@@ -1,0 +1,44 @@
+model Product {
+    id        String      @id @default(ulid())
+    shopId    String
+    name      String
+    description String
+    categoryId String
+    image     String[]
+    createdAt DateTime    @default(now())
+    updatedAt DateTime    @updatedAt
+
+    // productReview ProductReview[]
+    
+    category  ProductCategory @relation(fields: [categoryId], references: [id])
+    shop      Shop            @relation(fields: [shopId], references: [id], onDelete: Cascade)
+
+    @@index([name, categoryId, shopId])
+}
+
+
+model ProductCategory {
+    id        String      @id @default(ulid())
+    parentId  String?
+    name      String      @unique  
+    description String
+    createdAt DateTime    @default(now())
+    updatedAt DateTime    @updatedAt
+
+    products Product[]
+
+    @@index([name])
+}
+
+// model ProductReview{
+//     id        String      @id @default(ulid())
+//     productId String
+//     userId    String
+//     rating    Int
+//     comment   String
+//     image     String[]
+//     createdAt DateTime    @default(now())
+//     updatedAt DateTime    @updatedAt
+    
+//     product   Product     @relation(fields: [productId], references: [id])
+// }

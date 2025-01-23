@@ -1,0 +1,45 @@
+model Shop {
+     id           String   @id @default(ulid())
+     ownerId      String
+     name         String
+     description  String
+     logo         String
+     createdAt    DateTime @default(now())
+     updatedAt    DateTime @updatedAt
+     shopCategoryId String
+
+     product        Product[]
+    //  productReview ProductReview[]
+     shopReview   ShopReview[]
+
+     shopCategory   ShopCategory @relation(fields: [shopCategoryId], references: [id])
+
+     owner        User     @relation(fields: [ownerId], references: [id])
+
+     @@index([name])
+}
+
+model ShopCategory {
+         id           String   @id @default(ulid())
+         name  String           @unique
+         description String
+         createdAt    DateTime @default(now())
+         updatedAt    DateTime @updatedAt
+         shop         Shop[]
+}
+
+model ShopReview{
+         id           String   @id @default(ulid())
+         shopId       String
+         userId       String
+         rating       Int
+         comment      String
+         createdAt    DateTime @default(now())
+         updatedAt    DateTime @updatedAt
+
+         shop         Shop     @relation(fields: [shopId], references: [id])
+
+         user         User     @relation(fields: [userId], references: [id])
+
+        //  @@unique([shopId, userId])
+}
