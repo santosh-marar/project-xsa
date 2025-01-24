@@ -24,15 +24,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Pencil, Trash2 } from "lucide-react";
-
-const formSchema = z.object({
-  name: z.string().min(2, {
-    message: "Name must be at least 2 characters.",
-  }),
-  description: z.string().min(2, {
-    message: "Description must be at least 2 characters.",
-  }),
-});
+import { ShopCategory, shopCategorySchema } from "@/validation/shop-category";
 
 export function ShopCategoryCard() {
   const [editingId, setEditingId] = useState<string | null>(null);
@@ -41,8 +33,8 @@ export function ShopCategoryCard() {
   const { data: shopCategories } =
     api.shopCategory.getAllShopCategory.useQuery();
 
-  const form = useForm<z.infer<typeof formSchema>>({
-    resolver: zodResolver(formSchema),
+  const form = useForm<ShopCategory>({
+    resolver: zodResolver(shopCategorySchema),
     defaultValues: {
       name: "",
       description: "",
@@ -69,7 +61,7 @@ export function ShopCategoryCard() {
     },
   });
 
-  function onSubmit(values: z.infer<typeof formSchema>) {
+  function onSubmit(values: ShopCategory) {
     if (editingId) {
       updateShopCategory.mutate({ id: editingId, ...values });
     } else {

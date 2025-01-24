@@ -5,12 +5,16 @@ import { signOut } from "next-auth/react";
 
 export function SignOut() {
   const handleSignOut = async () => {
-    await signOut(); // Triggers sign-out on the client
+    await signOut({ callbackUrl: "/" });
   };
 
   return (
-    <div className="w-full max-w-xs">
-      <Button onClick={handleSignOut}>Sign Out</Button>
-    </div>
+    <Button
+      onClick={handleSignOut}
+      variant="destructive"
+      className="rounded-sm w-full"
+    >
+      Sign Out
+    </Button>
   );
 }

@@ -25,6 +25,7 @@ import {
   SidebarHeader,
   SidebarRail,
 } from "@/components/ui/sidebar"
+import { api } from "@/trpc/react";
 
 // This is sample data.
 const data = {
@@ -151,6 +152,7 @@ const data = {
 };
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
+  const [profile] = api.user.getMyProfile.useSuspenseQuery();
   return (
     <Sidebar collapsible="icon" {...props}>
       <SidebarHeader>
@@ -161,9 +163,15 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         <NavProjects projects={data.projects} />
       </SidebarContent>
       <SidebarFooter>
-        <NavUser user={data.user} />
+        <SidebarFooter>
+          <NavUser
+            name={profile?.name as string}
+            email={profile?.email as string}
+            avatar={profile?.image as string}
+          />
+        </SidebarFooter>
       </SidebarFooter>
       <SidebarRail />
     </Sidebar>
-  )
+  );
 }
