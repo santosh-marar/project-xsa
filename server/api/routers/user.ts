@@ -7,4 +7,9 @@ export const userRouter = createTRPCRouter({
     });
     return profile ?? null;
   }),
+
+  getAll: protectedProcedure.query(async ({ ctx }) => {
+    const users = await ctx.db.user.findMany();
+    return users ?? null;
+  }),
 });

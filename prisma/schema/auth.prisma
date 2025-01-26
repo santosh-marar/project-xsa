@@ -25,6 +25,7 @@ model User {
     password      String?
     emailVerified DateTime?
     image         String?
+    phoneNumber   String?
     accounts      Account[]
     posts         Post[]
     shops         Shop[]

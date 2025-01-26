@@ -11,7 +11,7 @@ import {
 import { z } from "zod";
 
 export const shopRouter = createTRPCRouter({
-  create: adminProcedure.input(shopSchema).mutation(async ({ ctx, input }) => {
+  create: sellerProcedure.input(shopSchema).mutation(async ({ ctx, input }) => {
     const ownerId = ctx.session.user.id as string;
     return ctx.db.shop.create({
       data: {
@@ -34,7 +34,29 @@ export const shopRouter = createTRPCRouter({
           select: {
             id: true,
             name: true,
-            email: true, 
+            email: true,
+            // phoneNumber: true,
+          },
+        },
+      },
+    });
+  }),
+
+  getMyShops: sellerProcedure.query(async ({ ctx }) => {
+    return ctx.db.shop.findMany({
+      where: { ownerId: ctx.session.user.id },
+      include: {
+        shopCategory: {
+          select: {
+            id: true,
+            name: true,
+          },
+        },
+        owner: {
+          select: {
+            id: true,
+            name: true,
+            email: true,
             // phoneNumber: true,
           },
         },
@@ -52,7 +74,7 @@ export const shopRouter = createTRPCRouter({
       });
     }),
 
-  delete: adminProcedure
+  delete: sellerProcedure
     .input(shopDeleteSchema)
     .mutation(async ({ ctx, input }) => {
       return ctx.db.shop.delete({

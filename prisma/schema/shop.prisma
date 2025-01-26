@@ -11,10 +11,8 @@ model Shop {
      product        Product[]
     //  productReview ProductReview[]
      shopReview   ShopReview[]
-
      shopCategory   ShopCategory @relation(fields: [shopCategoryId], references: [id])
-
-     owner        User     @relation(fields: [ownerId], references: [id])
+     owner        User     @relation(fields: [ownerId], references: [id], onDelete: Cascade)
 
      @@index([name])
 }
@@ -37,9 +35,8 @@ model ShopReview{
          createdAt    DateTime @default(now())
          updatedAt    DateTime @updatedAt
 
-         shop         Shop     @relation(fields: [shopId], references: [id])
-
-         user         User     @relation(fields: [userId], references: [id])
+         shop         Shop     @relation(fields: [shopId], references: [id], onDelete: Cascade)
+         user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
         //  @@unique([shopId, userId])
 }

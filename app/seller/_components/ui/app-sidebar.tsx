@@ -1,40 +1,28 @@
-"use client"
+"use client";
 
-import * as React from "react"
+import * as React from "react";
 import {
   AudioWaveform,
   BookOpen,
-  Bot,
-  Command,
-  Frame,
-  GalleryVerticalEnd,
-  Map,
-  PieChart,
   Settings2,
   SquareTerminal,
   Store,
-} from "lucide-react"
+} from "lucide-react";
 
-import { NavMain } from "@/app/(admin)/_components/nav-main"
-import { NavProjects } from "@/app/(admin)/_components/nav-projects"
-import { NavUser } from "@/app/(admin)/_components/nav-user"
-import { TeamSwitcher } from "@/app/(admin)/_components/team-switcher"
 import {
   Sidebar,
   SidebarContent,
   SidebarFooter,
   SidebarHeader,
   SidebarRail,
-} from "@/components/ui/sidebar"
+} from "@/components/ui/sidebar";
 import { api } from "@/trpc/react";
+import { TeamSwitcher } from "./team-switcher";
+import { NavMain } from "./nav-main";
+import { NavUser } from "./nav-user";
 
 // This is sample data.
 const data = {
-  user: {
-    name: "shadcn",
-    email: "m@example.com",
-    avatar: "/avatars/shadcn.jpg",
-  },
   teams: [
     {
       name: "Evil Corp.",
@@ -45,32 +33,24 @@ const data = {
   navMain: [
     {
       title: "Dashboard",
-      url: "/dashboard",
+      url: "/seller",
       icon: SquareTerminal,
       isActive: true,
       items: [
         {
           title: "Overview",
-          url: "/dashboard",
+          url: "seller",
         },
       ],
     },
     {
       title: "Shops",
-      url: "/dashboard/shop",
+      url: "/seller/shop",
       icon: Store,
       items: [
         {
           title: "Shop",
-          url: "/dashboard/shop",
-        },
-        {
-          title: "Shop category",
-          url: "/dashboard/shop/category",
-        },
-        {
-          title: "Add shop",
-          url: "/dashboard/shop/register",
+          url: "/seller/shop",
         },
       ],
     },
@@ -121,23 +101,6 @@ const data = {
       ],
     },
   ],
-  projects: [
-    {
-      name: "Design Engineering",
-      url: "#",
-      icon: Frame,
-    },
-    {
-      name: "Sales & Marketing",
-      url: "#",
-      icon: PieChart,
-    },
-    {
-      name: "Travel",
-      url: "#",
-      icon: Map,
-    },
-  ],
 };
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
@@ -149,7 +112,6 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       </SidebarHeader>
       <SidebarContent>
         <NavMain items={data.navMain} />
-        <NavProjects projects={data.projects} />
       </SidebarContent>
       <SidebarFooter>
         <SidebarFooter>
