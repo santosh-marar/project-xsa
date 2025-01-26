@@ -12,6 +12,7 @@ import {
   PieChart,
   Settings2,
   SquareTerminal,
+  Store,
 } from "lucide-react"
 
 import { NavMain } from "@/app/(admin)/_components/nav-main"
@@ -52,36 +53,24 @@ const data = {
           title: "Overview",
           url: "/dashboard",
         },
-        {
-          title: "Shops",
-          url: "/dashboard/shop",
-        },
-        {
-          title: "Add Shop",
-          url: "/dashboard/shop/register",
-        },
-        {
-          title: "Category",
-          url: "/dashboard/shop/category",
-        },
       ],
     },
     {
-      title: "Models",
-      url: "#",
-      icon: Bot,
+      title: "Shops",
+      url: "/dashboard/shop",
+      icon: Store,
       items: [
         {
-          title: "Genesis",
-          url: "#",
+          title: "Shop",
+          url: "/dashboard/shop",
         },
         {
-          title: "Explorer",
-          url: "#",
+          title: "Shop category",
+          url: "/dashboard/shop/category",
         },
         {
-          title: "Quantum",
-          url: "#",
+          title: "Add shop",
+          url: "/dashboard/shop/register",
         },
       ],
     },

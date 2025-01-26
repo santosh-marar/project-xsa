@@ -16,7 +16,8 @@ export const shopCategoryRouter = createTRPCRouter({
     }),
 
   getAllShopCategory: publicProcedure.query(async({ ctx }) => {
-    return db.shopCategory.findMany();
+    const shopCategories = await ctx.db.shopCategory.findMany();
+    return shopCategories;
   }),
 
   getShopCategoryById: publicProcedure

@@ -1,27 +1,13 @@
-import { createTRPCRouter, publicProcedure } from "@/server/api/trpc";
+import { createTRPCRouter, protectedProcedure } from "@/server/api/trpc";
+import { DeleteObjectCommand, PutObjectCommand } from "@aws-sdk/client-s3";
+import { imageDeleteSchema, imageValidation } from "@/validation/image";
+import { s3Client } from "@/config/s3-config";
 import { z } from "zod";
-import { S3Client, PutObjectCommand } from "@aws-sdk/client-s3";
 
 export const imageRouter = createTRPCRouter({
-  upload: publicProcedure
-    .input(
-      z.object({
-        name: z.string(),
-        type: z.string(),
-        size: z.number(),
-        base64: z.string(),
-        folder: z.string().optional().default("uploads"),
-      })
-    )
+  upload: protectedProcedure
+    .input(imageValidation)
     .mutation(async ({ input }) => {
-      const s3Client = new S3Client({
-        region: process.env.NEXT_PUBLIC_AWS_REGION,
-        credentials: {
-          accessKeyId: process.env.NEXT_PUBLIC_AWS_ACCESS_KEY_ID!,
-          secretAccessKey: process.env.NEXT_PUBLIC_AWS_SECRET_ACCESS_KEY!,
-        },
-      });
-
       const buffer = Buffer.from(input.base64, "base64");
       const key = `${input.folder}/${crypto.randomUUID()}-${input.name}`;
 
@@ -38,14 +24,43 @@ export const imageRouter = createTRPCRouter({
         url: `https://${process.env.NEXT_PUBLIC_AWS_S3_BUCKET_NAME}.s3.amazonaws.com/${key}`,
       };
     }),
-  delete: publicProcedure
-    .input(
-      z.object({
-        url: z.string(),
-      })
-    )
+
+  deleteImage: protectedProcedure
+    .input(imageDeleteSchema)
     .mutation(async ({ input }) => {
-      // Implement delete logic
-      return { success: true };
+      const { url } = input;
+      const parsedUrl = new URL(url);
+      const key = decodeURIComponent(parsedUrl.pathname.slice(1));
+
+      const command = new DeleteObjectCommand({
+        Bucket: process.env.NEXT_PUBLIC_AWS_S3_BUCKET_NAME!,
+        Key: key,
+      });
+
+      await s3Client.send(command);
+
+      return { success: true, deletedUrl: url };
+    }),
+
+  // Multiple image deletion
+  deleteImages: protectedProcedure
+    .input(z.object({ urls: z.array(z.string().url()) }))
+    .mutation(async ({ input }) => {
+      const deletedUrls: string[] = [];
+
+      for (const url of input.urls) {
+        const parsedUrl = new URL(url);
+        const key = decodeURIComponent(parsedUrl.pathname.slice(1));
+
+        const command = new DeleteObjectCommand({
+          Bucket: process.env.NEXT_PUBLIC_AWS_S3_BUCKET_NAME!,
+          Key: key,
+        });
+
+        await s3Client.send(command);
+        deletedUrls.push(url);
+      }
+
+      return { success: true, deletedUrls };
     }),
 });

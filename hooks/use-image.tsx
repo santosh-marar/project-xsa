@@ -1,13 +1,7 @@
+import { FileUploadConfig } from "@/@types/image";
 import { api } from "@/trpc/react";
 import { useState } from "react";
 import { toast } from "sonner";
-
-export interface FileUploadConfig {
-  maxFiles?: number;
-  maxSizeInMB?: number;
-  allowedTypes?: string[];
-  folder?: string;
-}
 
 export function useFileUpload(config: FileUploadConfig = {}) {
   const [files, setFiles] = useState<File[]>([]);
@@ -111,3 +105,25 @@ export function useFileUpload(config: FileUploadConfig = {}) {
     isUploading,
   };
 }
+
+export const useImageDelete = () => {
+  const utils = api.useUtils();
+
+  const deleteSingleImage = api.image.deleteImage.useMutation({
+    onSuccess: () => {
+      utils.image.invalidate();
+    },
+  });
+
+  const deleteMultipleImages = api.image.deleteImages.useMutation({
+    onSuccess: () => {
+      utils.image.invalidate();
+    },
+  });
+
+  return {
+    deleteSingleImage: (url: string) => deleteSingleImage.mutate({ url }),
+    deleteMultipleImages: (urls: string[]) =>
+      deleteMultipleImages.mutate({ urls }),
+  };
+};
