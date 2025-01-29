@@ -1,8 +1,8 @@
 import { z } from "zod";
 
 export const shopCategorySchema = z.object({
-  name: z.string(),
-  description: z.string(),
+  name: z.string().trim().toLowerCase(),
+  description: z.string().trim().toLowerCase(),
 });
 
 export const shopCategoryUpdateSchema = shopCategorySchema.extend({

@@ -1,8 +1,16 @@
 import { z } from "zod";
 
 export const shopSchema = z.object({
-  name: z.string().min(1),
-  description: z.string().min(1),
+  name: z
+    .string()
+    .min(1)
+    .trim()
+    .toLowerCase(),
+  description: z
+    .string()
+    .min(1)
+    .trim()
+    .toLowerCase(),
   logo: z.string().url(),
   shopCategoryId: z.string().min(1),
 });

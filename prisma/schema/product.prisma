@@ -1,33 +1,35 @@
 model Product {
-    id        String      @id @default(ulid())
-    shopId    String
-    name      String
-    description String
-    categoryId String
-    image     String[]
-    createdAt DateTime    @default(now())
-    updatedAt DateTime    @updatedAt
+  id          String   @id @default(ulid())
+  shopId      String
+  name        String
+  description String
+  categoryId  String
+  image       String[]
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
 
-    // productReview ProductReview[]
-    
-    category  ProductCategory @relation(fields: [categoryId], references: [id])
-    shop      Shop            @relation(fields: [shopId], references: [id], onDelete: Cascade)
+  // productReview ProductReview[]
 
-    @@index([name, categoryId, shopId])
+  category ProductCategory @relation(fields: [categoryId], references: [id])
+  shop     Shop            @relation(fields: [shopId], references: [id], onDelete: Cascade)
+
+  @@index([name, categoryId, shopId])
 }
 
-
 model ProductCategory {
-    id        String      @id @default(ulid())
-    parentId  String?
-    name      String      @unique  
-    description String
-    createdAt DateTime    @default(now())
-    updatedAt DateTime    @updatedAt
+  id          String   @id @default(ulid())
+  parentId    String?  // Nullable for top-level categories
+  name        String   @unique
+  description String
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
 
-    products Product[]
+  parentCategory ProductCategory? @relation("CategoryHierarchy", fields: [parentId], references: [id])
+  subCategories  ProductCategory[] @relation("CategoryHierarchy")
 
-    @@index([name])
+  products     Product[]
+
+  @@index([name])
 }
 
 // model ProductReview{
@@ -39,6 +41,6 @@ model ProductCategory {
 //     image     String[]
 //     createdAt DateTime    @default(now())
 //     updatedAt DateTime    @updatedAt
-    
+
 //     product   Product     @relation(fields: [productId], references: [id])
 // }

@@ -40,6 +40,8 @@ interface NavUserProps {
 export function NavUser({ name, email, avatar }: NavUserProps) {
   const { isMobile } = useSidebar();
 
+
+
   return (
     <SidebarMenu>
       <SidebarMenuItem>

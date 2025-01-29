@@ -138,7 +138,7 @@ export const ImageUploader = forwardRef<ImageUploaderRef, ImageUploaderProps>(
     const currentValues = Array.isArray(value) ? value : value ? [value] : [];
     const currentPreviews = previews;
 
-    console.log("currentValues", currentValues);
+    // console.log("currentValues", currentValues);
 
     return (
       <div className="space-y-4">

@@ -153,7 +153,7 @@ export const ShopComponent = () => {
                 <ImageUploader
                   ref={logoRef}
                   value={logo}
-                  onChange={(url) => setLogo(url as string)}
+                  // onChange={(url) => setLogo(url as string)}
                   multiple={false}
                   config={{
                     maxFiles: 1,

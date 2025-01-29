@@ -41,20 +41,21 @@ export const authConfig = {
       if (user) {
         token.id = user.id;
 
-        // Fetch and store only role names in the token
-        const userWithRoles = await db.user.findUnique({
-          where: { id: user.id },
-          include: { roles: true },
+        const userRoles = await db.userRole.findMany({
+          where: { userId: user.id },
+          include: { role: true }, 
         });
 
-        token.roles = userWithRoles?.roles.map((role) => role.name) || [];
+        // Store only role names in the token
+        token.roles = userRoles.map((userRole) => userRole.role.name);
       }
       return token;
     },
+
     async session({ session, token }) {
       if (session.user) {
         session.user.id = token.id as string;
-        session.user.role = token.roles as USER_ROLE[];
+        session.user.role = token.roles as USER_ROLE[]; 
       }
       return session;
     },
@@ -76,15 +77,17 @@ export const authConfig = {
           });
         }
 
-        // Assign the role to the new user
-        await db.user.update({
-          where: { id: message.user.id },
-          data: {
-            roles: {
-              connect: { id: userRole.id },
+        // Assign the role to the new user in the UserRoles table
+        if (message.user.id) {
+          await db.userRole.create({
+            data: {
+              userId: message.user.id, 
+              roleId: userRole.id,
             },
-          },
-        });
+          });
+        } else {
+          console.error("Error: User ID is undefined");
+        }
       } catch (error) {
         console.error("Error assigning role to new user:", error);
       }
