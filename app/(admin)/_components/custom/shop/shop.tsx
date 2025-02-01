@@ -14,7 +14,7 @@ import {
 import { ImageUploaderRef } from "@/@types/image";
 import { ImageUploader } from "@/components/custom/image-uploader";
 import { useImageDelete } from "@/hooks/use-image";
-import { ShopsDataTable } from "./shop-data-table";
+import { ShopsDataTable } from "./data-table";
 
 const ShopManagerComponent = () => {
   const [formData, setFormData] = useState({
@@ -146,7 +146,6 @@ const ShopManagerComponent = () => {
                 <ImageUploader
                   ref={logoRef}
                   value={logo}
-                  onChange={(url) => setLogo(url as string)}
                   multiple={false}
                   config={{
                     maxFiles: 1,

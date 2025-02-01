@@ -71,25 +71,17 @@ const data = {
       ],
     },
     {
-      title: "Documentation",
-      url: "#",
-      icon: BookOpen,
+      title: "Products",
+      url: "/dashboard/product",
+      icon: GalleryVerticalEnd,
       items: [
         {
-          title: "Introduction",
-          url: "#",
+          title: "Product",
+          url: "/dashboard/product",
         },
         {
-          title: "Get Started",
-          url: "#",
-        },
-        {
-          title: "Tutorials",
-          url: "#",
-        },
-        {
-          title: "Changelog",
-          url: "#",
+          title: "Product category",
+          url: "/dashboard/product/category",
         },
       ],
     },

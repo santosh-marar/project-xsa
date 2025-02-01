@@ -1,19 +1,42 @@
 model Product {
-  id          String   @id @default(ulid())
+  id          String    @id @default(ulid())
   shopId      String
   name        String
   description String
   categoryId  String
-  image       String[]
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  image       String
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
 
-  // productReview ProductReview[]
-
-  category ProductCategory @relation(fields: [categoryId], references: [id])
-  shop     Shop            @relation(fields: [shopId], references: [id], onDelete: Cascade)
+  category    ProductCategory @relation(fields: [categoryId], references: [id])
+  shop        Shop            @relation(fields: [shopId], references: [id], onDelete: Cascade)
+  variations  ProductVariation[]
 
   @@index([name, categoryId, shopId])
+}
+
+model ProductVariation {
+  id          String    @id @default(ulid())
+  productId   String
+  price       Float
+  stock       Int
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  image       String[]
+
+  product     Product   @relation(fields: [productId], references: [id], onDelete: Cascade)
+ 
+  
+  tShirtAttributes     TShirtAttributes?     
+  pantAttributes       PantAttributes?    
+  shirtAttributes      ShirtAttributes?
+  jacketAttributes     JacketAttributes?    
+  hoodieAttributes     HoodieAttributes?    
+  undergarmentAttributes UndergarmentAttributes?
+  shoeAttributes       ShoeAttributes? 
+  genericAttributes    GenericAttributes? // For uncategorized products
+  
+  @@index([productId, price, createdAt])
 }
 
 model ProductCategory {
@@ -32,15 +55,4 @@ model ProductCategory {
   @@index([name])
 }
 
-// model ProductReview{
-//     id        String      @id @default(ulid())
-//     productId String
-//     userId    String
-//     rating    Int
-//     comment   String
-//     image     String[]
-//     createdAt DateTime    @default(now())
-//     updatedAt DateTime    @updatedAt
 
-//     product   Product     @relation(fields: [productId], references: [id])
-// }

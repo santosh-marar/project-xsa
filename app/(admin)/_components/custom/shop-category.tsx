@@ -162,7 +162,7 @@ export function ShopCategoryCard() {
                             deleteShopCategory.mutate({ id: category.id })
                           }
                         >
-                          <Trash2 className="h-4 w-4 text-red-500" />
+                          <Trash2 className="h-4 w-4 text-destructive" />
                         </Button>
                       </div>
                     </TableCell>

@@ -1,7 +1,8 @@
-import { adminProcedure, createTRPCRouter, publicProcedure } from "../trpc";
+
 import { db } from "@/server/db";
 import { shopCategoryDeleteSchema, shopCategorySchema, shopCategoryUpdateSchema } from "@/validation/shop-category";
 import { z } from "zod";
+import { adminProcedure, createTRPCRouter, publicProcedure } from "../../trpc";
 
 export const shopCategoryRouter = createTRPCRouter({
   createShopCategory: adminProcedure

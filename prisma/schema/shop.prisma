@@ -38,5 +38,5 @@ model ShopReview {
   shop Shop @relation(fields: [shopId], references: [id], onDelete: Cascade)
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-  //  @@unique([shopId, userId])
+  @@unique([shopId, userId])
 }

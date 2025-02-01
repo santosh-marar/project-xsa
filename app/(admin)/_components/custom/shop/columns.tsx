@@ -6,7 +6,6 @@ import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
   DropdownMenuContent,
-  DropdownMenuItem,
   DropdownMenuLabel,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
@@ -14,9 +13,6 @@ import { Checkbox } from "@/components/ui/checkbox";
 import Image from "next/image";
 import { DeleteConfirmationDialog } from "@/components/custom/delete-confirmation-dialog";
 import { Shop } from "@/@types/shop";
-
-
-
 
 export const columns: ColumnDef<Shop>[] = [
   {
