@@ -30,6 +30,8 @@ import {
   useSidebar,
 } from "@/components/ui/sidebar"
 import { SignOut } from "@/app/_components/signOut";
+import { Button } from "@/components/ui/button";
+import Link from "next/link";
 
 interface NavUserProps {
   name: string;
@@ -79,6 +81,16 @@ export function NavUser({ name, email, avatar }: NavUserProps) {
               </div>
             </DropdownMenuLabel>
             <DropdownMenuSeparator />
+            <DropdownMenuItem>
+              <Button
+                variant="outline"
+                size="sm"
+                className="w-full bg-primary text-secondary"
+                asChild
+              >
+                <Link href="/seller">Seller Dashboard</Link>
+              </Button>
+            </DropdownMenuItem>
             <DropdownMenuItem>
               <SignOut />
             </DropdownMenuItem>

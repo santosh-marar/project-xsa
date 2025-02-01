@@ -13,6 +13,7 @@ export function SignOut() {
       onClick={handleSignOut}
       variant="destructive"
       className="rounded-sm w-full"
+      size="sm"
     >
       Sign Out
     </Button>
