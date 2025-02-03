@@ -1,3 +1,3 @@
 export default function SellerDashboardPage() {
-  return <></>;
+  return <>hello form seller dashboard</>;
 }

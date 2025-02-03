@@ -5,12 +5,12 @@ import {
 } from "@/server/api/trpc";
 import { db } from "@/server/db";
 import {
-  ProductCategoryDeleteSchema,
-  ProductCategorySchema,
-  ProductCategoryUpdateSchema,
-} from "@/validation/product-category";
+  createProductCategorySchema,
+  deleteProductCategorySchema,
+  updateProductCategorySchema,
+} from "@/validation/product/category";
 
-export const productCategoryRouter = createTRPCRouter({
+const productCategoryRouter = createTRPCRouter({
   getAll: publicProcedure.query(async () => {
     return db.productCategory.findMany({
       include: {
@@ -25,15 +25,15 @@ export const productCategoryRouter = createTRPCRouter({
   }),
 
   create: adminProcedure
-    .input(ProductCategorySchema.omit({ id: true }))
+    .input(createProductCategorySchema)
     .mutation(async ({ input }) => {
       return db.productCategory.create({
-        data: { ...input, createdAt: new Date(), updatedAt: new Date() },
+        data: { ...input },
       });
     }),
 
   update: adminProcedure
-    .input(ProductCategoryUpdateSchema)
+    .input(updateProductCategorySchema)
     .mutation(async ({ input }) => {
       const { id, ...rest } = input;
       return db.productCategory.update({
@@ -43,9 +43,11 @@ export const productCategoryRouter = createTRPCRouter({
     }),
 
   delete: adminProcedure
-    .input(ProductCategoryDeleteSchema)
+    .input(deleteProductCategorySchema)
     .mutation(async ({ input }) => {
       await db.productCategory.delete({ where: { id: input.id } });
       return true;
     }),
 });
+
+export default productCategoryRouter;

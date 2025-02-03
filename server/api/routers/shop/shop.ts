@@ -52,14 +52,6 @@ export const shopRouter = createTRPCRouter({
             name: true,
           },
         },
-        owner: {
-          select: {
-            id: true,
-            name: true,
-            email: true,
-            // phoneNumber: true,
-          },
-        },
       },
     });
   }),

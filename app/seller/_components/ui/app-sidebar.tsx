@@ -5,6 +5,7 @@ import {
   AudioWaveform,
   BookOpen,
   Settings2,
+  Shirt,
   SquareTerminal,
   Store,
 } from "lucide-react";
@@ -39,7 +40,7 @@ const data = {
       items: [
         {
           title: "Overview",
-          url: "seller",
+          url: "/seller",
         },
       ],
     },
@@ -55,48 +56,13 @@ const data = {
       ],
     },
     {
-      title: "Documentation",
-      url: "#",
-      icon: BookOpen,
+      title: "Products",
+      url: "/seller/product",
+      icon: Shirt,
       items: [
         {
-          title: "Introduction",
-          url: "#",
-        },
-        {
-          title: "Get Started",
-          url: "#",
-        },
-        {
-          title: "Tutorials",
-          url: "#",
-        },
-        {
-          title: "Changelog",
-          url: "#",
-        },
-      ],
-    },
-    {
-      title: "Settings",
-      url: "#",
-      icon: Settings2,
-      items: [
-        {
-          title: "General",
-          url: "#",
-        },
-        {
-          title: "Team",
-          url: "#",
-        },
-        {
-          title: "Billing",
-          url: "#",
-        },
-        {
-          title: "Limits",
-          url: "#",
+          title: "Product",
+          url: "/seller/product",
         },
       ],
     },

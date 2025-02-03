@@ -4,13 +4,14 @@ model Product {
   name        String
   description String
   categoryId  String
-  image       String
+  image       String @default("")
+  brand       String?
   createdAt   DateTime  @default(now())
   updatedAt   DateTime  @updatedAt
 
-  category    ProductCategory @relation(fields: [categoryId], references: [id])
+  productCategory    ProductCategory @relation(fields: [categoryId], references: [id])
   shop        Shop            @relation(fields: [shopId], references: [id], onDelete: Cascade)
-  variations  ProductVariation[]
+  productVariations  ProductVariation[]
 
   @@index([name, categoryId, shopId])
 }
@@ -20,6 +21,8 @@ model ProductVariation {
   productId   String
   price       Float
   stock       Int
+  modelNumber String?
+  warranty    String?
   createdAt   DateTime  @default(now())
   updatedAt   DateTime  @updatedAt
   image       String[]

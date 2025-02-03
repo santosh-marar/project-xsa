@@ -25,11 +25,8 @@ import {
 import { Button } from "@/components/ui/button";
 import { api } from "@/trpc/react";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
-import {
-  ProductCategory,
-  ProductCategorySchema,
-} from "@/validation/product-category";
 import { ProductCategoryTable } from "./table";
+import { createProductCategorySchema, ProductCategory } from "@/validation/product/category";
 
 export function ProductCategoryForm() {
   const utils = api.useUtils();
@@ -41,7 +38,7 @@ export function ProductCategoryForm() {
   const createProductCategory = api.productCategory.create.useMutation();
 
   const form = useForm<ProductCategory>({
-    resolver: zodResolver(ProductCategorySchema),
+    resolver: zodResolver(createProductCategorySchema),
     defaultValues: {
       name: "",
       description: "",
@@ -194,7 +191,7 @@ export function ProductCategoryForm() {
         </Card>
 
         {/* Table section */}
-          <ProductCategoryTable />
+        <ProductCategoryTable />
       </div>
     </div>
   );

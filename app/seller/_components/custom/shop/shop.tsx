@@ -183,7 +183,6 @@ export const ShopComponent = () => {
                 <TableHead>Logo</TableHead>
                 <TableHead className="w-[200px]">Shop name</TableHead>
                 <TableHead>Description</TableHead>
-                <TableHead>Your info</TableHead>
                 <TableHead>Created at</TableHead>
                 <TableHead className="text-right">Actions</TableHead>
               </TableRow>
@@ -208,13 +207,6 @@ export const ShopComponent = () => {
                     </TableCell>
                     <TableCell className="font-medium">{shop.name}</TableCell>
                     <TableCell>{shop.description}</TableCell>
-                    <TableCell>
-                      {shop.owner.name}
-                      <br />
-                      <span className="text-sm text-gray-500">
-                        {shop.owner.email}
-                      </span>
-                    </TableCell>
                     <TableCell>{shop.createdAt.toLocaleDateString()}</TableCell>
                     <TableCell className="text-right">
                       <Button
