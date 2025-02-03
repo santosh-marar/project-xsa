@@ -5,7 +5,7 @@ model Product {
   description String
   categoryId  String
   image       String @default("")
-  brand       String?
+  brand       String? @default("")
   createdAt   DateTime  @default(now())
   updatedAt   DateTime  @updatedAt
 
@@ -20,7 +20,7 @@ model ProductVariation {
   id          String    @id @default(ulid())
   productId   String
   price       Float
-  stock       Int
+  stock       Int       @default(0)
   modelNumber String?
   warranty    String?
   createdAt   DateTime  @default(now())

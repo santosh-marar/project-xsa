@@ -201,7 +201,7 @@ export function CreateProductForm({
                 config={{
                   maxFiles: 1,
                   maxSizeInMB: 50,
-                  folder: "shop-logos",
+                  folder: "product-images",
                 }}
               />
             </div>
