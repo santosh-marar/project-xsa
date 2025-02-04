@@ -29,6 +29,7 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
+        <Toaster richColors position="top-right" />
         <TRPCReactProvider>{children}</TRPCReactProvider>
       </body>
     </html>

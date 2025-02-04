@@ -17,14 +17,6 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import type * as z from "zod";
-import {
   UpdateProduct,
   updateProductSchema,
 } from "@/validation/product/product";

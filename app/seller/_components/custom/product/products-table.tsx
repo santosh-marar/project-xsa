@@ -58,83 +58,104 @@ export function ProductsTable({ shops, categories }: ProductsTableProps) {
     },
   });
 
-  const columns: ColumnDef<Product>[] = [
-    {
-      accessorKey: "name",
-      header: ({ column }) => {
-        return (
-          <Button
-            variant="ghost"
-            onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-          >
-            Name
-            <ArrowUpDown className="ml-2 h-4 w-4" />
-          </Button>
-        );
-      },
-    },
+ const handleAddVariation = (productId: string, categoryName: string) => {
+   console.log(productId, categoryName);
+   router.push(
+     `/seller/product/${productId}/variation/create?category=${encodeURIComponent(
+       categoryName
+     )}`
+   );
+ };
 
-    {
-      accessorKey: "shop.name",
-      header: "Shop",
-    },
-    {
-      accessorKey: "productCategory.name",
-      header: "Category",
-    },
-    {
-      accessorKey: "brand",
-      header: "Brand",
-    },
-    {
-      accessorKey: "createdAt",
-      header: "Created At",
-      cell: ({ row }) =>
-        new Date(row.getValue("createdAt")).toLocaleDateString(),
-    },
-    {
-      id: "actions",
-      header: "Actions",
-      cell: ({ row, table }) => {
-        const category = row.original;
+ const columns: ColumnDef<Product>[] = [
+   {
+     accessorKey: "name",
+     header: ({ column }) => {
+       return (
+         <Button
+           variant="ghost"
+           onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+         >
+           Name
+           <ArrowUpDown className="ml-2 h-4 w-4" />
+         </Button>
+       );
+     },
+   },
 
-        return (
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button variant="ghost" className="h-8 w-8 p-0">
-                <span className="sr-only">Open menu</span>
-                <MoreHorizontal className="h-4 w-4" />
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="center" className="flex flex-col gap-1">
-              <DropdownMenuLabel className="text-sm text-center">
-                Actions
-              </DropdownMenuLabel>
-              <DropdownMenuItem
-                onClick={() => navigator.clipboard.writeText(category.id)}
-              >
-                Copy category ID
-              </DropdownMenuItem>
-              <Button
-                variant="outline"
-                size="icon"
-                onClick={() =>
-                  router.push(`/seller/product/${row.original.id}`)
-                }
-              >
-                <Pencil className="h-4 w-4" />
-              </Button>
+   {
+     accessorKey: "shop.name",
+     header: "Shop",
+   },
+   {
+     accessorKey: "productCategory.name",
+     header: "Category",
+   },
+   {
+     accessorKey: "brand",
+     header: "Brand",
+   },
+   {
+     accessorKey: "createdAt",
+     header: "Created At",
+     cell: ({ row }) =>
+       new Date(row.getValue("createdAt")).toLocaleDateString(),
+   },
+   {
+     id: "actions",
+     header: "Actions",
+     cell: ({ row, table }) => {
+       const product = row.original;
+       return (
+         <DropdownMenu>
+           <DropdownMenuTrigger asChild>
+             <Button variant="ghost" className="h-8 w-8 p-0">
+               <span className="sr-only">Open menu</span>
+               <MoreHorizontal className="h-4 w-4" />
+             </Button>
+           </DropdownMenuTrigger>
+           <DropdownMenuContent align="center" className="flex flex-col gap-1">
+             <DropdownMenuLabel className="text-sm text-center">
+               Actions
+             </DropdownMenuLabel>
+             <DropdownMenuItem
+               onClick={() => navigator.clipboard.writeText(product.id)}
+             >
+               Copy category ID
+             </DropdownMenuItem>
 
-              <DeleteConfirmationDialog
-                onConfirm={() => deleteProduct.mutate({ id: row.original.id })}
-                itemName={`Product "${row.original.name}"`}
-              />
-            </DropdownMenuContent>
-          </DropdownMenu>
-        );
-      },
-    },
-  ];
+             <Button
+               className="w-full"
+               variant="outline"
+               size="icon"
+               onClick={() =>
+                 handleAddVariation(
+                   row.original.id,
+                   product?.productCategory?.name
+                 )
+               }
+             >
+               Add Variation
+             </Button>
+
+             <Button
+               variant="outline"
+               size="icon"
+               onClick={() => router.push(`/seller/product/${row.original.id}`)}
+             >
+               <Pencil className="h-4 w-4" />
+             </Button>
+
+             <DeleteConfirmationDialog
+               onConfirm={() => deleteProduct.mutate({ id: row.original.id })}
+               itemName={`Product "${row.original.name}"`}
+             />
+           </DropdownMenuContent>
+         </DropdownMenu>
+       );
+     },
+   },
+ ];
 
   if (isLoading) {
     return <div>Loading...</div>;
