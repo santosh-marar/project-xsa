@@ -36,6 +36,7 @@ export const ShopComponent = () => {
   const [logo, setLogo] = useState("");
   const logoRef = useRef<ImageUploaderRef>(null);
   const { deleteSingleImage } = useImageDelete();
+  let isAlreadyHaveShop = false;
 
   // Fetch all shops
   const {
@@ -44,6 +45,14 @@ export const ShopComponent = () => {
     isLoading,
     isError,
   } = api.shop.getMyShops.useQuery();
+
+  if (shops) {
+    if (shops?.length > 0) {
+      isAlreadyHaveShop = true;
+    }
+  }
+
+
 
   const { data: shopCategories } =
     api.shopCategory.getAllShopCategory.useQuery();
@@ -167,7 +176,12 @@ export const ShopComponent = () => {
                 <Button variant="outline" onClick={resetForm} type="button">
                   Cancel
                 </Button>
-                <Button type="submit">{editingId ? "Update" : "Create"}</Button>
+                <Button
+                  type="submit"
+                  disabled={!editingId && isAlreadyHaveShop}
+                >
+                  {editingId ? "Update" : "Create"}
+                </Button>
               </div>
             </form>
           </CardContent>

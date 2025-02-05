@@ -8,11 +8,19 @@ import {
   shopSchema,
   shopUpdateSchema,
 } from "@/validation/shop";
-import { z } from "zod";
 
 export const shopRouter = createTRPCRouter({
   create: sellerProcedure.input(shopSchema).mutation(async ({ ctx, input }) => {
     const ownerId = ctx.session.user.id as string;
+
+    const existingShop = await ctx.db.shop.findFirst({
+      where: { ownerId },
+    });
+
+    if (existingShop) {
+      throw new Error("Shop already exists");
+    }
+
     return ctx.db.shop.create({
       data: {
         ...input,

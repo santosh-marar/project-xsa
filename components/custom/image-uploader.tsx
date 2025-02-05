@@ -86,6 +86,7 @@ import { useFileUpload } from "@/hooks/use-image";
 import { ImagePlus, X } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { ImageUploaderProps, ImageUploaderRef } from "@/@types/image";
+import Image from "next/image";
 
 
 
@@ -145,7 +146,7 @@ export const ImageUploader = forwardRef<ImageUploaderRef, ImageUploaderProps>(
         <div className="flex flex-wrap gap-4">
           {currentValues.map((url, index) => (
             <div key={url} className="relative">
-              <img
+              <Image
                 src={url}
                 alt={`Uploaded ${index}`}
                 className="w-32 h-32 object-cover rounded-lg border mp-4"

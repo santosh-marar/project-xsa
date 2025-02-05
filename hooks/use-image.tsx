@@ -1,4 +1,5 @@
 import { FileUploadConfig } from "@/@types/image";
+import { handleError } from "@/lib/zod-error";
 import { api } from "@/trpc/react";
 import { useState } from "react";
 import { toast } from "sonner";
@@ -71,12 +72,9 @@ export function useFileUpload(config: FileUploadConfig = {}) {
       setUploadedUrls(urls);
       setFiles([]);
       setPreviews([]);
-
-      toast.success("Uploaded successfully");
-
       return urls;
     } catch (error) {
-      toast.error("Something went wrong");
+      handleError(error);
       throw error;
     } finally {
       setIsUploading(false);
