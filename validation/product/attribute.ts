@@ -122,8 +122,8 @@ export const ShoeAttributesSchema = BaseAttributesSchema.extend({
   outsole: z
     .enum(["rubber", "eva", "tup", "leather", "other", "none"])
     .optional(),
-  insole: z.enum(["memory foam", "ortholite", "other", "none"]).optional(),
-  occasion: z.enum(["casual", "sports", "formal"]),
+  insole: z.enum(["memory-foam", "ortholite", "other", "none"]).optional(),
+  occasion: z.enum(["casual", "sports", "formal"])
 });
 
 // Shirt attributes schema

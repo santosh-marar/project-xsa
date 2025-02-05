@@ -33,6 +33,11 @@ import {
 import { ImageUploader } from "@/components/custom/image-uploader";
 import { handleError } from "@/lib/zod-error";
 import { toast } from "sonner";
+import { JacketAttributesFields } from "@/app/seller/_components/custom/product/form/attribute/jacket";
+import { ShirtAttributesFields } from "@/app/seller/_components/custom/product/form/attribute/shirt";
+import { UndergarmentAttributesFields } from "@/app/seller/_components/custom/product/form/attribute/under-garment";
+import { ShoeAttributesFields } from "@/app/seller/_components/custom/product/form/attribute/shoe";
+import { GenericAttributesFields } from "@/app/seller/_components/custom/product/form/attribute/generic";
 
 // Constants and Types
 export const categoryNames = [
@@ -111,7 +116,17 @@ const AttributeFields = ({
       return <TShirtAttributesFields index={index} control={control} />;
     case "pant":
       return <PantAttributesFields index={index} control={control} />;
-    // Add other category components here
+    case "jacket":
+      return <JacketAttributesFields index={index} control={control} />;
+    case "shirt":
+      return <ShirtAttributesFields index={index} control={control} />;
+    case "shoe":
+      return <ShoeAttributesFields index={index} control={control} />;
+    case "undergarment":
+      return <UndergarmentAttributesFields index={index} control={control} />;
+    case "generic":
+      return <GenericAttributesFields index={index} control={control} />;
+      break;
     default:
       return null;
   }
@@ -123,7 +138,6 @@ export default function AddVariationPage() {
   const productId = params.id as string;
   const urlCategory = searchParams.get("category") as CategoryName | null;
   const [productImage, setProductImage] = useState("");
-  const productImageRef = useRef<ImageUploaderRef>(null);
   const variationImageRefs = useRef<ImageUploaderRef>(null);
 
   const createProductVariation = api.productVariation.create.useMutation();
@@ -225,11 +239,11 @@ export default function AddVariationPage() {
           attributes: variation.attributes,
         });
 
-        await handleAttributeSave(
-          values.categoryName,
-          createdVariation.id,
-          variation.attributes
-        );
+        // await handleAttributeSave(
+        //   values.categoryName,
+        //   createdVariation.id,
+        //   variation.attributes
+        // );
 
         try {
           await handleAttributeSave(

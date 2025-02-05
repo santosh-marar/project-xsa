@@ -64,6 +64,10 @@ const data = {
           title: "Product",
           url: "/seller/product",
         },
+        {
+          title: "Product Variation",
+          url: "/seller/product/variation",
+        },
       ],
     },
   ],

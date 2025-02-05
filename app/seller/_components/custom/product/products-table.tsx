@@ -39,14 +39,46 @@ export function ProductsTable({ shops, categories }: ProductsTableProps) {
 
   const shopId = shops?.[0]?.id;
 
-  const {
-    data: products,
-    isError,
-    isLoading,
-    refetch,
-  } = api.product.getMyProducts.useQuery(shopId, {
-    enabled: Boolean(shopId),
+  const { data, isError, isLoading, refetch } =
+    api.product.getMyProducts.useQuery(
+      {
+        shopId,
+        page: 1,
+        pageSize: 10,
+      },
+      {
+        enabled: Boolean(shopId),
+      }
+    );
+
+  const products = data?.products;
+
+  console.log("getMyProducts", data);
+
+  const {data:da} = api.product.getAll.useQuery({
+    page: 1,
+    pageSize: 10,
+    // sortBy: "name",
+    // sortOrder: "asc",
+    // search: "shirt",
+    // filters: {
+    //   minPrice: 100,
+    //   maxPrice: 200,
+    //   sizes: ["M", "L", "XL"],
+    //   // genders: ["MEN", "WOMEN", "UNISEX"],
+    //   ageRange: ["INFANT", "KIDS", "TEENS", "ADULTS"],
+    //   categories: [
+    //     "T-Shirt",
+    //     "Pant",
+    //     "Shoe",
+    //     "Shirt",
+    //     "Jacket",
+    //     "Undergarment",
+    //   ],
+    // },
   });
+  console.log("getAll", da);
+
 
   const deleteProduct = api.product.delete.useMutation({
     onSuccess: () => {

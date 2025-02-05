@@ -181,6 +181,28 @@ export function ShoeAttributesFields({
       />
       <FormField
         control={control}
+        name={`variations.${index}.attributes.occasion`}
+        render={({ field }) => (
+          <FormItem>
+            <FormLabel>Occasion</FormLabel>
+            <Select onValueChange={field.onChange} defaultValue={field.value}>
+              <FormControl>
+                <SelectTrigger>
+                  <SelectValue placeholder="Select occasion" />
+                </SelectTrigger>
+              </FormControl>
+              <SelectContent>
+                <SelectItem value="casual">Casual</SelectItem>
+                <SelectItem value="sports">Sports</SelectItem>
+                <SelectItem value="formal">Formal</SelectItem>
+              </SelectContent>
+            </Select>
+            <FormMessage />
+          </FormItem>
+        )}
+      />
+      <FormField
+        control={control}
         name={`variations.${index}.attributes.width`}
         render={({ field }) => (
           <FormItem>
