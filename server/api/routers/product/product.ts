@@ -14,6 +14,30 @@ import {
 import { Prisma } from "@prisma/client";
 import { z } from "zod";
 
+enum Gender {
+  MALE = "MALE",
+  FEMALE = "FEMALE",
+  UNISEX = "UNISEX",
+}
+
+enum AgeRange {
+  INFANT = "INFANT",
+  TODDLER = "TODDLER",
+  KIDS = "KIDS",
+  TEENS = "TEENS",
+  ADULTS = "ADULTS",
+  SENIORS = "SENIORS",
+}
+
+interface FilterOptions {
+  minPrice?: number;
+  maxPrice?: number;
+  categories?: string[];
+  sizes?: string[];
+  gender?: Gender; // Updated to use enum
+  ageRange?: AgeRange; // Updated to use enum
+}
+
 export const getAllProductsInput = z.object({
   page: z.number().min(1).default(1),
   pageSize: z.number().min(1).max(100).default(10),
@@ -50,6 +74,310 @@ const getMyProductsInput = z.object({
 });
 
 const productRouter = createTRPCRouter({
+  getAllProducts: publicProcedure
+    .input(getAllProductsInput)
+    .query(async ({ ctx, input }) => {
+      const { page, pageSize, sortBy, sortOrder, search, filters } = input;
+
+      // Build the where clause
+      const baseWhere: Prisma.ProductWhereInput[] = [
+        {
+          productVariations: {
+            some: {
+              OR: [
+                { tShirtAttributes: { isNot: null } },
+                { pantAttributes: { isNot: null } },
+                { shirtAttributes: { isNot: null } },
+                { jacketAttributes: { isNot: null } },
+                { hoodieAttributes: { isNot: null } },
+                { undergarmentAttributes: { isNot: null } },
+                { shoeAttributes: { isNot: null } },
+                { genericAttributes: { isNot: null } },
+              ],
+            },
+          },
+        },
+      ];
+
+      if (search) {
+        baseWhere.push({
+          OR: [
+            {
+              name: {
+                contains: search,
+                mode: Prisma.QueryMode.insensitive,
+              },
+            },
+            {
+              description: {
+                contains: search,
+                mode: Prisma.QueryMode.insensitive,
+              },
+            },
+          ],
+        });
+      }
+
+      // Price filter
+      if (filters?.minPrice !== undefined || filters?.maxPrice !== undefined) {
+        baseWhere.push({
+          productVariations: {
+            some: {
+              price: {
+                gte: filters.minPrice,
+                lte: filters.maxPrice,
+              },
+            },
+          },
+        });
+      }
+
+      // Category filter
+      if (filters?.categories?.length) {
+        baseWhere.push({
+          productCategory: {
+            name: { in: filters.categories },
+          },
+        });
+      }
+
+      // Size filter
+      if (filters?.sizes?.length) {
+        baseWhere.push({
+          productVariations: {
+            some: {
+              OR: [
+                { tShirtAttributes: { size: { in: filters.sizes } } },
+                { pantAttributes: { size: { in: filters.sizes } } },
+                { shirtAttributes: { size: { in: filters.sizes } } },
+                { jacketAttributes: { size: { in: filters.sizes } } },
+                { hoodieAttributes: { size: { in: filters.sizes } } },
+                { undergarmentAttributes: { size: { in: filters.sizes } } },
+                { shoeAttributes: { size: { in: filters.sizes } } },
+                // { genericAttributes: { size: { in: filters.sizes } } }
+              ],
+            },
+          },
+        });
+      }
+
+      // Gender filter with proper enum type
+      // if (filters?.gender) {
+      //   baseWhere.push({
+      //     productVariations: {
+      //       some: {
+      //         OR: [
+      //           { tShirtAttributes: { gender: { equals: filters.gender } } },
+      //           { pantAttributes: { gender: { equals: filters.gender } } },
+      //           { shirtAttributes: { gender: { equals: filters.gender } } },
+      //           { jacketAttributes: { gender: { equals: filters.gender } } },
+      //           { hoodieAttributes: { gender: { equals: filters.gender } } },
+      //           {
+      //             undergarmentAttributes: {
+      //               gender: { equals: filters.gender },
+      //             },
+      //           },
+      //           { shoeAttributes: { gender: { equals: filters.gender } } },
+      //           { genericAttributes: { gender: { equals: filters.gender } } },
+      //         ],
+      //       },
+      //     },
+      //   });
+      // }
+
+      // Age Range filter with proper enum type
+      // if (filters?.ageRange) {
+      //   baseWhere.push({
+      //     productVariations: {
+      //       some: {
+      //         OR: [
+      //           {
+      //             tShirtAttributes: { ageRange: { equals: filters.ageRange } },
+      //           },
+      //           { pantAttributes: { ageRange: { equals: filters.ageRange } } },
+      //           { shirtAttributes: { ageRange: { equals: filters.ageRange } } },
+      //           {
+      //             jacketAttributes: { ageRange: { equals: filters.ageRange } },
+      //           },
+      //           {
+      //             hoodieAttributes: { ageRange: { equals: filters.ageRange } },
+      //           },
+      //           {
+      //             undergarmentAttributes: {
+      //               ageRange: { equals: filters.ageRange },
+      //             },
+      //           },
+      //           { shoeAttributes: { ageRange: { equals: filters.ageRange } } },
+      //           {
+      //             genericAttributes: { ageRange: { equals: filters.ageRange } },
+      //           },
+      //         ],
+      //       },
+      //     },
+      //   });
+      // }
+
+      const where: Prisma.ProductWhereInput = { AND: baseWhere };
+
+      let orderBy: Prisma.ProductOrderByWithRelationInput = {
+        createdAt: sortOrder ?? "desc",
+      };
+
+      if (sortBy && sortBy !== "price") {
+        orderBy = {
+          [sortBy]: sortOrder ?? "asc",
+        };
+      }
+
+      // Get distinct values for filter options
+      const [
+        products,
+        total,
+        priceRange,
+        categories,
+        availableSizes,
+        availableGenders,
+        availableAgeRanges,
+      ] = await Promise.all([
+        ctx.db.product.findMany({
+          where,
+          include: {
+            productCategory: true,
+            productVariations: {
+              select: {
+                id: true,
+                price: true,
+                stock: true,
+                image: true,
+              },
+              ...(sortBy === "price"
+                ? {
+                    orderBy: {
+                      price: sortOrder ?? "asc",
+                    },
+                  }
+                : {}),
+            },
+          },
+          orderBy,
+          skip: (page - 1) * pageSize,
+          take: pageSize,
+        }),
+        ctx.db.product.count({ where }),
+        ctx.db.productVariation.aggregate({
+          where: {
+            OR: [
+              { tShirtAttributes: { isNot: null } },
+              { pantAttributes: { isNot: null } },
+              { shirtAttributes: { isNot: null } },
+              { jacketAttributes: { isNot: null } },
+              { hoodieAttributes: { isNot: null } },
+              { undergarmentAttributes: { isNot: null } },
+              { shoeAttributes: { isNot: null } },
+              { genericAttributes: { isNot: null } },
+            ],
+          },
+          _min: { price: true },
+          _max: { price: true },
+        }),
+        ctx.db.productCategory.findMany({
+          select: {
+            id: true,
+            name: true,
+            _count: { select: { products: true } },
+          },
+        }),
+        // Get available sizes (using union of all attribute types)
+        ctx.db.productVariation.findMany({
+          select: {
+            tShirtAttributes: { select: { size: true } },
+            pantAttributes: { select: { size: true } },
+            shirtAttributes: { select: { size: true } },
+            jacketAttributes: { select: { size: true } },
+            shoeAttributes: { select: { size: true } },
+            undergarmentAttributes: { select: { size: true } },
+            // genericAttributes: { select: { size: true } },
+            // Add other attribute types here
+          },
+          distinct: ["id"],
+        }),
+        // Get available genders
+        ctx.db.productVariation.findMany({
+          select: {
+            tShirtAttributes: { select: { gender: true } },
+            pantAttributes: { select: { gender: true } },
+            // ... add other attribute types
+          },
+          distinct: ["id"],
+        }),
+        // Get available age ranges
+        ctx.db.productVariation.findMany({
+          select: {
+            tShirtAttributes: { select: { ageRange: true } },
+            pantAttributes: { select: { ageRange: true } },
+            // ... add other attribute types
+          },
+          distinct: ["id"],
+        }),
+      ]);
+
+      // Process the available filter options
+      const processedSizes = new Set<string>();
+      const processedGenders = new Set<string>();
+      const processedAgeRanges = new Set<string>();
+
+      // Process sizes
+      availableSizes.forEach((variation) => {
+        Object.values(variation).forEach((attr) => {
+          if (attr?.size) processedSizes.add(attr.size);
+        });
+      });
+
+      // Process genders
+      availableGenders.forEach((variation) => {
+        Object.values(variation).forEach((attr) => {
+          if (attr?.gender) processedGenders.add(attr.gender);
+        });
+      });
+
+      // Process age ranges
+      availableAgeRanges.forEach((variation) => {
+        Object.values(variation).forEach((attr) => {
+          if (attr?.ageRange) processedAgeRanges.add(attr.ageRange);
+        });
+      });
+
+      // Handle potentially undefined price range values
+      const minPrice = priceRange._min.price ?? 0;
+      const maxPrice = priceRange._max.price ?? 0;
+
+     return {
+       products,
+       metadata: {
+         total,
+         page,
+         pageSize,
+         totalPages: Math.ceil(total / pageSize),
+         hasNextPage: page * pageSize < total,
+         hasPreviousPage: page > 1,
+       },
+       filters: {
+         priceRange: {
+           min: minPrice,
+           max: maxPrice,
+         },
+         categories: (categories ?? []).map((c) => ({
+           id: c.id,
+           name: c.name,
+           productCount: c._count.products,
+         })),
+         sizes: Array.from(processedSizes),
+        //  genders: Object.values(Gender), // Return all possible gender values
+        //  ageRanges: Object.values(AgeRange), // Return all possible age range values
+       },
+     };
+    }),
+
   getAll: publicProcedure
     .input(getAllProductsInput)
     .query(async ({ ctx, input }) => {

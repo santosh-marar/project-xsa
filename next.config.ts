@@ -7,6 +7,20 @@ const nextConfig: NextConfig = {
         protocol: "https",
         hostname: "project-xsa.s3.amazonaws.com",
       },
+      {
+        protocol: "https",
+        hostname: "hebbkx1anhila5yf.public.blob.vercel-storage.com",
+      },
+      {
+        protocol: "https",
+        hostname: "via.placeholder.com",
+      },
+      {
+        protocol: "https",
+        hostname: "images.unsplash.com",
+        port: "",
+        pathname: "/photo-*",
+      },
     ],
   },
 };
