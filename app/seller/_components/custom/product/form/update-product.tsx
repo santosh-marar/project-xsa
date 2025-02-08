@@ -88,7 +88,10 @@ export function UpdateProductForm({ initialData }: UpdateProductFormProps) {
        </CardHeader>
        <CardContent>
          <Form {...form}>
-           <form onSubmit={form.handleSubmit(onSubmit)} className="lg:space-y-4 space-y-2">
+           <form
+             onSubmit={form.handleSubmit(onSubmit)}
+             className="lg:space-y-4 space-y-2"
+           >
              <FormField
                control={form.control}
                name="name"
@@ -113,13 +116,27 @@ export function UpdateProductForm({ initialData }: UpdateProductFormProps) {
                  </FormItem>
                )}
              />
+
              <FormField
                control={form.control}
                name="brand"
                render={({ field }) => (
                  <FormItem>
                    <FormControl>
-                     <Input {...field} />
+                     <Input {...field} placeholder="Brand" />
+                   </FormControl>
+                   <FormMessage />
+                 </FormItem>
+               )}
+             />
+
+             <FormField
+               control={form.control}
+               name="material"
+               render={({ field }) => (
+                 <FormItem>
+                   <FormControl>
+                     <Input {...field} placeholder="Material" />
                    </FormControl>
                    <FormMessage />
                  </FormItem>

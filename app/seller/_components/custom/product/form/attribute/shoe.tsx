@@ -6,7 +6,6 @@ import {
   FormControl,
   FormMessage,
 } from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
 import {
   Select,
   SelectContent,
@@ -26,56 +25,6 @@ export function ShoeAttributesFields({
 }: ShoeAttributesFieldsProps) {
   return (
     <div className="space-y-4">
-      <FormField
-        control={control}
-        name={`variations.${index}.attributes.size`}
-        render={({ field }) => (
-          <FormItem>
-            <FormLabel>Size</FormLabel>
-            <FormControl>
-              <Input placeholder="Enter size" {...field} />
-            </FormControl>
-            <FormMessage />
-          </FormItem>
-        )}
-      />
-      <FormField
-        control={control}
-        name={`variations.${index}.attributes.color`}
-        render={({ field }) => (
-          <FormItem>
-            <FormLabel>Color</FormLabel>
-            <FormControl>
-              <Input placeholder="Enter color" {...field} />
-            </FormControl>
-            <FormMessage />
-          </FormItem>
-        )}
-      />
-      <FormField
-        control={control}
-        name={`variations.${index}.attributes.material`}
-        render={({ field }) => (
-          <FormItem>
-            <FormLabel>Material</FormLabel>
-            <Select onValueChange={field.onChange} defaultValue={field.value}>
-              <FormControl>
-                <SelectTrigger>
-                  <SelectValue placeholder="Select material" />
-                </SelectTrigger>
-              </FormControl>
-              <SelectContent>
-                <SelectItem value="leather">Leather</SelectItem>
-                <SelectItem value="canvas">Canvas</SelectItem>
-                <SelectItem value="synthetic">Synthetic</SelectItem>
-                <SelectItem value="mesh">Mesh</SelectItem>
-                <SelectItem value="other">Other</SelectItem>
-              </SelectContent>
-            </Select>
-            <FormMessage />
-          </FormItem>
-        )}
-      />
       <FormField
         control={control}
         name={`variations.${index}.attributes.shoeType`}
@@ -126,53 +75,6 @@ export function ShoeAttributesFields({
                 <SelectItem value="buckle">Buckle</SelectItem>
                 <SelectItem value="zipper">Zipper</SelectItem>
                 <SelectItem value="none">None</SelectItem>
-              </SelectContent>
-            </Select>
-            <FormMessage />
-          </FormItem>
-        )}
-      />
-      <FormField
-        control={control}
-        name={`variations.${index}.attributes.gender`}
-        render={({ field }) => (
-          <FormItem>
-            <FormLabel>Gender</FormLabel>
-            <Select onValueChange={field.onChange} defaultValue={field.value}>
-              <FormControl>
-                <SelectTrigger>
-                  <SelectValue placeholder="Select gender" />
-                </SelectTrigger>
-              </FormControl>
-              <SelectContent>
-                <SelectItem value="MALE">Male</SelectItem>
-                <SelectItem value="FEMALE">Female</SelectItem>
-                <SelectItem value="UNISEX">Unisex</SelectItem>
-              </SelectContent>
-            </Select>
-            <FormMessage />
-          </FormItem>
-        )}
-      />
-      <FormField
-        control={control}
-        name={`variations.${index}.attributes.ageRange`}
-        render={({ field }) => (
-          <FormItem>
-            <FormLabel>Age Range</FormLabel>
-            <Select onValueChange={field.onChange} defaultValue={field.value}>
-              <FormControl>
-                <SelectTrigger>
-                  <SelectValue placeholder="Select age range" />
-                </SelectTrigger>
-              </FormControl>
-              <SelectContent>
-                <SelectItem value="INFANT">Infant</SelectItem>
-                <SelectItem value="TODDLER">Toddler</SelectItem>
-                <SelectItem value="KIDS">Kids</SelectItem>
-                <SelectItem value="TEENS">Teens</SelectItem>
-                <SelectItem value="ADULTS">Adults</SelectItem>
-                <SelectItem value="SENIORS">Seniors</SelectItem>
               </SelectContent>
             </Select>
             <FormMessage />

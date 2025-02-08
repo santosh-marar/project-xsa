@@ -53,31 +53,28 @@ export function ProductsTable({ shops, categories }: ProductsTableProps) {
 
   const products = data?.products;
 
-  console.log("getMyProducts", data);
-
-  const {data:da} = api.product.getAll.useQuery({
-    page: 1,
-    pageSize: 10,
-    // sortBy: "name",
-    // sortOrder: "asc",
-    // search: "shirt",
-    // filters: {
-    //   minPrice: 100,
-    //   maxPrice: 200,
-    //   sizes: ["M", "L", "XL"],
-    //   // genders: ["MEN", "WOMEN", "UNISEX"],
-    //   ageRange: ["INFANT", "KIDS", "TEENS", "ADULTS"],
-    //   categories: [
-    //     "T-Shirt",
-    //     "Pant",
-    //     "Shoe",
-    //     "Shirt",
-    //     "Jacket",
-    //     "Undergarment",
-    //   ],
-    // },
-  });
-  console.log("getAll", da);
+  //   page: 1,
+  //   pageSize: 10,
+  //   // sortBy: "name",
+  //   // sortOrder: "asc",
+  //   // search: "shirt",
+  //   // filters: {
+  //   //   minPrice: 100,
+  //   //   maxPrice: 200,
+  //   //   sizes: ["M", "L", "XL"],
+  //   //   // genders: ["MEN", "WOMEN", "UNISEX"],
+  //   //   ageRange: ["INFANT", "KIDS", "TEENS", "ADULTS"],
+  //   //   categories: [
+  //   //     "T-Shirt",
+  //   //     "Pant",
+  //   //     "Shoe",
+  //   //     "Shirt",
+  //   //     "Jacket",
+  //   //     "Undergarment",
+  //   //   ],
+  //   // },
+  // });
+  // console.log("getAll", da);
 
 
   const deleteProduct = api.product.delete.useMutation({

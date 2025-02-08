@@ -1,39 +1,10 @@
 import { z } from "zod";
 
-// Shared enums
-export const GenderEnum = z.enum(["MALE", "FEMALE", "UNISEX"]);
-export const AgeRangeEnum = z.enum([
-  "INFANT",
-  "TODDLER",
-  "KIDS",
-  "TEENS",
-  "ADULTS",
-  "SENIORS",
-]);
-
-// Base attributes schema
-export const BaseAttributesSchema = z.object({
-  size: z.string(),
-  color: z.string(),
-  gender: GenderEnum,
-  ageRange: AgeRangeEnum,
-});
-
 // Product-specific attribute schemas
-export const TShirtAttributesSchema = BaseAttributesSchema.extend({
+export const TShirtAttributesSchema = z.object({
   sleeveType: z.enum(["long", "short", "3/4", "full", "none"]),
   collarType: z.enum(["round", "v-neck", "polo", "square", "none"]),
   fit: z.enum(["regular", "slim", "oversized"]),
-  material: z.enum([
-    "cotton",
-    "polyester",
-    "linen",
-    "wool",
-    "silk",
-    "cashmere",
-    "cotton-polyester-blend",
-    "other",
-  ]),
   fabricWeight: z.enum(["light", "medium", "heavy", "very heavy"]).optional(),
   careInstructions: z.string().optional(),
   stretchability: z
@@ -59,17 +30,7 @@ export const TShirtAttributesSchema = BaseAttributesSchema.extend({
 });
 
 // Pant attributes schema
-export const PantAttributesSchema = BaseAttributesSchema.extend({
-  material: z.enum([
-    "cotton",
-    "polyester",
-    "linen",
-    "wool",
-    "silk",
-    "cashmere",
-    "cotton-polyester-blend",
-    "other",
-  ]),
+export const PantAttributesSchema = z.object({
   waistType: z.enum(["low", "mid", "high", "others"]).optional(),
   stretchType: z.enum([
     "non-stretch",
@@ -94,7 +55,7 @@ export const PantAttributesSchema = BaseAttributesSchema.extend({
 });
 
 // Shoe attributes schema
-export const ShoeAttributesSchema = BaseAttributesSchema.extend({
+export const ShoeAttributesSchema = z.object({
   width: z.enum(["narrow", "medium", "wide"]).optional(),
   shoeType: z.enum([
     "sneakers",
@@ -118,7 +79,6 @@ export const ShoeAttributesSchema = BaseAttributesSchema.extend({
     "zipper",
     "none",
   ]),
-  material: z.enum(["leather", "canvas", "mesh", "synthetic", "other"]),
   outsole: z
     .enum(["rubber", "eva", "tup", "leather", "other", "none"])
     .optional(),
@@ -127,15 +87,7 @@ export const ShoeAttributesSchema = BaseAttributesSchema.extend({
 });
 
 // Shirt attributes schema
-export const ShirtAttributesSchema = BaseAttributesSchema.extend({
-  material: z.enum([
-    "cotton",
-    "linen",
-    "polyester",
-    "cotton-polyester-blend",
-    "silk",
-    "other",
-  ]),
+export const ShirtAttributesSchema = z.object({
   collarType: z.enum([
     "spread",
     "button-down",
@@ -162,18 +114,7 @@ export const ShirtAttributesSchema = BaseAttributesSchema.extend({
 });
 
 // Jacket attributes schema
-export const JacketAttributesSchema = BaseAttributesSchema.extend({
-  material: z.enum([
-    "leather",
-    "denim",
-    "cotton",
-    "polyester",
-    "wool",
-    "silk",
-    "cashmere",
-    "cotton-polyester-blend",
-    "other",
-  ]),
+export const JacketAttributesSchema = z.object({
   closureType: z.enum(["zipper", "buttons", "snap", "none"]),
   insulation: z.enum(["down", "synthetic", "fleece", "none"]).optional(),
   hooded: z.boolean(),
@@ -183,17 +124,7 @@ export const JacketAttributesSchema = BaseAttributesSchema.extend({
 });
 
 // Hoodie attributes schema
-export const HoodieAttributesSchema = BaseAttributesSchema.extend({
-  material: z.enum([
-    "cotton",
-    "polyester",
-    "linen",
-    "wool",
-    "silk",
-    "cashmere",
-    "cotton-polyester-blend",
-    "other",
-  ]),
+export const HoodieAttributesSchema = z.object({
   fit: z.enum(["regular", "slim", "oversized"]),
   hoodType: z.enum(["fitted", "adjustable", "oversized"]).optional(),
   pocketStyle: z.enum(["kangaroo", "zippered", "split"]),
@@ -203,17 +134,7 @@ export const HoodieAttributesSchema = BaseAttributesSchema.extend({
 });
 
 // Undergarment attributes schema
-export const UndergarmentAttributesSchema = BaseAttributesSchema.extend({
-  material: z.enum([
-    "cotton",
-    "polyester",
-    "linen",
-    "wool",
-    "silk",
-    "cashmere",
-    "modal",
-    "other",
-  ]),
+export const UndergarmentAttributesSchema = z.object({
   type: z.enum(["boxers", "briefs", "trunks", "thong", "bikini", "other"]),
   waistband: z.enum(["elastic", "ribbed", "covered-elastic", "drawstring"]),
   breathability: z.enum(["moisture-wicking", "cotton"]).optional(),

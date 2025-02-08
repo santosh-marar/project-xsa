@@ -38,6 +38,13 @@ import { ShirtAttributesFields } from "@/app/seller/_components/custom/product/f
 import { UndergarmentAttributesFields } from "@/app/seller/_components/custom/product/form/attribute/under-garment";
 import { ShoeAttributesFields } from "@/app/seller/_components/custom/product/form/attribute/shoe";
 import { GenericAttributesFields } from "@/app/seller/_components/custom/product/form/attribute/generic";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 // Constants and Types
 export const categoryNames = [
@@ -65,20 +72,16 @@ const attributeSchemaMap = {
   generic: GenericAttributesSchema,
 } as const;
 
-// Base variation schema
-const baseVariationSchema = z.object({
-  price: z.number().positive("Price must be greater than 0"),
-  stock: z.number().int().nonnegative("Stock cannot be negative"),
-  modelNumber: z.string().optional(),
-  warranty: z.string().optional(),
-});
-
 // Form schema
 const formSchema = z.object({
   variations: z.array(
     z.object({
       price: z.number().positive("Price must be greater than 0"),
       stock: z.number().int().nonnegative("Stock cannot be negative"),
+      size: z.string(),
+      color: z.string(),
+      gender: z.string().optional(),
+      ageRange: z.string().optional(),
       modelNumber: z.string().optional(),
       warranty: z.string().optional(),
       attributes: z.record(z.any()),
@@ -234,6 +237,12 @@ export default function AddVariationPage() {
             : [variationImages ?? ""],
           price: variation.price,
           stock: variation.stock,
+          size: variation.size,
+          color: variation.color,
+          // @ts-ignore
+          gender: variation?.gender,
+          // @ts-ignore
+          ageRange: variation?.ageRange,
           modelNumber: variation.modelNumber,
           warranty: variation.warranty,
           attributes: variation.attributes,
@@ -321,6 +330,93 @@ export default function AddVariationPage() {
                     )}
                   />
 
+                  <FormField
+                    control={form.control}
+                    name={`variations.${index}.size`}
+                    render={({ field }) => (
+                      <FormItem className="mb-4">
+                        <FormLabel>Size</FormLabel>
+                        <FormControl>
+                          <Input type="text" {...field} placeholder="Size" />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+
+                  <FormField
+                    control={form.control}
+                    name={`variations.${index}.color`}
+                    render={({ field }) => (
+                      <FormItem className="mb-4">
+                        <FormLabel>Color</FormLabel>
+                        <FormControl>
+                          <Input type="text" {...field} placeholder="Color" />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+
+                  <FormField
+                    control={form.control}
+                    name={`variations.${index}.gender`}
+                    render={({ field }) => (
+                      <FormItem className="mb-4">
+                        <FormLabel>Gender</FormLabel>
+                        <FormControl>
+                          <Select
+                            onValueChange={field.onChange}
+                            defaultValue={field.value}
+                          >
+                            <FormControl>
+                              <SelectTrigger>
+                                <SelectValue placeholder="Select gender" />
+                              </SelectTrigger>
+                            </FormControl>
+                            <SelectContent>
+                              <SelectItem value="MALE">Male</SelectItem>
+                              <SelectItem value="FEMALE">Female</SelectItem>
+                              <SelectItem value="UNISEX">Unisex</SelectItem>
+                            </SelectContent>
+                          </Select>
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+
+                  <FormField
+                    control={form.control}
+                    name={`variations.${index}.ageRange`}
+                    render={({ field }) => (
+                      <FormItem className="mb-4">
+                        <FormLabel>Age Range</FormLabel>
+                        <FormControl>
+                          <Select
+                            onValueChange={field.onChange}
+                            defaultValue={field.value}
+                          >
+                            <FormControl>
+                              <SelectTrigger>
+                                <SelectValue placeholder="Select age range" />
+                              </SelectTrigger>
+                            </FormControl>
+                            <SelectContent>
+                              <SelectItem value="INFANT">Infant</SelectItem>
+                              <SelectItem value="TODDLER">Toddler</SelectItem>
+                              <SelectItem value="KIDS">Kids</SelectItem>
+                              <SelectItem value="TEENS">Teens</SelectItem>
+                              <SelectItem value="ADULTS">Adults</SelectItem>
+                              <SelectItem value="SENIORS">Seniors</SelectItem>
+                            </SelectContent>
+                          </Select>
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+
                   <AttributeFields
                     category={selectedCategory}
                     index={index}
@@ -333,7 +429,7 @@ export default function AddVariationPage() {
                       <ImageUploader
                         ref={variationImageRefs}
                         value={productImage}
-                        onChange={(url) => setProductImage(url as string)}
+                        // onChange={(url) => setProductImage(url as string)}
                         multiple={false}
                         config={{
                           maxFiles: 3,
@@ -366,6 +462,10 @@ export default function AddVariationPage() {
                     append({
                       price: 0,
                       stock: 0,
+                      size: "",
+                      color: "",
+                      gender: "",
+                      ageRange: "",
                       attributes: {},
                     })
                   }

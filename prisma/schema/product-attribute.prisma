@@ -1,45 +1,25 @@
-enum Gender {
-  MALE
-  FEMALE
-  UNISEX
-}
 
-enum AgeRange {
-  INFANT
-  TODDLER
-  KIDS
-  TEENS
-  ADULTS
-  SENIORS
-}
 
 model TShirtAttributes {
   id          String   @id @default(ulid())
   productVariation   ProductVariation @relation(fields: [productVariationId], references: [id], onDelete: Cascade)
   productVariationId String   @unique
-  size        String
-  color       String
   sleeveType  String   // "long" | "short" | "3/4" | "full" | "none"
   collarType  String   // "round" | "v-neck" | "polo" | "square" | "none"
   fit         String   // "regular" | "slim" | "oversized"
-  material    String   // "cotton" | "polyester" | "linen" | "wool" | "silk" | "cashmere" | "cotton-polyester-blend" | "other"  
   fabricWeight String?  // "light" | "medium" | "heavy" | "very heavy"
   careInstructions String?
   stretchability String? // "non-stretch" | "little-stretch" | "medium-stretch" | "super-stretch" | "other"
   pattern     String?  // "solid" | "striped" | "printed" | "logo-only" | "back-printed-only" | "front-printed-only" | "other"
-  gender      Gender   @default(UNISEX)
-  ageRange    AgeRange
 
-  @@index([productVariationId,  size, color, sleeveType, collarType, fit,material,  gender, ageRange])
+
+  @@index([productVariationId,  sleeveType, collarType, fit])
 }
 
 model PantAttributes {
   id          String   @id @default(ulid())
   productVariation   ProductVariation @relation(fields: [productVariationId], references: [id], onDelete: Cascade)
   productVariationId String   @unique
-  size        String
-  color       String
-  material    String    // "cotton" | "polyester" | "linen" | "wool" | "silk" | "cashmere" | "cotton-polyester-blend" | "other"  
   waistType   String?    // "low" | "mid" | "high", "others"
   stretchType String     // "non-stretch" | "little-stretch" | "medium-stretch" | "super-stretch" | "other"
   washType    String    // "dark-wash" | "medium-wash" | "distressed" | "other"
@@ -47,106 +27,83 @@ model PantAttributes {
   pantType    String    // "full pant" | "half pant" | "low-pant" | "3/4" | "other"
   inseam      Int?      // In inches (28, 30, 32)
   pocketTypes String[]  // ["front", "back", "coin"]
-  gender      Gender   @default(UNISEX)
-  ageRange    AgeRange
 
-  @@index([productVariationId, size, color, material, waistType, stretchType, legStyle, pantType,  gender, ageRange])
+
+  @@index([productVariationId, waistType, stretchType, legStyle, pantType])
 }
 
 model ShoeAttributes {
   id          String   @id @default(ulid())
   productVariation   ProductVariation @relation(fields: [productVariationId], references: [id], onDelete: Cascade)
   productVariationId String   @unique
-  size        String
   width       String?   // "narrow" | "medium" | "wide"
   shoeType    String   // "sneakers" | "boots" | "sandals" | "sport" | "dress-shoes" | "loafers" | "flats" | "ankle-boots" | "ballet-flats" | "slipper" | "sandals" | "formal-shoes" | "other"
   closureType String   // "laces" | "velcro" | "slip-on" | "buckle" | "zipper" | "none"
-  material    String   // "leather" | "canvas" | "mesh" | "synthetic" | "other"
-  color       String
   outsole     String?  // "rubber" | "eva" | "tup" | "leather" | "other" | "none"
   insole      String?  // "memory foam" | "ortholite" |"other" | "none"
   occasion    String   // "casual" | "sports" | "formal"
-  gender      Gender   @default(UNISEX)
-  ageRange    AgeRange
 
-  @@index([productVariationId,  size, width, shoeType, material, color,  occasion, gender, ageRange])
+
+  @@index([productVariationId,  width, shoeType,  occasion])
 }
 
 model ShirtAttributes {
   id          String   @id @default(ulid())
   productVariation   ProductVariation @relation(fields: [productVariationId], references: [id], onDelete: Cascade)
   productVariationId String   @unique
-  size        String
-  color       String
-  material    String   // "cotton" | "linen" | "polyester" | "cotton-polyester-blend" | "silk" | "other"
   collarType  String   // "spread" | "button-down" | "mandarin" | "wing" | "club" | "other" | "none"
   sleeveLength String  // "short" | "half" | "long" | "full" | "none" | "3/4"
   fit         String   // "slim" | "regular" | "relaxed" | "oversized" | "loose" | "other"
   pocketStyle String   // "chest" | "no pockets"
   placketType String   // "hidden" | "buttoned"
   pattern     String   // "solid" | "striped" | "checked" | "printed" | "logo-only" | "back-printed-only" | "front-printed-only" | "other"
-  gender      Gender   @default(UNISEX)
-  ageRange    AgeRange
 
 
-  @@index([productVariationId,  size, color, collarType, sleeveLength, fit, pocketStyle, placketType,  gender, ageRange])
+
+  @@index([productVariationId,  collarType, sleeveLength, fit, pocketStyle, placketType])
 }
 
 model JacketAttributes {
   id          String   @id @default(ulid())
   productVariation   ProductVariation @relation(fields: [productVariationId], references: [id], onDelete: Cascade)
   productVariationId String   @unique
-  size        String
-  color       String
-  material    String   // "leather" | "denim" | "cotton" | "polyester" | "wool" | "silk" | "cashmere" | "cotton-polyester-blend" | "other"
   closureType String   // "zipper" | "buttons" | "snap" | "none"
   insulation  String?  // "down" | "synthetic" | "fleece" | "none"
   hooded      Boolean
   pocketTypes String[] // chest | side | interior
   waterproof  Boolean
   weightClass String?   // "light" | "medium" | "heavy" | "very heavy"
-  gender      Gender   @default(UNISEX)
-  ageRange    AgeRange
 
 
-  @@index([productVariationId,  size, color, closureType, insulation, hooded, pocketTypes, waterproof, weightClass, gender, ageRange])
+
+  @@index([productVariationId,  closureType, insulation, hooded, pocketTypes, waterproof, weightClass])
 }
 
 model HoodieAttributes {
   id          String   @id @default(ulid())
   productVariation   ProductVariation @relation(fields: [productVariationId], references: [id], onDelete: Cascade)
   productVariationId String   @unique
-  size        String
-  color       String
-  material    String   // "cotton" | "polyester" | "linen" | "wool" | "silk" | "cashmere" | "cotton-polyester-blend" | "other"
   fit         String   // "regular" | "slim" | "oversized"
   hoodType    String?   // "fitted" | "adjustable" | "oversized"
   pocketStyle String   // "kangaroo" | "zippered" | "split"
   fabricWeight String?  // "light" | "medium" | "heavy" | "very heavy"
   sleeveStyle String?   // "raglan" | "set-in" | "other"    
-  drawstring  String?   // "cotton" | "nylon"
-  gender      Gender   @default(UNISEX)
-  ageRange    AgeRange?
+  drawString  String?   // "cotton" | "nylon"
 
-  @@index([productVariationId,  size, color, hoodType, pocketStyle, material, sleeveStyle, drawstring, gender, ageRange])
+  @@index([productVariationId,  hoodType, pocketStyle, sleeveStyle, drawString])
 }
 
 model UndergarmentAttributes {
   id          String   @id @default(ulid())
   productVariation   ProductVariation @relation(fields: [productVariationId], references: [id], onDelete: Cascade)
   productVariationId String   @unique
-  size        String
-  color       String
-  material    String   // "cotton" | "polyester" | "linen" | "wool" | "silk" | "cashmere" |"modal" | "other"
   type        String   // boxers | briefs | trunks | thong | bikini | other
   waistband   String   // elastic | ribbed  | covered-elastic | drawstring
   breathability String? // moisture-wicking | cotton
   supportLevel String?  // "light" | "medium" | "high"
   legLength    String  // "short" | "medium" | "long"
-  gender      Gender  
-  ageRange    AgeRange
 
-  @@index([productVariationId,  size, color, type, waistband, breathability, supportLevel, legLength, gender, ageRange])
+  @@index([productVariationId,  type, waistband, breathability, supportLevel, legLength])
 
 }
 

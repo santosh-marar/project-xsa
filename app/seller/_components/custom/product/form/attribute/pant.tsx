@@ -31,62 +31,6 @@ export function PantAttributesFields({
     <div className="space-y-4">
       <FormField
         control={control}
-        name={`variations.${index}.attributes.size`}
-        render={({ field }) => (
-          <FormItem>
-            <FormLabel>Size</FormLabel>
-            <FormControl>
-              <Input placeholder="Enter size 22" {...field} />
-            </FormControl>
-            <FormMessage />
-          </FormItem>
-        )}
-      />
-      <FormField
-        control={control}
-        name={`variations.${index}.attributes.color`}
-        render={({ field }) => (
-          <FormItem>
-            <FormLabel>Color</FormLabel>
-            <FormControl>
-              <Input placeholder="Enter color" {...field} />
-            </FormControl>
-            <FormMessage />
-          </FormItem>
-        )}
-      />
-      <FormField
-        control={control}
-        name={`variations.${index}.attributes.material`}
-        render={({ field }) => (
-          <FormItem>
-            <FormLabel>Material</FormLabel>
-            <Select onValueChange={field.onChange} defaultValue={field.value}>
-              <FormControl>
-                <SelectTrigger>
-                  <SelectValue placeholder="Select material" />
-                </SelectTrigger>
-              </FormControl>
-              <SelectContent>
-                <SelectItem value="denim">Denim</SelectItem>
-                <SelectItem value="cotton">Cotton</SelectItem>
-                <SelectItem value="polyester-blend">Polyester Blend</SelectItem>
-                <SelectItem value="linen">Linen</SelectItem>
-                <SelectItem value="wool">Wool</SelectItem>
-                <SelectItem value="silk">Silk</SelectItem>
-                <SelectItem value="cashmere">Cashmere</SelectItem>
-                <SelectItem value="cotton-polyester-blend">
-                  Cotton/Polyester Blend
-                </SelectItem>
-                <SelectItem value="other">Other</SelectItem>
-              </SelectContent>
-            </Select>
-            <FormMessage />
-          </FormItem>
-        )}
-      />
-      <FormField
-        control={control}
         name={`variations.${index}.attributes.waistType`}
         render={({ field }) => (
           <FormItem>
@@ -242,53 +186,6 @@ export function PantAttributesFields({
                 <SelectItem value="low-pant">Low-pant</SelectItem>
                 <SelectItem value="3/4-pant">3/4-pant</SelectItem>
                 <SelectItem value="other">Other</SelectItem>
-              </SelectContent>
-            </Select>
-            <FormMessage />
-          </FormItem>
-        )}
-      />
-      <FormField
-        control={control}
-        name={`variations.${index}.attributes.gender`}
-        render={({ field }) => (
-          <FormItem>
-            <FormLabel>Gender</FormLabel>
-            <Select onValueChange={field.onChange} defaultValue={field.value}>
-              <FormControl>
-                <SelectTrigger>
-                  <SelectValue placeholder="Select gender" />
-                </SelectTrigger>
-              </FormControl>
-              <SelectContent>
-                <SelectItem value="MALE">Male</SelectItem>
-                <SelectItem value="FEMALE">Female</SelectItem>
-                <SelectItem value="UNISEX">Unisex</SelectItem>
-              </SelectContent>
-            </Select>
-            <FormMessage />
-          </FormItem>
-        )}
-      />
-      <FormField
-        control={control}
-        name={`variations.${index}.attributes.ageRange`}
-        render={({ field }) => (
-          <FormItem>
-            <FormLabel>Age Range</FormLabel>
-            <Select onValueChange={field.onChange} defaultValue={field.value}>
-              <FormControl>
-                <SelectTrigger>
-                  <SelectValue placeholder="Select age range" />
-                </SelectTrigger>
-              </FormControl>
-              <SelectContent>
-                <SelectItem value="INFANT">Infant</SelectItem>
-                <SelectItem value="TODDLER">Toddler</SelectItem>
-                <SelectItem value="KIDS">Kids</SelectItem>
-                <SelectItem value="TEENS">Teens</SelectItem>
-                <SelectItem value="ADULTS">Adults</SelectItem>
-                <SelectItem value="SENIORS">Seniors</SelectItem>
               </SelectContent>
             </Select>
             <FormMessage />

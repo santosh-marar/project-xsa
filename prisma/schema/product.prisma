@@ -1,3 +1,18 @@
+enum Gender {
+  MALE
+  FEMALE
+  UNISEX
+}
+
+enum AgeRange {
+  INFANT
+  TODDLER
+  KIDS
+  TEENS
+  ADULTS
+  SENIORS
+}
+
 model Product {
   id          String    @id @default(ulid())
   shopId      String
@@ -6,6 +21,7 @@ model Product {
   categoryId  String
   image       String @default("")
   brand       String? @default("")
+  material    String? @default("")
   createdAt   DateTime  @default(now())
   updatedAt   DateTime  @updatedAt
 
@@ -21,6 +37,10 @@ model ProductVariation {
   productId   String
   price       Float
   stock       Int       @default(0)
+  size        String
+  color       String
+  gender      Gender?   @default(UNISEX)
+  ageRange    AgeRange?
   modelNumber String?
   warranty    String?
   createdAt   DateTime  @default(now())

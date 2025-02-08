@@ -6,6 +6,7 @@ export const productSchema = z.object({
   name: z.string().min(1, "Product name is required"),
   description: z.string().min(1, "Product description is required"),
   brand: z.string().optional(),
+  material: z.string().optional(),
   categoryId: z.string().min(1, "Category ID is required"),
   image: z.string().optional(),
   createdAt: z.date().default(() => new Date()),

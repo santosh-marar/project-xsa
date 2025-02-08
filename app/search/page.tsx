@@ -67,7 +67,7 @@ export default function ProductsPage() {
     setSortOrder(order === "low-to-high" ? "low-to-high" : "high-to-low");
   };
 
-  if (isLoading) return <div className="text-center py-12">Loading...</div>;
+  // if (isLoading) return <div className="text-center py-12">Loading...</div>;
   if (error)
     return <div className="text-center py-12">Error: {error.message}</div>;
 

@@ -144,8 +144,10 @@ const ProductVariationTable = () => {
   const [priceRange, setPriceRange] = useState<[number, number]>([0, 100]);
   const [expanded, setExpanded] = useState<Record<string, boolean>>({});
 
-  const { data: shops } = api.shop.getAll.useQuery();
+  const [shops] = api.shop.getMyShops.useSuspenseQuery();
+
   const shopId = shops?.[0]?.id ?? "";
+  // console.log(shopId);
 
   const { data, isLoading, refetch } = api.product.getMyProducts.useQuery(
     {
@@ -157,6 +159,8 @@ const ProductVariationTable = () => {
       enabled: Boolean(shopId),
     }
   );
+
+  console.log(data);
 
   const deleteProductVariation = api.productVariation.delete.useMutation({
     onSuccess: () => {

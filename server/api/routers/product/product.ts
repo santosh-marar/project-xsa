@@ -5,40 +5,17 @@ import {
   sellerProcedure,
 } from "@/server/api/trpc";
 import { db } from "@/server/db";
-import { AgeRangeEnum, GenderEnum } from "@/validation/product/attribute";
 import {
   createProductSchema,
   deleteProductSchema,
   updateProductSchema,
 } from "@/validation/product/product";
+import { AgeRangeEnum, GenderEnum } from "@/validation/product/variation";
 import { Prisma } from "@prisma/client";
 import { z } from "zod";
 
-enum Gender {
-  MALE = "MALE",
-  FEMALE = "FEMALE",
-  UNISEX = "UNISEX",
-}
 
-enum AgeRange {
-  INFANT = "INFANT",
-  TODDLER = "TODDLER",
-  KIDS = "KIDS",
-  TEENS = "TEENS",
-  ADULTS = "ADULTS",
-  SENIORS = "SENIORS",
-}
-
-interface FilterOptions {
-  minPrice?: number;
-  maxPrice?: number;
-  categories?: string[];
-  sizes?: string[];
-  gender?: Gender; // Updated to use enum
-  ageRange?: AgeRange; // Updated to use enum
-}
-
-export const getAllProductsInput = z.object({
+export const getAllProductSchema = z.object({
   page: z.number().min(1).default(1),
   pageSize: z.number().min(1).max(100).default(10),
   sortBy: z.enum(["name", "createdAt", "updatedAt", "price"]).optional(),
@@ -46,11 +23,14 @@ export const getAllProductsInput = z.object({
   search: z.string().optional(),
   filters: z
     .object({
+      materials: z.array(z.string()).optional(),
+      brands: z.array(z.string()).optional(),
       minPrice: z.number().optional(),
       maxPrice: z.number().optional(),
       sizes: z.array(z.string()).optional(),
-      gender: z.array(GenderEnum).optional(),
-      ageRange: z.array(AgeRangeEnum).optional(),
+      colors: z.array(z.string()).optional(),
+      genders: z.array(GenderEnum).optional(),
+      ageRanges: z.array(AgeRangeEnum).optional(),
       categories: z.array(z.string()).optional(),
     })
     .optional(),
@@ -75,7 +55,7 @@ const getMyProductsInput = z.object({
 
 const productRouter = createTRPCRouter({
   getAllProducts: publicProcedure
-    .input(getAllProductsInput)
+    .input(getAllProductSchema)
     .query(async ({ ctx, input }) => {
       const { page, pageSize, sortBy, sortOrder, search, filters } = input;
 
@@ -118,7 +98,7 @@ const productRouter = createTRPCRouter({
         });
       }
 
-      // Price filter
+      // Price filter (from ProductVariation)
       if (filters?.minPrice !== undefined || filters?.maxPrice !== undefined) {
         baseWhere.push({
           productVariations: {
@@ -141,81 +121,75 @@ const productRouter = createTRPCRouter({
         });
       }
 
-      // Size filter
-      if (filters?.sizes?.length) {
+      // Material filter (from Product)
+      if (filters?.materials?.length) {
+        baseWhere.push({
+          material: {
+            in: filters.materials,
+          },
+        });
+      }
+
+      // Brand filter (from Product)
+      if (filters?.brands?.length) {
+        baseWhere.push({
+          brand: {
+            in: filters.brands,
+          },
+        });
+      }
+
+      // Color filter (from ProductVariation)
+      if (filters?.colors?.length) {
         baseWhere.push({
           productVariations: {
             some: {
-              OR: [
-                { tShirtAttributes: { size: { in: filters.sizes } } },
-                { pantAttributes: { size: { in: filters.sizes } } },
-                { shirtAttributes: { size: { in: filters.sizes } } },
-                { jacketAttributes: { size: { in: filters.sizes } } },
-                { hoodieAttributes: { size: { in: filters.sizes } } },
-                { undergarmentAttributes: { size: { in: filters.sizes } } },
-                { shoeAttributes: { size: { in: filters.sizes } } },
-                // { genericAttributes: { size: { in: filters.sizes } } }
-              ],
+              color: {
+                in: filters.colors,
+              },
             },
           },
         });
       }
 
-      // Gender filter with proper enum type
-      // if (filters?.gender) {
-      //   baseWhere.push({
-      //     productVariations: {
-      //       some: {
-      //         OR: [
-      //           { tShirtAttributes: { gender: { equals: filters.gender } } },
-      //           { pantAttributes: { gender: { equals: filters.gender } } },
-      //           { shirtAttributes: { gender: { equals: filters.gender } } },
-      //           { jacketAttributes: { gender: { equals: filters.gender } } },
-      //           { hoodieAttributes: { gender: { equals: filters.gender } } },
-      //           {
-      //             undergarmentAttributes: {
-      //               gender: { equals: filters.gender },
-      //             },
-      //           },
-      //           { shoeAttributes: { gender: { equals: filters.gender } } },
-      //           { genericAttributes: { gender: { equals: filters.gender } } },
-      //         ],
-      //       },
-      //     },
-      //   });
-      // }
+      // Size filter (from ProductVariation)
+      if (filters?.sizes?.length) {
+        baseWhere.push({
+          productVariations: {
+            some: {
+              size: {
+                in: filters.sizes,
+              },
+            },
+          },
+        });
+      }
 
-      // Age Range filter with proper enum type
-      // if (filters?.ageRange) {
-      //   baseWhere.push({
-      //     productVariations: {
-      //       some: {
-      //         OR: [
-      //           {
-      //             tShirtAttributes: { ageRange: { equals: filters.ageRange } },
-      //           },
-      //           { pantAttributes: { ageRange: { equals: filters.ageRange } } },
-      //           { shirtAttributes: { ageRange: { equals: filters.ageRange } } },
-      //           {
-      //             jacketAttributes: { ageRange: { equals: filters.ageRange } },
-      //           },
-      //           {
-      //             hoodieAttributes: { ageRange: { equals: filters.ageRange } },
-      //           },
-      //           {
-      //             undergarmentAttributes: {
-      //               ageRange: { equals: filters.ageRange },
-      //             },
-      //           },
-      //           { shoeAttributes: { ageRange: { equals: filters.ageRange } } },
-      //           {
-      //             genericAttributes: { ageRange: { equals: filters.ageRange } },
-      //           },
-      //         ],
-      //       },
-      //     },
-      //   });
-      // }
+      // Gender filter (from ProductVariation)
+      if (filters?.genders?.length) {
+        baseWhere.push({
+          productVariations: {
+            some: {
+              gender: {
+                in: filters.genders, // Fix: Using `in` for array filtering
+              },
+            },
+          },
+        });
+      }
+
+      // Age Range filter (from ProductVariation)
+      if (filters?.ageRanges?.length) {
+        baseWhere.push({
+          productVariations: {
+            some: {
+              ageRange: {
+                in: filters.ageRanges, // Fix: Using `in` for array filtering
+              },
+            },
+          },
+        });
+      }
 
       const where: Prisma.ProductWhereInput = { AND: baseWhere };
 
@@ -235,9 +209,12 @@ const productRouter = createTRPCRouter({
         total,
         priceRange,
         categories,
+        // From Product model
+        availableMaterials,
+        availableBrands,
+        // From ProductVariation model
         availableSizes,
-        availableGenders,
-        availableAgeRanges,
+        availableColors,
       ] = await Promise.all([
         ctx.db.product.findMany({
           where,
@@ -249,6 +226,10 @@ const productRouter = createTRPCRouter({
                 price: true,
                 stock: true,
                 image: true,
+                size: true,
+                color: true,
+                gender: true,
+                ageRange: true,
               },
               ...(sortBy === "price"
                 ? {
@@ -265,18 +246,6 @@ const productRouter = createTRPCRouter({
         }),
         ctx.db.product.count({ where }),
         ctx.db.productVariation.aggregate({
-          where: {
-            OR: [
-              { tShirtAttributes: { isNot: null } },
-              { pantAttributes: { isNot: null } },
-              { shirtAttributes: { isNot: null } },
-              { jacketAttributes: { isNot: null } },
-              { hoodieAttributes: { isNot: null } },
-              { undergarmentAttributes: { isNot: null } },
-              { shoeAttributes: { isNot: null } },
-              { genericAttributes: { isNot: null } },
-            ],
-          },
           _min: { price: true },
           _max: { price: true },
         }),
@@ -287,99 +256,75 @@ const productRouter = createTRPCRouter({
             _count: { select: { products: true } },
           },
         }),
-        // Get available sizes (using union of all attribute types)
-        ctx.db.productVariation.findMany({
-          select: {
-            tShirtAttributes: { select: { size: true } },
-            pantAttributes: { select: { size: true } },
-            shirtAttributes: { select: { size: true } },
-            jacketAttributes: { select: { size: true } },
-            shoeAttributes: { select: { size: true } },
-            undergarmentAttributes: { select: { size: true } },
-            // genericAttributes: { select: { size: true } },
-            // Add other attribute types here
+        // Get materials from Product
+        ctx.db.product.findMany({
+          select: { material: true },
+          distinct: ["material"],
+          where: {
+            material: { not: null },
           },
-          distinct: ["id"],
         }),
-        // Get available genders
-        ctx.db.productVariation.findMany({
-          select: {
-            tShirtAttributes: { select: { gender: true } },
-            pantAttributes: { select: { gender: true } },
-            // ... add other attribute types
+        // Get brands from Product
+        ctx.db.product.findMany({
+          select: { brand: true },
+          distinct: ["brand"],
+          where: {
+            brand: { not: null },
           },
-          distinct: ["id"],
         }),
-        // Get available age ranges
+        // Get sizes from ProductVariation
         ctx.db.productVariation.findMany({
-          select: {
-            tShirtAttributes: { select: { ageRange: true } },
-            pantAttributes: { select: { ageRange: true } },
-            // ... add other attribute types
-          },
-          distinct: ["id"],
+          select: { size: true },
+          distinct: ["size"],
+        }),
+        // Get colors from ProductVariation
+        ctx.db.productVariation.findMany({
+          select: { color: true },
+          distinct: ["color"],
         }),
       ]);
 
-      // Process the available filter options
-      const processedSizes = new Set<string>();
-      const processedGenders = new Set<string>();
-      const processedAgeRanges = new Set<string>();
-
-      // Process sizes
-      availableSizes.forEach((variation) => {
-        Object.values(variation).forEach((attr) => {
-          if (attr?.size) processedSizes.add(attr.size);
-        });
-      });
-
-      // Process genders
-      availableGenders.forEach((variation) => {
-        Object.values(variation).forEach((attr) => {
-          if (attr?.gender) processedGenders.add(attr.gender);
-        });
-      });
-
-      // Process age ranges
-      availableAgeRanges.forEach((variation) => {
-        Object.values(variation).forEach((attr) => {
-          if (attr?.ageRange) processedAgeRanges.add(attr.ageRange);
-        });
-      });
-
-      // Handle potentially undefined price range values
       const minPrice = priceRange._min.price ?? 0;
       const maxPrice = priceRange._max.price ?? 0;
 
-     return {
-       products,
-       metadata: {
-         total,
-         page,
-         pageSize,
-         totalPages: Math.ceil(total / pageSize),
-         hasNextPage: page * pageSize < total,
-         hasPreviousPage: page > 1,
-       },
-       filters: {
-         priceRange: {
-           min: minPrice,
-           max: maxPrice,
-         },
-         categories: (categories ?? []).map((c) => ({
-           id: c.id,
-           name: c.name,
-           productCount: c._count.products,
-         })),
-         sizes: Array.from(processedSizes),
-        //  genders: Object.values(Gender), // Return all possible gender values
-        //  ageRanges: Object.values(AgeRange), // Return all possible age range values
-       },
-     };
+      return {
+        products,
+        metadata: {
+          total,
+          page,
+          pageSize,
+          totalPages: Math.ceil(total / pageSize),
+          hasNextPage: page * pageSize < total,
+          hasPreviousPage: page > 1,
+        },
+        filters: {
+          priceRange: {
+            min: minPrice,
+            max: maxPrice,
+          },
+          categories: categories.map((c) => ({
+            id: c.id,
+            name: c.name,
+            productCount: c._count.products,
+          })),
+          // From Product
+          materials: availableMaterials
+            .map((m) => m.material)
+            .filter((m): m is string => m !== null),
+          brands: availableBrands
+            .map((b) => b.brand)
+            .filter((b): b is string => b !== null),
+          // From ProductVariation
+          sizes: availableSizes.map((s) => s.size),
+          colors: availableColors.map((c) => c.color),
+          genders: Object.values(GenderEnum),
+          ageRanges: Object.values(AgeRangeEnum),
+        },
+      };
     }),
 
   getAll: publicProcedure
-    .input(getAllProductsInput)
+    .input(getAllProductSchema)
     .query(async ({ ctx, input }) => {
       const { page, pageSize, sortBy, sortOrder, search, filters } = input;
 
@@ -405,6 +350,7 @@ const productRouter = createTRPCRouter({
         });
       }
 
+      // Price filter
       if (filters?.minPrice !== undefined || filters?.maxPrice !== undefined) {
         baseWhere.push({
           productVariations: {
@@ -418,64 +364,82 @@ const productRouter = createTRPCRouter({
         });
       }
 
+      // Material filter (from Product)
+      if (filters?.materials?.length) {
+        baseWhere.push({
+          material: {
+            in: filters.materials,
+          },
+        });
+      }
+
+      // Brand filter (from Product)
+      if (filters?.brands?.length) {
+        baseWhere.push({
+          brand: {
+            in: filters.brands,
+          },
+        });
+      }
+
+      // Size filter (from ProductVariation)
       if (filters?.sizes?.length) {
         baseWhere.push({
           productVariations: {
             some: {
-              OR: [
-                { tShirtAttributes: { size: { in: filters.sizes } } },
-                { pantAttributes: { size: { in: filters.sizes } } },
-                { shoeAttributes: { size: { in: filters.sizes } } },
-                { shirtAttributes: { size: { in: filters.sizes } } },
-                { jacketAttributes: { size: { in: filters.sizes } } },
-                { undergarmentAttributes: { size: { in: filters.sizes } } },
-              ],
+              size: {
+                in: filters.sizes,
+              },
             },
           },
         });
       }
 
-      if (filters?.gender?.length) {
+      // Color filter (from ProductVariation)
+      if (filters?.colors?.length) {
         baseWhere.push({
           productVariations: {
             some: {
-              OR: [
-                { tShirtAttributes: { gender: { in: filters.gender } } },
-                { pantAttributes: { gender: { in: filters.gender } } },
-                { shirtAttributes: { gender: { in: filters.gender } } },
-                { jacketAttributes: { gender: { in: filters.gender } } },
-                { hoodieAttributes: { gender: { in: filters.gender } } },
-                { undergarmentAttributes: { gender: { in: filters.gender } } },
-              ],
+              color: {
+                in: filters.colors,
+              },
             },
           },
         });
       }
 
-      if (filters?.ageRange?.length) {
+      // Gender filter (from ProductVariation)
+      if (filters?.genders?.length) {
         baseWhere.push({
           productVariations: {
             some: {
-              OR: [
-                { tShirtAttributes: { ageRange: { in: filters.ageRange } } },
-                { pantAttributes: { ageRange: { in: filters.ageRange } } },
-                { shirtAttributes: { ageRange: { in: filters.ageRange } } },
-                { jacketAttributes: { ageRange: { in: filters.ageRange } } },
-                { hoodieAttributes: { ageRange: { in: filters.ageRange } } },
-                {
-                  undergarmentAttributes: {
-                    ageRange: { in: filters.ageRange },
-                  },
-                },
-              ],
+              gender: {
+                in: filters.genders,
+              },
             },
           },
         });
       }
 
+      // Age Range filter (from ProductVariation)
+      if (filters?.ageRanges?.length) {
+        baseWhere.push({
+          productVariations: {
+            some: {
+              ageRange: {
+                in: filters.ageRanges,
+              },
+            },
+          },
+        });
+      }
+
+      // Category filter
       if (filters?.categories?.length) {
         baseWhere.push({
-          productCategory: { name: { in: filters.categories } },
+          productCategory: {
+            name: { in: filters.categories },
+          },
         });
       }
 
@@ -497,9 +461,12 @@ const productRouter = createTRPCRouter({
         products,
         total,
         priceRange,
-        sizes,
-        genders,
-        ageRanges,
+        availableMaterials,
+        availableBrands,
+        availableSizes,
+        availableColors,
+        availableGenders,
+        availableAgeRanges,
         categories,
       ] = await Promise.all([
         ctx.db.product.findMany({
@@ -536,54 +503,48 @@ const productRouter = createTRPCRouter({
           _min: { price: true },
           _max: { price: true },
         }),
-        // Query for distinct sizes
-        ctx.db.$queryRaw<Array<{ size: string }>>`
-          SELECT DISTINCT size FROM (
-            SELECT "TShirtAttributes"."size" FROM "TShirtAttributes"
-            UNION
-            SELECT "PantAttributes"."size" FROM "PantAttributes"
-            UNION
-            SELECT "ShoeAttributes"."size" FROM "ShoeAttributes"
-            UNION
-            SELECT "ShirtAttributes"."size" FROM "ShirtAttributes"
-            UNION
-            SELECT "JacketAttributes"."size" FROM "JacketAttributes"
-            UNION
-            SELECT "UndergarmentAttributes"."size" FROM "UndergarmentAttributes"
-          ) AS sizes WHERE size IS NOT NULL
-        `,
-        // Query for distinct genders
-        ctx.db.$queryRaw<Array<{ gender: string }>>`
-          SELECT DISTINCT gender FROM (
-            SELECT "TShirtAttributes"."gender" FROM "TShirtAttributes"
-            UNION
-            SELECT "PantAttributes"."gender" FROM "PantAttributes"
-            UNION
-            SELECT "ShirtAttributes"."gender" FROM "ShirtAttributes"
-            UNION
-            SELECT "JacketAttributes"."gender" FROM "JacketAttributes"
-            UNION
-            SELECT "HoodieAttributes"."gender" FROM "HoodieAttributes"
-            UNION
-            SELECT "UndergarmentAttributes"."gender" FROM "UndergarmentAttributes"
-          ) AS genders WHERE gender IS NOT NULL
-        `,
-        // Query for distinct age ranges (using the actual column name "agerange")
-        ctx.db.$queryRaw<Array<{ ageRange: string }>>`
-  SELECT DISTINCT "ageRange" FROM (
-    SELECT "ageRange" FROM "TShirtAttributes"
-    UNION
-    SELECT "ageRange" FROM "PantAttributes"
-    UNION
-    SELECT "ageRange" FROM "ShirtAttributes"
-    UNION
-    SELECT "ageRange" FROM "JacketAttributes"
-    UNION
-    SELECT "ageRange" FROM "HoodieAttributes"
-    UNION
-    SELECT "ageRange" FROM "UndergarmentAttributes"
-  ) AS ageRanges WHERE "ageRange" IS NOT NULL
-`,
+        // Get materials from Product
+        ctx.db.product.findMany({
+          select: { material: true },
+          distinct: ["material"],
+          where: {
+            material: { not: null },
+          },
+        }),
+        // Get brands from Product
+        ctx.db.product.findMany({
+          select: { brand: true },
+          distinct: ["brand"],
+          where: {
+            brand: { not: null },
+          },
+        }),
+        // Get sizes from ProductVariation
+        ctx.db.productVariation.findMany({
+          select: { size: true },
+          distinct: ["size"],
+        }),
+        // Get colors from ProductVariation
+        ctx.db.productVariation.findMany({
+          select: { color: true },
+          distinct: ["color"],
+        }),
+        // Get genders from ProductVariation
+        ctx.db.productVariation.findMany({
+          select: { gender: true },
+          distinct: ["gender"],
+          where: {
+            gender: { not: null },
+          },
+        }),
+        // Get age ranges from ProductVariation
+        ctx.db.productVariation.findMany({
+          select: { ageRange: true },
+          distinct: ["ageRange"],
+          where: {
+            ageRange: { not: null },
+          },
+        }),
         ctx.db.productCategory.findMany({
           select: {
             id: true,
@@ -608,10 +569,19 @@ const productRouter = createTRPCRouter({
             min: priceRange._min.price,
             max: priceRange._max.price,
           },
-          sizes: sizes.map((s) => s.size),
-          gender: genders.map((g) => g.gender),
-          ageRange: ageRanges.map((a) => a.ageRange),
-          categories: (categories ?? []).map((c) => ({
+          // From Product
+          materials: availableMaterials
+            .map((m) => m.material)
+            .filter((m): m is string => m !== null),
+          brands: availableBrands
+            .map((b) => b.brand)
+            .filter((b): b is string => b !== null),
+          // From ProductVariation
+          sizes: availableSizes.map((s) => s.size),
+          colors: availableColors.map((c) => c.color),
+          genders: Object.values(GenderEnum),
+          ageRanges: Object.values(AgeRangeEnum),
+          categories: categories.map((c) => ({
             id: c.id,
             name: c.name,
             productCount: c._count.products,
