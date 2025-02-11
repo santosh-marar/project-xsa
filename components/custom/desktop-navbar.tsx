@@ -12,7 +12,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 // Mock user state - replace with your actual auth logic
 const user = null; // Set this to your user object when logged in
 
-export function Header() {
+export function DesktopNavbar() {
   const router = useRouter();
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobile, setIsMobile] = useState(false);

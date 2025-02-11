@@ -26,6 +26,7 @@ import { api } from "@/trpc/react";
 import { cn } from "@/lib/utils";
 import MobileNavbar from "@/components/custom/mobile-navbar";
 import Link from "next/link";
+import { ProductCard } from "@/components/custom/product-card";
 
 export default function ProductsPage() {
   const [searchTerm, setSearchTerm] = useState("");
@@ -35,7 +36,7 @@ export default function ProductsPage() {
     "low-to-high" | "high-to-low" | null
   >(null);
 
-  const { data, isLoading, error } = api.product.getAll.useQuery({
+  const { data, isLoading, error } = api.product.getAllProducts.useQuery({
     page: 1,
     pageSize: 10,
     sortBy: sortOrder ? "price" : "createdAt",
@@ -45,11 +46,13 @@ export default function ProductsPage() {
       minPrice: 0,
       maxPrice: 5000,
       sizes: selectedSize ? [selectedSize] : [],
-      gender: [],
-      ageRange: [],
+      // gender: [],
+      // ageRange: [],
       categories: selectedCategory ? [selectedCategory] : [],
     },
   });
+
+  console.log(data);
 
   const handleSearch = (term: string) => {
     setSearchTerm(term);
@@ -77,9 +80,9 @@ export default function ProductsPage() {
         <div className="sticky top-0 z-50 bg-white pb-4 shadow-sm">
           <div className="flex items-center gap-3 p-4 pl-0">
             {/* <Button variant="ghost" size="icon" className="shrink-0 -ml-2 w-8 h-8"> */}
-              <Link href="/">
-              <ChevronLeft size={32}/>
-              </Link>
+            <Link href="/">
+              <ChevronLeft size={32} />
+            </Link>
             {/* </Button> */}
             <div className="relative flex-1">
               <div className="relative flex items-center">
@@ -157,37 +160,11 @@ export default function ProductsPage() {
           </div>
         </div>
 
-        <div className="grid grid-cols-2 gap-4 p-4 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5">
+        <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 mx-2 md:mx-4 lg:mx-8 my-4 md:my-4 lg:my-8">
           {data?.products.map((product) => (
-            <Card
-              key={product.id}
-              className="overflow-hidden transition-shadow hover:shadow-md"
-            >
-              <div className="aspect-square relative">
-                <Image
-                  src={product.image || "/placeholder.svg"}
-                  alt={product.name}
-                  fill
-                  className="object-cover"
-                  sizes="(max-width: 640px) 50vw, (max-width: 768px) 33vw, (max-width: 1024px) 25vw, 20vw"
-                />
-              </div>
-              <CardContent className="p-4">
-                <h3 className="font-semibold truncate text-sm sm:text-base">
-                  {product.name}
-                </h3>
-                <p className="text-xs sm:text-sm text-muted-foreground">
-                  {product.brand}
-                </p>
-                <p className="font-semibold mt-2 text-sm sm:text-base">
-                  ${product.productVariations[0]?.price}
-                </p>
-                <p className="text-xs sm:text-sm text-muted-foreground">
-                  Size:{" "}
-                  {product.productVariations[0]?.shoeAttributes?.size || "N/A"}
-                </p>
-              </CardContent>
-            </Card>
+            <div key={product.id} className="max-w-[248px] mx-auto w-full">
+              <ProductCard {...product} />
+            </div>
           ))}
         </div>
 
