@@ -1,0 +1,30 @@
+model Cart {
+  id         String    @id @default(ulid())
+  userId     String    @unique // One cart per user
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime  @updatedAt
+  items      CartItem[]
+
+  user       User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+
+model CartItem {
+  id                  String    @id @default(ulid())
+  cartId              String
+  productId           String
+  productVariationId  String
+  quantity            Int       @default(1)
+  price               Float     // Store price at the time of adding to cart
+  totalPrice          Float     // price * quantity
+  createdAt           DateTime  @default(now())
+  updatedAt           DateTime  @updatedAt
+
+  cart               Cart                @relation(fields: [cartId], references: [id], onDelete: Cascade)
+  product            Product             @relation(fields: [productId], references: [id], onDelete: Cascade)
+  productVariation  ProductVariation    @relation(fields: [productVariationId], references: [id], onDelete: Cascade)
+
+  @@unique([cartId, productVariationId]) // Prevent duplicate variations in the same cart
+}
+
+

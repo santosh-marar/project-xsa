@@ -28,6 +28,9 @@ model Product {
   productCategory    ProductCategory @relation(fields: [categoryId], references: [id])
   shop        Shop            @relation(fields: [shopId], references: [id], onDelete: Cascade)
   productVariations  ProductVariation[]
+  cartItems         CartItem[] // Relation to CartItem
+  orderItems        OrderItem[] // Relation to OrderItem
+
 
   @@index([name, categoryId, shopId])
 }
@@ -48,7 +51,8 @@ model ProductVariation {
   image       String[]
 
   product     Product   @relation(fields: [productId], references: [id], onDelete: Cascade)
- 
+  cartItems   CartItem[] // Relation to CartItem
+  orderItems OrderItem[] // Relation to OrderItem
   
   tShirtAttributes     TShirtAttributes?     
   pantAttributes       PantAttributes?    

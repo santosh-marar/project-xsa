@@ -38,6 +38,10 @@ model User {
   shops         Shop[]
   shopReview    ShopReview[]
   roles         UserRole[]
+  address       Address[]
+  cart          Cart?
+  order         Order[]
+  shippingAddress ShippingAddress[]
 
   createdAt DateTime @default(now())
 

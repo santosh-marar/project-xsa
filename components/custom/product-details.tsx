@@ -286,7 +286,7 @@ export default function ProductPage({ product }: { product: Product }) {
     selectedVariation.undergarmentAttributes ||
     selectedVariation.genericAttributes;
 
-  console.log(product?.productVariations[0].image);
+  // console.log(product?.productVariations[0].image);
 
   const goBack = useBack();
   const fallback = "/";
