@@ -32,17 +32,21 @@ export type Product = {
   };
 };
 
-type ProductVariation = {
+export interface ProductVariation {
   id: string;
+  color: string;
+  size: string;
   price: number;
   stock: number;
-  modelNumber: string | null;
-  tShirtAttributes?: TShirtAttributes[];
-  pantAttributes?: PantAttributes[];
-  shirtAttributes?: ShirtAttributes[];
-  jacketAttributes?: JacketAttributes[];
-  hoodieAttributes?: HoodieAttributes[];
-  undergarmentAttributes?: UndergarmentAttributes[];
-  shoeAttributes?: ShoeAttributes[];
-  genericAttributes?: GenericAttributes[];
-};
+  image: string[];
+  gender: "MALE" | "FEMALE" | "UNISEX";
+  ageRange: string;
+  tShirtAttributes?: TShirtAttributes;
+  pantAttributes?: PantAttributes;
+  shoeAttributes?: ShoeAttributes;
+  shirtAttributes?: ShirtAttributes;
+  jacketAttributes?: JacketAttributes;
+  hoodieAttributes?: HoodieAttributes;
+  undergarmentAttributes?: UndergarmentAttributes;
+  genericAttributes?: GenericAttributes;
+}

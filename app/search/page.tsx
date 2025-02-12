@@ -26,7 +26,7 @@ import { api } from "@/trpc/react";
 import { cn } from "@/lib/utils";
 import MobileNavbar from "@/components/custom/mobile-navbar";
 import Link from "next/link";
-import { ProductCard } from "@/components/custom/product-card";
+import { ProductCard } from "@/components/custom/product/product-card";
 
 export default function ProductsPage() {
   const [searchTerm, setSearchTerm] = useState("");

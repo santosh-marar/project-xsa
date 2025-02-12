@@ -3,6 +3,7 @@
 //   description: "Welcome to Shozens.com - Your profile Page",
 // };
 
+import { DesktopNavbar } from "@/components/custom/desktop-navbar";
 import MobileNavbar from "@/components/custom/mobile-navbar";
 
 export default function AuthLayout({
@@ -12,6 +13,7 @@ export default function AuthLayout({
 }>) {
   return (
     <>
+      {/* <DesktopNavbar /> */}
       {children}
       <MobileNavbar />
     </>

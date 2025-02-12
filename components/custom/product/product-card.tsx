@@ -106,12 +106,12 @@ export function ProductCard({
           <div className="flex items-center justify-between">
             <div className="flex items-baseline gap-1">
               <span className="text-base font-bold text-gray-900">
-                ${sortedVariations[0].price} - $
+               रु.{sortedVariations[0].price} - रु.
                 {sortedVariations[sortedVariations.length - 1].price}
               </span>
               {/* {originalPrice && (
                 <span className="text-xs text-gray-500 line-through">
-                  ${originalPrice}
+                 रु.{originalPrice}
                 </span>
               )} */}
             </div>

@@ -1,8 +1,9 @@
 "use client";
 
 import { api } from "@/trpc/react";
-import ProductPage from "@/components/custom/product-details";
+import ProductPage from "@/components/custom/product/product-details";
 import { useParams } from "next/navigation";
+import SecondaryNavbar from "@/components/custom/secondary-navbar";
 
 export default function Page() {
   const params = useParams();
@@ -12,8 +13,10 @@ export default function Page() {
     enabled: Boolean(productId),
   });
 
-  console.log(product.data);
-
-  //@ts-ignore
-  return <ProductPage product={product?.data} />;
+  return (
+    <>
+      {/* @ts-ignore */}
+      <ProductPage product={product?.data} />
+    </>
+  );
 }

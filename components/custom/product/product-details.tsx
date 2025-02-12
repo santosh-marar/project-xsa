@@ -19,104 +19,18 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { ProductImageGallery } from "./product-image-gallery";
-import { Card, CardContent } from "../ui/card";
-import { Badge } from "../ui/badge";
-import { DesktopNavbar } from "./desktop-navbar";
-import MobileNavbar from "./mobile-navbar";
+import { ProductImageGallery } from "../product-image-gallery";
+import { Card, CardContent } from "../../ui/card";
+import { Badge } from "../../ui/badge";
+import { DesktopNavbar } from "../desktop-navbar";
+import MobileNavbar from "../mobile-navbar";
 import useBack from "@/hooks/use-back";
-
-interface BaseAttributes {
-  id: string;
-  productVariationId: string;
-}
-
-interface TShirtAttributes extends BaseAttributes {
-  sleeveType: string; // "long" | "short" | "3/4" | "full" | "none"
-  collarType: string; // "round" | "v-neck" | "polo" | "square" | "none"
-  fit: string; // "regular" | "slim" | "oversized"
-  fabricWeight?: string; // "light" | "medium" | "heavy" | "very heavy"
-  careInstructions?: string;
-  stretchability?: string; // "non-stretch" | "little-stretch" | "medium-stretch" | "super-stretch" | "other"
-  pattern?: string; // "solid" | "striped" | "printed" | "logo-only" | "back-printed-only" | "front-printed-only" | "other"
-}
-
-interface PantAttributes extends BaseAttributes {
-  waistType?: string; // "low" | "mid" | "high", "others"
-  stretchType: string; // "non-stretch" | "little-stretch" | "medium-stretch" | "super-stretch" | "other"
-  washType: string; // "dark-wash" | "medium-wash" | "distressed" | "other"
-  legStyle: string; // "skinny" | "slim" |"straight" | "regular" | "bootcut" | "wide" | "other"
-  pantType: string; // "full pant" | "half pant" | "low-pant" | "3/4" | "other"
-  inseam?: number; // In inches (28, 30, 32)
-  pocketTypes: string[]; // ["front", "back", "coin"]
-}
-
-interface ShoeAttributes extends BaseAttributes {
-  width?: string; // "narrow" | "medium" | "wide"
-  shoeType: string; // "sneakers" | "boots" | "sandals" | "sport" | "dress-shoes" | "loafers" | "flats" | "ankle-boots" | "ballet-flats" | "slipper" | "sandals" | "formal-shoes" | "other"
-  closureType: string; // "laces" | "velcro" | "slip-on" | "buckle" | "zipper" | "none"
-  outsole?: string; // "rubber" | "eva" | "tup" | "leather" | "other" | "none"
-  insole?: string; // "memory foam" | "ortholite" |"other" | "none"
-  occasion: string; // "casual" | "sports" | "formal"
-}
-
-interface ShirtAttributes extends BaseAttributes {
-  collarType: string; // "spread" | "button-down" | "mandarin" | "wing" | "club" | "other" | "none"
-  sleeveLength: string; // "short" | "half" | "long" | "full" | "none" | "3/4"
-  fit: string; // "slim" | "regular" | "relaxed" | "oversized" | "loose" | "other"
-  pocketStyle: string; // "chest" | "no pockets"
-  placketType: string; // "hidden" | "buttoned"
-  pattern: string; // "solid" | "striped" | "checked" | "printed" | "logo-only" | "back-printed-only" | "front-printed-only" | "other"
-}
-
-interface JacketAttributes extends BaseAttributes {
-  closureType: string; // "zipper" | "buttons" | "snap" | "none"
-  insulation?: string; // "down" | "synthetic" | "fleece" | "none"
-  hooded: boolean;
-  pocketTypes: string[]; // chest | side | interior
-  waterproof: boolean;
-  weightClass?: string; // "light" | "medium" | "heavy" | "very heavy"
-}
-
-interface HoodieAttributes extends BaseAttributes {
-  fit: string; // "regular" | "slim" | "oversized"
-  hoodType?: string; // "fitted" | "adjustable" | "oversized"
-  pocketStyle: string; // "kangaroo" | "zippered" | "split"
-  fabricWeight?: string; // "light" | "medium" | "heavy" | "very heavy"
-  sleeveStyle?: string; // "raglan" | "set-in" | "other"
-  drawString?: string; // "cotton" | "nylon"
-}
-
-interface UndergarmentAttributes extends BaseAttributes {
-  type: string; // boxers | briefs | trunks | thong | bikini | other
-  waistband: string; // elastic | ribbed  | covered-elastic | drawstring
-  breathability?: string; // moisture-wicking | cotton
-  supportLevel?: string; // "light" | "medium" | "high"
-  legLength: string; // "short" | "medium" | "long"
-}
-
-interface GenericAttributes extends BaseAttributes {
-  attributes: Record<string, any>;
-}
-
-interface ProductVariation {
-  id: string;
-  color: string;
-  size: string;
-  price: number;
-  stock: number;
-  image: string[];
-  gender: "MALE" | "FEMALE" | "UNISEX";
-  ageRange: string;
-  tShirtAttributes?: TShirtAttributes;
-  pantAttributes?: PantAttributes;
-  shoeAttributes?: ShoeAttributes;
-  shirtAttributes?: ShirtAttributes;
-  jacketAttributes?: JacketAttributes;
-  hoodieAttributes?: HoodieAttributes;
-  undergarmentAttributes?: UndergarmentAttributes;
-  genericAttributes?: GenericAttributes;
-}
+import { useSession } from "next-auth/react";
+import { toast } from "sonner";
+import { renderAttributes } from "./render-attribute";
+import { ProductVariation } from "@/@types/product";
+import { api } from "@/trpc/react";
+import SecondaryNavbar from "../secondary-navbar";
 
 interface Product {
   id: string;
@@ -129,72 +43,23 @@ interface Product {
   categoryId: string;
 }
 
-function getAttributeTitle(attributeKey: string): string {
-  return attributeKey
-    .replace(/([A-Z])/g, " $1")
-    .replace(/^./, (str) => str.toUpperCase())
-    .replace(/Id$/, "ID");
-}
-
-// @ts-ignore
-function renderAttributes(attributes: ProductAttributes | undefined) {
-  if (!attributes) return null;
-
-  //   @ts-ignore
-  const renderField = (key: string, value: any) => {
-    if (key === "id" || key === "productVariationId") return null;
-
-    const title = getAttributeTitle(key);
-
-    if (typeof value === "boolean") {
-      return (
-        <div key={key} className="grid grid-cols-2 gap-2">
-          <span className="font-medium">{title}:</span>
-          <span>{value ? "Yes" : "No"}</span>
-        </div>
-      );
-    }
-    if (Array.isArray(value)) {
-      return (
-        <div key={key} className="grid grid-cols-2 gap-2">
-          <span className="font-medium">{title}:</span>
-          <span>{value.join(", ")}</span>
-        </div>
-      );
-    }
-
-    if (typeof value === "object" && value !== null) {
-      // @ts-ignore
-      return Object.entries(value).map(([subKey, subValue]) =>
-        renderField(`${key} - ${subKey}`, subValue)
-      );
-    }
-    return (
-      <div key={key} className="grid grid-cols-2 gap-2">
-        <span className="font-medium">{title}:</span>
-        <span>{value}</span>
-      </div>
-    );
-  };
-
-  return (
-    <div className="text-sm space-y-2 border rounded-lg p-4 h-full">
-      <h3 className="font-medium text-base mb-3">Product Details</h3>
-      <div className="space-y-2">
-        {Object.entries(attributes).map(([key, value]) =>
-          renderField(key, value)
-        )}
-      </div>
-    </div>
-  );
-}
-
 export default function ProductPage({ product }: { product: Product }) {
   // Initialize state with undefined and set actual values after checking product
   const [selectedColor, setSelectedColor] = useState<string>();
   const [selectedSize, setSelectedSize] = useState<string>();
   const [quantity, setQuantity] = useState(1);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
+
+  const goBack = useBack();
+  const fallback = "/";
+
+  const session = useSession();
+
+  const addCart = api.cart.addItem.useMutation({
+    onSuccess: () => {
+      toast.success("Product added to cart successfully");
+    },
+  });
 
   // Set initial values once product is available
   useEffect(() => {
@@ -253,11 +118,14 @@ export default function ProductPage({ product }: { product: Product }) {
   const handleAddToCart = () => {
     if (!selectedVariation) return;
 
-    console.log("Adding to cart:", {
+    if (!session) {
+      toast.error("Please sign in to add to cart");
+      return;
+    }
+
+    addCart.mutate({
       productId: product.id,
-      variationId: selectedVariation.id,
-      color: selectedColor,
-      size: selectedSize,
+      productVariationId: selectedVariation.id,
       quantity,
       price: selectedVariation.price * quantity,
     });
@@ -287,22 +155,16 @@ export default function ProductPage({ product }: { product: Product }) {
     selectedVariation.genericAttributes;
 
   // console.log(product?.productVariations[0].image);
-
-  const goBack = useBack();
-  const fallback = "/";
-
-  // Rest of the component remains the same...
   return (
     <>
-      <DesktopNavbar />
-
-      <button onClick={() => goBack(fallback)} className="flex underline">
+      {/* <button onClick={() => goBack(fallback)} className="flex underline">
         <ChevronLeft strokeWidth={2} size={24} className="text-primary" />
         <span className="sr-only">Back</span>
         Go back
-      </button>
+      </button> */}
+      <SecondaryNavbar/>
 
-      <div className="max-w-2xl mx-auto p-4 md:max-w-6xl">
+      <div className="max-w-2xl mx-auto p-4 pt-1 md:max-w-6xl">
         <div className="space-y-4 md:grid md:grid-cols-2 md:gap-6">
           {/* Product Image Carousel */}
           <div className="relative aspect-square mb-6">

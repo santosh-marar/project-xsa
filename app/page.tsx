@@ -2,7 +2,7 @@ import { DesktopNavbar } from "@/components/custom/desktop-navbar";
 import { Footer } from "@/components/custom/footer";
 import { HomeCarousel } from "@/components/custom/home-carousel";
 import MobileNavbar from "@/components/custom/mobile-navbar";
-import { ProductCard } from "@/components/custom/product-card";
+import { ProductCard } from "@/components/custom/product/product-card";
 
 export default function Page() {
   return (

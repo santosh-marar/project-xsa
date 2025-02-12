@@ -8,6 +8,7 @@ import productCategoryRouter from "./routers/product/category";
 import productRouter from "./routers/product/product";
 import productVariationRouter from "./routers/product/variation";
 import { productAttributesRouter } from "./routers/product/attribute";
+import { cartRouter } from "./routers/cart";
 
 /**
  * This is the primary router for your server.
@@ -23,6 +24,7 @@ export const appRouter = createTRPCRouter({
   product: productRouter,
   productVariation: productVariationRouter,
   productAttribute: productAttributesRouter,
+  cart: cartRouter,
 });
 
 // export type definition of API
