@@ -25,28 +25,3 @@ model Address {
 
   @@index([userId, city, village])
 }
-
-model ShippingAddress {
-  id           String  @id @default(ulid())
-  userId       String
-  addressLine1 String
-  addressLine2 String?
-  country      String
-  state        String
-  district     String
-  city         String?
-  village      String?
-  street       String
-  zipCode      String?
-  fullName     String
-  phoneNumber1 String
-  phoneNumber2 String?
-  isDefault    Boolean @default(false)
-  createdAt    DateTime @default(now())
-  updatedAt    DateTime @updatedAt
-
-  user         User    @relation(fields: [userId], references: [id], onDelete: Cascade)
-  order        Order[]
-
-  @@index([userId, city, village])
-}

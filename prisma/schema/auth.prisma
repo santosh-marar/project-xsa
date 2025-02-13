@@ -41,7 +41,6 @@ model User {
   address       Address[]
   cart          Cart?
   order         Order[]
-  shippingAddress ShippingAddress[]
 
   createdAt DateTime @default(now())
 

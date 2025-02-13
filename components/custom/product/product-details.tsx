@@ -50,9 +50,6 @@ export default function ProductPage({ product }: { product: Product }) {
   const [quantity, setQuantity] = useState(1);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
 
-  const goBack = useBack();
-  const fallback = "/";
-
   const session = useSession();
 
   const addCart = api.cart.addItem.useMutation({
@@ -157,14 +154,9 @@ export default function ProductPage({ product }: { product: Product }) {
   // console.log(product?.productVariations[0].image);
   return (
     <>
-      {/* <button onClick={() => goBack(fallback)} className="flex underline">
-        <ChevronLeft strokeWidth={2} size={24} className="text-primary" />
-        <span className="sr-only">Back</span>
-        Go back
-      </button> */}
       <SecondaryNavbar/>
 
-      <div className="max-w-2xl mx-auto p-4 pt-1 md:max-w-6xl">
+      <div className="max-w-2xl mx-auto p-4 pt-1 md:max-w-6xl pb-20">
         <div className="space-y-4 md:grid md:grid-cols-2 md:gap-6">
           {/* Product Image Carousel */}
           <div className="relative aspect-square mb-6">
@@ -244,7 +236,7 @@ export default function ProductPage({ product }: { product: Product }) {
                     >
                       <button
                         onClick={() => handleColorChange(color)}
-                        className={`w-7 h-7 md:w-8 md:h-8 rounded-full transition-all duration-200 relative ${
+                        className={`w-7 h-7 md:w-8 md:h-8 rounded-full border-2 transition-all duration-200 relative ${
                           selectedColor === color
                             ? ""
                             : "border-input hover:border-primary"

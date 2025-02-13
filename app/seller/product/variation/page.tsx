@@ -237,16 +237,39 @@ const ProductVariationTable = () => {
     []
   );
 
+  // const filteredProducts = useMemo(() => {
+  //   if (!data?.products) return [];
+
+  //   return data.products.filter((product) => {
+  //     const matchesCategory =
+  //       selectedCategory === "all"
+  //         ? true
+  //         : product.productCategory.name === selectedCategory;
+
+  //     const matchesPriceRange = product.productVariations.some(
+  //       (v) => v.price >= priceRange[0] && v.price <= priceRange[1]
+  //     );
+
+  //     return matchesCategory && matchesPriceRange;
+  //   });
+  // }, [data?.products, selectedCategory, priceRange]);
+
+
+
   const filteredProducts = useMemo(() => {
     if (!data?.products) return [];
 
     return data.products.filter((product) => {
-      const matchesCategory =
-        selectedCategory === "all"
-          ? true
-          : product.productCategory.name === selectedCategory;
+      // If no category is selected, return all products
+      if (!selectedCategory) return true;
 
-      const matchesPriceRange = product.productVariations.some(
+      const categoryName = product.productCategory?.name ?? "uncategorized";
+
+      const matchesCategory = selectedCategory
+        ? categoryName === selectedCategory
+        : true; // Return all products if no category is selected
+
+      const matchesPriceRange = product.productVariations?.some(
         (v) => v.price >= priceRange[0] && v.price <= priceRange[1]
       );
 
@@ -254,8 +277,10 @@ const ProductVariationTable = () => {
     });
   }, [data?.products, selectedCategory, priceRange]);
 
+  console.log(filteredProducts);
+
   const table = useReactTable({
-    data: filteredProducts,
+    data: data?.products,
     columns,
     state: {
       sorting,
@@ -351,48 +376,54 @@ const ProductVariationTable = () => {
             ))}
           </TableHeader>
           <TableBody>
-            {table.getRowModel().rows.map((row) => (
-              <React.Fragment key={row.id}>
-                <TableRow
-                  className="cursor-pointer hover:bg-gray-50"
-                  onClick={() => {
-                    setExpanded((prev) => ({
-                      ...prev,
-                      [row.id]: !prev[row.id],
-                    }));
-                  }}
-                >
-                  {row.getVisibleCells().map((cell) => (
-                    <TableCell key={cell.id}>
-                      {flexRender(
-                        cell.column.columnDef.cell,
-                        cell.getContext()
-                      )}
-                    </TableCell>
-                  ))}
-                </TableRow>
-                {expanded[row.id] && (
-                  <TableRow>
-                    <TableCell colSpan={columns.length}>
-                      <div className="p-4 space-y-4">
-                        <h4 className="font-medium">Product Variations</h4>
-                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                          {row.original.productVariations.map((variation) => (
-                            <VariationCard
-                              key={variation.id}
-                              variation={variation}
-                              onDelete={(id) =>
-                                deleteProductVariation.mutate({ id })
-                              }
-                            />
-                          ))}
-                        </div>
-                      </div>
-                    </TableCell>
+            {table.getRowModel().rows.length > 0 ? (
+              table.getRowModel().rows.map((row) => (
+                <React.Fragment key={row.id}>
+                  <TableRow
+                    className="cursor-pointer hover:bg-gray-50"
+                    onClick={() => {
+                      setExpanded((prev) => ({
+                        ...prev,
+                        [row.id]: !prev[row.id],
+                      }));
+                    }}
+                  >
+                    {row.getVisibleCells().map((cell) => (
+                      <TableCell key={cell.id}>
+                        {flexRender(
+                          cell.column.columnDef.cell,
+                          cell.getContext()
+                        )}
+                      </TableCell>
+                    ))}
                   </TableRow>
-                )}
-              </React.Fragment>
-            ))}
+                  {expanded[row.id] && (
+                    <TableRow>
+                      <TableCell colSpan={columns.length}>
+                        <div className="p-4 space-y-4">
+                          <h4 className="font-medium">Product Variations</h4>
+                          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                            {row.original?.productVariations?.map(
+                              (variation) => (
+                                <VariationCard
+                                  key={variation.id}
+                                  variation={variation}
+                                  onDelete={(id) =>
+                                    deleteProductVariation.mutate({ id })
+                                  }
+                                />
+                              )
+                            ) || <p>No variations available</p>}
+                          </div>
+                        </div>
+                      </TableCell>
+                    </TableRow>
+                  )}
+                </React.Fragment>
+              ))
+            ) : (
+              <p>No products available</p>
+            )}
           </TableBody>
         </Table>
       </CardContent>

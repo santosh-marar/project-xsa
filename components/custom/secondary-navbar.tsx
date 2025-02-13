@@ -20,18 +20,18 @@ const SecondaryNavbar: React.FC<SecondaryNavbarProps> = ({
   return (
     <nav
       className={cn(
-        "xl:px-8 md:px-4 px-2 min-h-8 py-2 w-8 z-40 max-w-5xl",
+        "xl:px-8 md:px-4 px-2 min-h-8 py-3 w-8 z-40 max-w-5xl",
         className
       )}
     >
       <Button
-        onClick={() => goBack(fallback)}
+        className="flex-1 rounded-full text-sm md:text-base"
         variant="outline"
-        className="rounded-full"
+        size="icon"
+        onClick={() => goBack(fallback)}
       >
         <ChevronLeft strokeWidth={2} size={32} className="text-primary" />
         <span className="sr-only">Back</span>
-        Go back
       </Button>
     </nav>
   );

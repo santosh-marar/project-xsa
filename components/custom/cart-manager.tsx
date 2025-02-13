@@ -15,6 +15,7 @@ import { api } from "@/trpc/react";
 import Link from "next/link";
 import { toast } from "sonner";
 import { useEffect, useState } from "react";
+import OrderSummary from "./order-summary";
 
 export default function ShoppingCart() {
   const utils = api.useUtils();
@@ -175,53 +176,7 @@ export default function ShoppingCart() {
 
         <div className="lg:w-1/3 mt-8 lg:mt-0">
           {/* Order Summary */}
-          <div className="bg-white p-6 rounded-lg border">
-            <h2 className="text-2xl font-bold mb-4 text-gray-800">
-              Order Summary
-            </h2>
-            <div className="space-y-3">
-              <div className="flex justify-between text-gray-600">
-                <span>Subtotal</span>
-                <span className="font-medium">
-                  रु. {calculateTotal().toFixed(2)}
-                </span>
-              </div>
-              <div className="flex justify-between text-gray-600">
-                <span>Tax</span>
-                <span className="font-medium">
-                  रु. {(calculateTotal() * 0.1).toFixed(2)}
-                </span>
-              </div>
-              <Separator className="my-4" />
-              <div className="flex justify-between text-lg font-bold text-gray-800">
-                <span>Total</span>
-                <span>
-                  रु.{" "}
-                  {(calculateTotal() + 10 + calculateTotal() * 0.1).toFixed(2)}
-                </span>
-              </div>
-            </div>
-            <div className="mt-6 space-y-4">
-              <Button className="w-full" asChild>
-                <Link
-                  href="/user/checkout"
-                  className="flex items-center justify-center"
-                >
-                  <CreditCard className="mr-2 h-5 w-5" />
-                  Proceed to Checkout
-                </Link>
-              </Button>
-              <Button variant="outline" className="w-full" asChild>
-                <Link
-                  href="/search"
-                  className="flex items-center justify-center"
-                >
-                  <ArrowLeft className="mr-2 h-5 w-5" />
-                  Continue Shopping
-                </Link>
-              </Button>
-            </div>
-          </div>
+          <OrderSummary calculateTotal={calculateTotal} />
         </div>
       </div>
     </div>
