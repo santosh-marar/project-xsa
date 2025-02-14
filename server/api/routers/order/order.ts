@@ -382,60 +382,183 @@ const orderRouter = createTRPCRouter({
       })
     ),
 
-  getSellerOrders: sellerProcedure.query(async ({ ctx, input }) => {
-    const sellerId = ctx.session.user.id;
+  getSellerOrders: sellerProcedure
+    .input(
+      z.object({
+        page: z.number().min(1).default(1),
+        pageSize: z.number().min(1).default(10),
+        status: z.nativeEnum(OrderStatus).optional(),
+        paymentStatus: z.nativeEnum(PaymentStatus).optional(),
+        paymentMethod: z.nativeEnum(PaymentMethod).optional(),
+      })
+    )
+    .query(async ({ ctx, input }) => {
+      const { page, pageSize, status, paymentStatus, paymentMethod } = input;
+      const skip = (page - 1) * pageSize;
 
-    // Find the shop that belongs to this seller
-    const shop = await ctx.db.shop.findFirst({
-      where: { ownerId: sellerId },
-      select: { id: true },
-    });
+      const sellerId = ctx.session.user.id;
 
-    if (!shop) {
-      throw new TRPCError({
-        code: "NOT_FOUND",
-        message: "Seller does not own a shop.",
+      // Find the shop that belongs to this seller
+      const shop = await ctx.db.shop.findFirst({
+        where: { ownerId: sellerId },
+        select: { id: true },
       });
-    }
 
-    // Fetch only order items for this seller's shop
-    const orders = await ctx.db.orderItem.findMany({
-      where: {
+      if (!shop) {
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: "Seller does not own a shop",
+        });
+      }
+
+      // Build where clause for order items
+      const whereClause: Prisma.OrderItemWhereInput = {
         product: {
-          shopId: shop.id, // Ensure product belongs to the seller's shop
+          shopId: shop.id,
         },
-      },
-      select: {
-        id: true,
-        orderId: true,
-        productId: true,
-        productVariationId: true,
-        quantity: true,
-        price: true,
-        totalPrice: true,
-        order: {
-          select: {
-            createdAt: true, // Order date
+        ...(status && {
+          order: {
+            status,
+            ...(paymentStatus || paymentMethod
+              ? {
+                  payment: {
+                    ...(paymentStatus && { status: paymentStatus }),
+                    ...(paymentMethod && { method: paymentMethod }),
+                  },
+                }
+              : {}),
+          },
+        }),
+        ...(!status &&
+          (paymentStatus || paymentMethod) && {
+            order: {
+              payment: {
+                ...(paymentStatus && { status: paymentStatus }),
+                ...(paymentMethod && { method: paymentMethod }),
+              },
+            },
+          }),
+      };
+
+      // Get total count of orders
+      const total = await ctx.db.orderItem.count({
+        where: whereClause,
+      });
+
+      // Get order status statistics
+      const orderStats = await ctx.db.order.groupBy({
+        by: ["status"],
+        where: {
+          items: {
+            some: {
+              product: {
+                shopId: shop.id,
+              },
+            },
           },
         },
-        product: {
-          select: {
-            name: true, // Product name
-            shopId: true, // Ensure it's linked to seller's shop
+        _count: {
+          _all: true,
+        },
+      });
+
+      // Get payment status statistics
+      const paymentStats = await ctx.db.payment.groupBy({
+        by: ["status"],
+        where: {
+          order: {
+            items: {
+              some: {
+                product: {
+                  shopId: shop.id,
+                },
+              },
+            },
           },
         },
-      },
-    });
-
-    if (!orders.length) {
-      throw new TRPCError({
-        code: "NOT_FOUND",
-        message: "No orders found for this seller.",
+        _count: {
+          _all: true,
+        },
       });
-    }
 
-    return orders;
-  }),
+      // Get price range
+      const priceRange = await ctx.db.orderItem.aggregate({
+        where: whereClause,
+        _min: {
+          totalPrice: true,
+        },
+        _max: {
+          totalPrice: true,
+        },
+      });
+
+      // Fetch paginated orders
+      const orders = await ctx.db.orderItem.findMany({
+        where: whereClause,
+        skip,
+        take: pageSize,
+        orderBy: {
+          order: {
+            createdAt: "desc",
+          },
+        },
+        select: {
+          id: true,
+          orderId: true,
+          productId: true,
+          productVariationId: true,
+          quantity: true,
+          price: true,
+          totalPrice: true,
+          order: {
+            select: {
+              createdAt: true,
+              status: true,
+              payment: {
+                select: {
+                  status: true,
+                  method: true,
+                },
+              },
+            },
+          },
+          product: {
+            select: {
+              name: true,
+              image: true,
+              shopId: true,
+            },
+          },
+        },
+      });
+
+      return {
+        orders,
+        metadata: {
+          total,
+          page,
+          pageSize,
+          totalPages: Math.ceil(total / pageSize),
+          hasNextPage: page * pageSize < total,
+          hasPreviousPage: page > 1,
+        },
+        filters: {
+          orderStatuses: orderStats.map((stat) => ({
+            status: stat.status,
+            count: stat._count._all,
+          })),
+          paymentStatuses: paymentStats.map((stat) => ({
+            status: stat.status,
+            count: stat._count._all,
+          })),
+          priceRange: {
+            min: priceRange._min.totalPrice ?? 0,
+            max: priceRange._max.totalPrice ?? 0,
+          },
+          paymentMethods: Object.values(PaymentMethod),
+        },
+      };
+    }),
 });
 
 export default orderRouter;

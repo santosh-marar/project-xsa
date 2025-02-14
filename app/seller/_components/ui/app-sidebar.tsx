@@ -4,6 +4,7 @@ import * as React from "react";
 import {
   AudioWaveform,
   BookOpen,
+  Package,
   Settings2,
   Shirt,
   SquareTerminal,
@@ -67,6 +68,17 @@ const data = {
         {
           title: "Product Variation",
           url: "/seller/product/variation",
+        },
+      ],
+    },
+    {
+      title: "Orders",
+      url: "/seller/order",
+      icon: Package,
+      items: [
+        {
+          title: "Order",
+          url: "/seller/order",
         },
       ],
     },
