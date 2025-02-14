@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 
 // const TAX_PERCENTAGE = 0.1; // 10% tax
-const TAX_PERCENTAGE = 0.13;
+const TAX_PERCENTAGE = 0;
 const SHIPPING_FEE = 0; // Fixed shipping fee
 
 interface OrderSummaryProps {
@@ -35,11 +35,10 @@ const OrderSummary: React.FC<OrderSummaryProps> = ({ calculateTotal }) => {
 
         <Separator className="my-4" />
 
-        <div className="flex justify-between text-lg font-bold text-gray-800">
+        {/* <div className="flex justify-between text-lg font-bold text-gray-800">
           <span>Total</span>
           <span>रु. {(total + tax).toFixed(2)}</span>{" "}
-          {/* Adds tax when uncommented */}
-        </div>
+        </div> */}
       </div>
 
       <div className="mt-6 space-y-4">

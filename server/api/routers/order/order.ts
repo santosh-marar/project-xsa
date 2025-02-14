@@ -7,9 +7,10 @@ import {
   protectedProcedure,
   sellerProcedure,
 } from "../../trpc";
+import { nanoid } from "nanoid";
 
-// Helper to generate order number
-const generateOrderNumber = () => `ORD-${ulid()}`;
+const generateOrderNumber = () => `ORD-${nanoid(6)}`;
+
 
 const orderRouter = createTRPCRouter({
   create: protectedProcedure
@@ -46,7 +47,6 @@ const orderRouter = createTRPCRouter({
         notes: z.string().optional(),
       })
     )
-
     .mutation(async ({ ctx, input }) => {
       const userId = ctx.session.user.id as string;
 
@@ -95,24 +95,47 @@ const orderRouter = createTRPCRouter({
       });
     }),
 
-  get: protectedProcedure
-    .input(z.object({ id: z.string() }))
-    .query(({ ctx, input }) =>
-      ctx.db.order.findUnique({
-        where: { id: input.id },
-        include: { items: true, payment: true },
-      })
-    ),
+  getMyOrders: protectedProcedure.query(async ({ ctx }) => {
+    const orders = await ctx.db.order.findMany({
+      where: { userId: ctx.session.user.id },
+      select: {
+        id: true, // Order ID
+        createdAt: true, // Order date
+        status: true, // Order status
+        total: true, // Total amount
+        items: {
+          select: {
+            id: true,
+          },
+        },
+      },
+      orderBy: { createdAt: "desc" },
+    });
 
-  list: protectedProcedure
-    .input(z.object({ userId: z.string().optional() }))
-    .query(({ ctx, input }) =>
-      ctx.db.order.findMany({
-        where: input.userId ? { userId: input.userId } : undefined,
-        include: { items: true, payment: true },
-        orderBy: { createdAt: "desc" },
-      })
-    ),
+    return orders.map((order) => ({
+      id: order.id,
+      date: order.createdAt,
+      totalItems: order.items.length,
+      status: order.status,
+      total: order.total,
+    }));
+  }),
+
+  getMyOrderById: protectedProcedure
+    .input(z.string())
+    .query(async ({ ctx, input }) => {
+      return ctx.db.order.findUnique({
+        where: { id: input, userId: ctx.session.user.id },
+        include: {
+          items: {
+            include: {
+              product: true, // Fetch product details along with items
+            },
+          },
+          payment: true,
+        },
+      });
+    }),
 
   updateOrderByAdminById: adminProcedure
     .input(

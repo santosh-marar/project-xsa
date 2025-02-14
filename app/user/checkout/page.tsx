@@ -161,7 +161,7 @@ export default function Checkout() {
       onSuccess: (data) => {
         // Handle successful order creation (e.g., redirect to confirmation page)
         toast.success("Order created placed successfully");
-        router.push("/orders");
+        router.push("/user/order");
         setIsSubmitting(false);
         // Add a success message or redirect to a confirmation page
       },
@@ -416,13 +416,18 @@ export default function Checkout() {
                 <div className="space-y-4 mb-4">
                   {cartItems.map((item) => (
                     <div key={item.id} className="flex items-center space-x-4">
-                      <div className="relative w-16 h-16 flex-shrink-0">
-                        <Image
-                          src={item.product.image || "/placeholder.svg"}
-                          alt={item.product.name}
-                          fill
-                          className="object-cover rounded-md"
-                        />
+                      <div className="relative w-16 h-16 flex-shrink-0 cursor-pointer">
+                        <Link
+                          href={`/product/${item.product.id}`}
+                          className="block"
+                        >
+                          <Image
+                            src={item.product.image || "/placeholder.svg"}
+                            alt={item.product.name}
+                            fill
+                            className="object-cover rounded-md transition-transform hover:scale-105"
+                          />
+                        </Link>
                       </div>
                       <div className="flex-grow">
                         <h3 className="font-medium">{item.product.name}</h3>

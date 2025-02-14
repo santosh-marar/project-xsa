@@ -17,34 +17,14 @@ import Link from "next/link";
 import SecondaryNavbar from "@/components/custom/secondary-navbar";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-
-const recentOrders = [
-  {
-    id: "12345",
-    date: "April 15, 2023",
-    status: "Delivered",
-    total: "$129.99",
-    items: 3,
-  },
-  {
-    id: "12346",
-    date: "May 1, 2023",
-    status: "In Transit",
-    total: "$79.99",
-    items: 1,
-  },
-  {
-    id: "12347",
-    date: "May 10, 2023",
-    status: "Processing",
-    total: "$199.99",
-    items: 2,
-  },
-];
+import { api } from "@/trpc/react";
+import { formatNepaliDateInEnglish } from "@/lib/nepali-format-date";
 
 export default function ProfilePage() {
   const session = useSession();
   // console.log("session",session);
+
+  const { data: orders } = api.order.getMyOrders.useQuery();
 
   return (
     <div>
@@ -84,13 +64,13 @@ export default function ProfilePage() {
             </Button>
           </div>
         </div>
-        <Card>
+        <Card className="shadow-none max-w-3xl mx-auto">
           <CardHeader>
             <CardTitle>Recent Orders</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="space-y-6">
-              {recentOrders.map((order) => (
+              {orders?.map((order) => (
                 <div
                   key={order.id}
                   className="flex items-center justify-between"
@@ -98,19 +78,24 @@ export default function ProfilePage() {
                   <div className="space-y-1">
                     <p className="font-medium">Order #{order.id}</p>
                     <p className="text-sm text-muted-foreground">
-                      {order.date}
+                      {formatNepaliDateInEnglish(order?.date)}
                     </p>
                     <Badge variant="outline">{order.status}</Badge>
                   </div>
                   <div className="text-right">
                     <p className="font-medium">रु. {order.total}</p>
                     <p className="text-sm text-muted-foreground">
-                      {order.items} item(s)
+                      {order.totalItems} item(s)
                     </p>
                   </div>
-                  <Button variant="ghost" size="icon">
-                    <ChevronRight className="h-4 w-4" />
-                    <span className="sr-only">View order details</span>
+                  <Button variant="ghost" size="icon" className="rounded-full">
+                    <Link
+                      href={`/user/order/${order.id}`}
+                      className="flex items-center"
+                    >
+                      <ChevronRight className="h-4 w-4" />
+                      <span className="sr-only">View order details</span>
+                    </Link>
                   </Button>
                 </div>
               ))}
