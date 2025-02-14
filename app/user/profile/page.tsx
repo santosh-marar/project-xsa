@@ -22,7 +22,13 @@ import { formatNepaliDateInEnglish } from "@/lib/nepali-format-date";
 
 export default function ProfilePage() {
   const session = useSession();
-  // console.log("session",session);
+
+  if (!session)
+    return (
+      <Button className="rounded-full font-medium">
+        <Link href="/api/auth/signin">Login</Link>
+      </Button>
+    );
 
   const { data: orders } = api.order.getMyOrders.useQuery();
 

@@ -10,14 +10,23 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Separator } from "@/components/ui/separator";
 import { api } from "@/trpc/react";
 import Link from "next/link";
 import { toast } from "sonner";
 import { useEffect, useState } from "react";
 import OrderSummary from "./order-summary";
+import { useSession } from "next-auth/react";
 
 export default function ShoppingCart() {
+  const session = useSession();
+
+  if (!session)
+    return (
+      <Button className="rounded-full font-medium">
+        <Link href="/api/auth/signin">Login</Link>
+      </Button>
+    );
+
   const utils = api.useUtils();
 
   const { data: cart, isLoading, error } = api.cart.getCart.useQuery();
