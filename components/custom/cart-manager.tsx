@@ -20,7 +20,7 @@ import { useSession } from "next-auth/react";
 export default function ShoppingCart() {
   const session = useSession();
 
-  if (!session)
+  if (!session.data)
     return (
       <Button className="rounded-full font-medium">
         <Link href="/api/auth/signin">Login</Link>

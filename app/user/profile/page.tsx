@@ -23,7 +23,7 @@ import { formatNepaliDateInEnglish } from "@/lib/nepali-format-date";
 export default function ProfilePage() {
   const session = useSession();
 
-  if (!session)
+  if (!session.data)
     return (
       <Button className="rounded-full font-medium">
         <Link href="/api/auth/signin">Login</Link>
