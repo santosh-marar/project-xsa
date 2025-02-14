@@ -9,7 +9,7 @@ import {
 } from "../../trpc";
 import { nanoid } from "nanoid";
 
-const generateOrderNumber = () => `ORD-${nanoid(6)}`;
+const generateOrderNumber = () => `ORD-${nanoid(8)}`;
 
 
 const orderRouter = createTRPCRouter({
@@ -100,6 +100,7 @@ const orderRouter = createTRPCRouter({
       where: { userId: ctx.session.user.id },
       select: {
         id: true, // Order ID
+        orderNumber: true, // Order number
         createdAt: true, // Order date
         status: true, // Order status
         total: true, // Total amount
@@ -114,6 +115,7 @@ const orderRouter = createTRPCRouter({
 
     return orders.map((order) => ({
       id: order.id,
+      orderNumber: order.orderNumber,
       date: order.createdAt,
       totalItems: order.items.length,
       status: order.status,

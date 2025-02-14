@@ -128,18 +128,18 @@ export default function ProductPage({ product }: { product: Product }) {
     });
   };
 
-  const handleBuyNow = () => {
-    if (!selectedVariation) return;
+  // const handleBuyNow = () => {
+  //   if (!selectedVariation) return;
 
-    console.log("Buying now:", {
-      productId: product.id,
-      variationId: selectedVariation.id,
-      color: selectedColor,
-      size: selectedSize,
-      quantity,
-      price: selectedVariation.price * quantity,
-    });
-  };
+  //   console.log("Buying now:", {
+  //     productId: product.id,
+  //     variationId: selectedVariation.id,
+  //     color: selectedColor,
+  //     size: selectedSize,
+  //     quantity,
+  //     price: selectedVariation.price * quantity,
+  //   });
+  // };
 
   const attributes =
     selectedVariation.tShirtAttributes ||
@@ -327,21 +327,21 @@ export default function ProductPage({ product }: { product: Product }) {
               <div className="flex gap-3 py-2 max-w-3xl mx-auto">
                 <Button
                   className="flex-1 rounded-full text-sm md:text-base h-10 md:h-12"
-                  variant="outline"
+                  // variant=""
                   disabled={!selectedVariation || selectedVariation.stock === 0}
                   onClick={handleAddToCart}
                 >
                   <ShoppingCart className="mr-1 md:mr-2 h-4 md:h-5 w-4 md:w-5" />{" "}
                   Add to Cart
                 </Button>
-                <Button
+                {/* <Button
                   className="flex-1 rounded-full text-sm md:text-base h-10 md:h-12"
                   disabled={!selectedVariation || selectedVariation.stock === 0}
                   onClick={handleBuyNow}
                 >
                   <CreditCard className="mr-1 md:mr-2 h-4 md:h-5 w-4 md:w-5" />{" "}
                   Buy Now
-                </Button>
+                </Button> */}
               </div>
             </div>
           </div>

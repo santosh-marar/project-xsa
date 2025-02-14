@@ -76,7 +76,7 @@ export default function ProfilePage() {
                   className="flex items-center justify-between"
                 >
                   <div className="space-y-1">
-                    <p className="font-medium">Order #{order.id}</p>
+                    <p className="font-medium">Order: {order.orderNumber}</p>
                     <p className="text-sm text-muted-foreground">
                       {formatNepaliDateInEnglish(order?.date)}
                     </p>
