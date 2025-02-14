@@ -11,8 +11,10 @@ import {
   Map,
   PieChart,
   Settings2,
+  Shirt,
   SquareTerminal,
   Store,
+  User,
 } from "lucide-react";
 
 import { NavMain } from "@/app/(admin)/_components/ui/nav-main";
@@ -73,7 +75,7 @@ const data = {
     {
       title: "Products",
       url: "/dashboard/product",
-      icon: GalleryVerticalEnd,
+      icon: Shirt,
       items: [
         {
           title: "Product",
@@ -86,25 +88,24 @@ const data = {
       ],
     },
     {
-      title: "Settings",
-      url: "#",
-      icon: Settings2,
+      title: "Users",
+      url: "/dashboard/user",
+      icon: User,
       items: [
         {
-          title: "General",
-          url: "#",
+          title: "User",
+          url: "/dashboard/user",
         },
+      ],
+    },
+    {
+      title: "Orders",
+      url: "/dashboard/order",
+      icon: User,
+      items: [
         {
-          title: "Team",
-          url: "#",
-        },
-        {
-          title: "Billing",
-          url: "#",
-        },
-        {
-          title: "Limits",
-          url: "#",
+          title: "Order",
+          url: "/dashboard/order",
         },
       ],
     },
@@ -114,16 +115,6 @@ const data = {
       name: "Design Engineering",
       url: "#",
       icon: Frame,
-    },
-    {
-      name: "Sales & Marketing",
-      url: "#",
-      icon: PieChart,
-    },
-    {
-      name: "Travel",
-      url: "#",
-      icon: Map,
     },
   ],
 };

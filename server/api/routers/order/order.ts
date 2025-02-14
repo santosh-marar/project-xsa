@@ -8,8 +8,39 @@ import {
   sellerProcedure,
 } from "../../trpc";
 import { nanoid } from "nanoid";
+import {
+  Prisma,
+  OrderStatus,
+  PaymentStatus,
+  PaymentMethod,
+} from "@prisma/client";
 
 const generateOrderNumber = () => `ORD-${nanoid(8)}`;
+// Input validation schema
+const getOrdersInputSchema = z.object({
+  page: z.number().int().positive().default(1),
+  pageSize: z.number().int().positive().default(10),
+  sortBy: z
+    .enum(["orderNumber", "createdAt", "total", "status"])
+    .default("createdAt"),
+  sortOrder: z.enum(["asc", "desc"]).default("desc"),
+  search: z.string().optional(),
+  filters: z
+    .object({
+      status: z.nativeEnum(OrderStatus).optional(),
+      paymentStatus: z.nativeEnum(PaymentStatus).optional(),
+      paymentMethod: z.nativeEnum(PaymentMethod).optional(),
+      minTotal: z.number().optional(),
+      maxTotal: z.number().optional(),
+      dateFrom: z.date().optional(),
+      dateTo: z.date().optional(),
+      userId: z.string().optional(),
+    })
+    .optional(),
+});
+
+type GetOrdersInput = z.infer<typeof getOrdersInputSchema>;
+
 
 
 const orderRouter = createTRPCRouter({
@@ -188,11 +219,159 @@ const orderRouter = createTRPCRouter({
       ctx.db.order.delete({ where: { id: input.id } })
     ),
 
-  getAllOrder: adminProcedure.query(({ ctx }) => {
-    return ctx.db.order.findMany({
-      include: { items: true },
-    });
-  }),
+  getAllOrder: adminProcedure
+    .input(getOrdersInputSchema)
+    .query(async ({ ctx, input }) => {
+      const { page, pageSize, sortBy, sortOrder, search, filters } = input;
+
+      // Initialize where conditions array
+      const conditions: Prisma.OrderWhereInput[] = [];
+
+      // Add search conditions if search is provided
+      if (search) {
+        conditions.push({
+          OR: [
+            { orderNumber: { contains: search, mode: "insensitive" } },
+            { user: { name: { contains: search, mode: "insensitive" } } },
+            { user: { email: { contains: search, mode: "insensitive" } } },
+          ],
+        });
+      }
+
+      // Add status filter
+      if (filters?.status) {
+        conditions.push({ status: filters.status });
+      }
+
+      // Add payment status filter
+      if (filters?.paymentStatus) {
+        conditions.push({
+          payment: { status: filters.paymentStatus },
+        });
+      }
+
+      // Add payment method filter
+      if (filters?.paymentMethod) {
+        conditions.push({
+          payment: { method: filters.paymentMethod },
+        });
+      }
+
+      // Add total amount range filter
+      if (filters?.minTotal !== undefined) {
+        conditions.push({ total: { gte: filters.minTotal } });
+      }
+      if (filters?.maxTotal !== undefined) {
+        conditions.push({ total: { lte: filters.maxTotal } });
+      }
+
+      // Add date range filter
+      if (filters?.dateFrom) {
+        conditions.push({ createdAt: { gte: filters.dateFrom } });
+      }
+      if (filters?.dateTo) {
+        conditions.push({ createdAt: { lte: filters.dateTo } });
+      }
+
+      // Add user filter
+      if (filters?.userId) {
+        conditions.push({ userId: filters.userId });
+      }
+
+      // Build the final where clause
+      const where: Prisma.OrderWhereInput =
+        conditions.length > 0 ? { AND: conditions } : {};
+
+      // Get total count for pagination
+      const total = await ctx.db.order.count({ where });
+
+      // Get orders with pagination, sorting, and includes
+      const orders = await ctx.db.order.findMany({
+        where,
+        include: {
+          items: {
+            include: {
+              product: {
+                select: {
+                  name: true,
+                  description: true,
+                },
+              },
+              productVariation: {
+                select: {
+                  size: true,
+                  color: true,
+                  price: true,
+                },
+              },
+            },
+          },
+          payment: true,
+          user: {
+            select: {
+              id: true,
+              name: true,
+              email: true,
+            },
+          },
+          _count: {
+            select: {
+              items: true,
+            },
+          },
+        },
+        orderBy: {
+          [sortBy]: sortOrder,
+        },
+        skip: (page - 1) * pageSize,
+        take: pageSize,
+      });
+
+      // Get statistics for filters
+      const [orderStats, paymentStats] = await Promise.all([
+        ctx.db.order.groupBy({
+          by: ["status"],
+          _count: true,
+        }),
+        ctx.db.payment.groupBy({
+          by: ["status"],
+          _count: true,
+        }),
+      ]);
+
+      // Calculate price range
+      const priceRange = await ctx.db.order.aggregate({
+        _min: { total: true },
+        _max: { total: true },
+      });
+
+      return {
+        orders,
+        metadata: {
+          total,
+          page,
+          pageSize,
+          totalPages: Math.ceil(total / pageSize),
+          hasNextPage: page * pageSize < total,
+          hasPreviousPage: page > 1,
+        },
+        filters: {
+          orderStatuses: orderStats.map((stat) => ({
+            status: stat.status,
+            count: stat._count,
+          })),
+          paymentStatuses: paymentStats.map((stat) => ({
+            status: stat.status,
+            count: stat._count,
+          })),
+          priceRange: {
+            min: priceRange._min.total,
+            max: priceRange._max.total,
+          },
+          paymentMethods: Object.values(PaymentMethod),
+        },
+      };
+    }),
 
   getOrderById: adminProcedure
     .input(z.object({ id: z.string() }))
