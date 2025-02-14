@@ -29,7 +29,7 @@ import { db } from "@/server/db";
 export const createTRPCContext = async (opts: { headers: Headers }) => {
   const session = await auth();
 
-  // console.log("session",session);
+  // console.log("session", session);
 
   return {
     db,
@@ -104,13 +104,33 @@ const timingMiddleware = t.middleware(async ({ next, path }) => {
 });
 
 /**
+ * NEW: Middleware to safely handle null responses.
+ *
+ * If a procedure returns null, this middleware converts it to an empty object.
+ */
+//@ts-ignore
+const nullResponseMiddleware = t.middleware(async ({ next }) => {
+  const result = await next();
+  if (result.ok) {
+    // Only check data if the result is OK.
+    if (result.data === null) {
+      return { ok: true, data: {} };
+    }
+  }
+  return result;
+});
+
+
+/**
  * Public (unauthenticated) procedure
  *
  * This is the base piece you use to build new queries and mutations on your tRPC API. It does not
  * guarantee that a user querying is authorized, but you can still access user session data if they
  * are logged in.
  */
-export const publicProcedure = t.procedure.use(timingMiddleware);
+export const publicProcedure = t.procedure
+  .use(timingMiddleware)
+  .use(nullResponseMiddleware);
 
 /**
  * Protected (authenticated) procedure
@@ -120,6 +140,21 @@ export const publicProcedure = t.procedure.use(timingMiddleware);
  *
  * @see https://trpc.io/docs/procedures
  */
+export const protectedProcedure = t.procedure
+  .use(timingMiddleware)
+  .use(({ ctx, next }) => {
+    if (!ctx.session || !ctx.session.user || !ctx.session.user.id) {
+      throw new TRPCError({ code: "UNAUTHORIZED" });
+    }
+
+    return next({
+      ctx: {
+        // infers the `session` as non-nullable
+        session: { ...ctx.session, user: ctx.session.user },
+      },
+    });
+  })
+  .use(nullResponseMiddleware);
 
 // Role-based middleware creator
 const hasRole = (allowedRoles: string[]) => {
@@ -149,20 +184,7 @@ const hasRole = (allowedRoles: string[]) => {
   });
 };
 
-export const protectedProcedure = t.procedure
-  .use(timingMiddleware)
-  .use(({ ctx, next }) => {
-    if (!ctx.session || !ctx.session.user || !ctx.session.user.id) {
-      throw new TRPCError({ code: "UNAUTHORIZED" });
-    }
-
-    return next({
-      ctx: {
-        // infers the `session` as non-nullable
-        session: { ...ctx.session, user: ctx.session.user },
-      },
-    });
-  });
-
 export const adminProcedure = protectedProcedure.use(hasRole(["admin"]));
-export const sellerProcedure = protectedProcedure.use(hasRole(["seller", "admin"]));
+export const sellerProcedure = protectedProcedure.use(
+  hasRole(["seller", "admin"])
+);

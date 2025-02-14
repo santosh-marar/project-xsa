@@ -2,7 +2,7 @@ import { DesktopNavbar } from "@/components/custom/desktop-navbar";
 import { Footer } from "@/components/custom/footer";
 import { HomeCarousel } from "@/components/custom/home-carousel";
 import MobileNavbar from "@/components/custom/mobile-navbar";
-import { ProductCard } from "@/components/custom/product/product-card";
+import HomeProduct from "@/components/custom/product/home-product";
 
 export default function Page() {
   return (
@@ -12,9 +12,7 @@ export default function Page() {
 
         <main className="container mx-auto px-4 py-8">
           {/* Featured Section */}
-          <section className="mb-12">
-            <HomeCarousel />
-          </section>
+          <section className="mb-12">{/* <HomeCarousel /> */}</section>
 
           {/* Product Grid */}
           <section>
@@ -24,13 +22,7 @@ export default function Page() {
               View all
             </button>
           </div> */}
-            {/* <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
-              {products.map((product) => (
-                <div key={product.id} className="max-w-[248px] mx-auto w-full">
-                  <ProductCard {...product} />
-                </div>
-              ))}
-            </div> */}
+            <HomeProduct />
           </section>
         </main>
         <MobileNavbar />

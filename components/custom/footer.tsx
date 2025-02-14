@@ -130,7 +130,7 @@ export function Footer() {
     <footer className="bg-gray-100 py-4 hidden md:block">
       <div className="container mx-auto px-4">
         <p className="text-center text-gray-500 text-sm">
-          © 2025 YourBrand. All rights reserved.
+          © 2025 S. All rights reserved.
           <br />
           <Link href="/privacy">Privacy Policy</Link>
         </p>

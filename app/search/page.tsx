@@ -52,8 +52,6 @@ export default function ProductsPage() {
     },
   });
 
-  console.log(data);
-
   const handleSearch = (term: string) => {
     setSearchTerm(term);
   };

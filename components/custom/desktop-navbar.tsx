@@ -7,15 +7,17 @@ import { ShoppingCart, Search } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-// import { auth } from "@/server/auth";      
-
-// Mock user state - replace with your actual auth logic
-const user = null; // Set this to your user object when logged in
+import { useSession } from "next-auth/react";
+import AvatarDropdown from "./avatar-dropdown";
 
 export function DesktopNavbar() {
   const router = useRouter();
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
+
+  const session = useSession();
+  // console.log("session", session);
+  const user = session?.data?.user;
 
   // Update header style on scroll
   useEffect(() => {
@@ -61,7 +63,8 @@ export function DesktopNavbar() {
     focus:outline-none focus:ring-[1px] focus:ring-primary focus:ring-offset-0 
     transition-all duration-300 placeholder:text-gray-600"
                 placeholder="Search for product"
-                onClick={isMobile ? () => router.push("/search") : undefined}
+                // onClick={isMobile ? () => router.push("/search") : undefined}
+                onClick={() => router.push("/search")}
               />
             </div>
           </div>
@@ -72,18 +75,19 @@ export function DesktopNavbar() {
               <Button
                 variant="ghost"
                 size="icon"
-                className="relative rounded-full"
+                asChild
+                className="relative rounded-full h-12 w-12"
               >
-                <ShoppingCart className="h-6 w-6" />
-                <span className="absolute -right-1 -top-1 flex h-5 w-5 items-center justify-center rounded-full bg-primary text-xs font-medium text-white">
+                <Link href="/user/cart">
+                  <ShoppingCart strokeWidth={2} className="h-8 w-8" />
+                  {/* <span className="absolute -right-1 -top-1 flex h-5 w-5 items-center justify-center rounded-full bg-primary text-xs font-medium text-white">
                   2
-                </span>
+                </span> */}
+                </Link>
               </Button>
               {user ? (
-                <Avatar>
-                  <AvatarImage src={user?.image} alt={user?.name} />
-                  <AvatarFallback>{user?.name[0]}</AvatarFallback>
-                </Avatar>
+                // @ts-ignore
+                <AvatarDropdown user={user} />
               ) : (
                 <Button className="rounded-full font-medium">
                   {/* href={session ? "/api/auth/signout" : "/api/auth/signin"} */}

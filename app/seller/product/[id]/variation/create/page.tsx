@@ -47,7 +47,7 @@ import {
 } from "@/components/ui/select";
 
 // Constants and Types
-export const categoryNames = [
+ const categoryNames = [
   "t-shirt",
   "pant",
   "shoe",

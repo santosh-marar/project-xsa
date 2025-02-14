@@ -58,7 +58,7 @@ export default function ProfilePage() {
               asChild
               className="h-10 w-10 rounded-full"
             >
-              <Link href="/user/settings">
+              <Link href="/user/setting">
                 <Settings className="h-4 w-4" />
               </Link>
             </Button>

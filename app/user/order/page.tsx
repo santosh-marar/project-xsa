@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { Suspense, useEffect, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import { api } from "@/trpc/react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -14,12 +14,12 @@ import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Separator } from "@/components/ui/separator";
 import { Skeleton } from "@/components/ui/skeleton";
 
-const OrderPage = () => {
-  const { data: orders, isLoading } = api.order.getMyOrders.useQuery();
+const SearchParamsHandler = ({
+  setShowSuccess,
+}: {
+  setShowSuccess: (value: boolean) => void;
+}) => {
   const searchParams = useSearchParams();
-  const [showSuccess, setShowSuccess] = useState(false);
-
-  console.log("orders", orders);
 
   useEffect(() => {
     if (searchParams.get("success") === "true") {
@@ -29,10 +29,21 @@ const OrderPage = () => {
     }
   }, [searchParams]);
 
+  return null;
+};
+
+const OrderPage = () => {
+  const { data: orders, isLoading } = api.order.getMyOrders.useQuery();
+  const [showSuccess, setShowSuccess] = useState(false);
+
   return (
     <div className="bg-gray-50 min-h-screen">
       <SecondaryNavbar />
       <div className="container mx-auto px-4 py-8">
+        <Suspense fallback={null}>
+          <SearchParamsHandler setShowSuccess={setShowSuccess} />
+        </Suspense>
+
         {showSuccess && (
           <Alert className="mb-6 bg-green-50 border-green-200">
             <Package className="h-4 w-4 text-green-600" />
@@ -45,6 +56,7 @@ const OrderPage = () => {
             </AlertDescription>
           </Alert>
         )}
+
         <Card className="shadow-none max-w-3xl mx-auto">
           <CardHeader className="bg-gray-100">
             <CardTitle className="text-2xl font-bold text-gray-800">
