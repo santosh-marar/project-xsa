@@ -10,9 +10,9 @@ export default function Page() {
       <div className="min-h-screen bg-gray-50 pb-14">
         <DesktopNavbar />
 
-        <main className="container mx-auto px-4 py-8">
+        <main className="container mx-auto p-4 md:p-8">
           {/* Featured Section */}
-          <section className="mb-12">{/* <HomeCarousel /> */}</section>
+          {/* <section className="mb-12"><HomeCarousel /></section> */}
 
           {/* Product Grid */}
           <section>

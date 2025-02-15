@@ -115,7 +115,7 @@ export default function ProductPage({ product }: { product: Product }) {
   const handleAddToCart = () => {
     if (!selectedVariation) return;
 
-    if (!session) {
+    if (!session.data) {
       toast.error("Please sign in to add to cart");
       return;
     }
@@ -154,9 +154,9 @@ export default function ProductPage({ product }: { product: Product }) {
   // console.log(product?.productVariations[0].image);
   return (
     <>
-      <SecondaryNavbar/>
+      <SecondaryNavbar />
 
-      <div className="max-w-2xl mx-auto p-4 pt-1 md:max-w-6xl pb-20">
+      <div className="max-w-2xl mx-auto p-4  md:max-w-6xl py-20">
         <div className="space-y-4 md:grid md:grid-cols-2 md:gap-6">
           {/* Product Image Carousel */}
           <div className="relative aspect-square mb-6">

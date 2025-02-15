@@ -745,7 +745,7 @@ const productRouter = createTRPCRouter({
       };
     }),
 
-  getById: sellerProcedure.input(z.string()).query(async ({ input }) => {
+  getById: publicProcedure.input(z.string()).query(async ({ input }) => {
     return db.product.findUnique({
       where: { id: input },
       include: {

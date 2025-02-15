@@ -20,7 +20,7 @@ const SecondaryNavbar: React.FC<SecondaryNavbarProps> = ({
   return (
     <nav
       className={cn(
-        "xl:px-8 md:px-4 px-2 min-h-8 py-3 w-8 z-40 max-w-5xl",
+        "xl:px-8 md:px-4 px-2 py-3 w-full fixed top-0 left-0 right-0 z-40 shadow-md h-16 bg-secondary",
         className
       )}
     >

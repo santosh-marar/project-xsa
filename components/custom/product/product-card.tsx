@@ -2,6 +2,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { Star, Heart } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { Badge } from "@/components/ui/badge";
 // Define the type for the product category object
 interface ProductCategory {
   createdAt: Date;        
@@ -71,51 +72,54 @@ export function ProductCard({
   // }
 
 
-  return (
-    // Wrap the whole card in a Link that navigates to /product/:id
-    <Link href={`/product/${id}`} className="block">
-      <div
-        className={cn(
-          "group relative overflow-hidden rounded bg-white shadow-md transition-all duration-300 hover:-translate-y-1 hover:shadow-lg"
-          // className
-        )}
-      >
-        <div className="relative aspect-square overflow-hidden rounded bg-gray-100">
-          <Image
-            src={image || "/placeholder.svg"}
-            alt={name || "Product Image"}
-            width={400}
-            height={400}
-            className="object-cover transition-transform duration-300 group-hover:scale-105"
-          />
-          {/* The heart button—prevent its click from propagating to the Link */}
-          {/* <button
-            onClick={(e) => {
-              e.preventDefault();
-              // Handle "favorite" logic here, if needed
-            }}
-            className="absolute right-2 top-2 rounded-full bg-white p-1.5 shadow-md transition-transform duration-200 hover:scale-105 active:scale-95"
-          >
-            <Heart className="h-4 w-4 text-gray-600" />
-          </button> */}
-        </div>
-        <div className="space-y-1 p-3">
-          <h3 className="text-sm font-medium text-gray-700 line-clamp-1">
-            {name}
-          </h3>
-          <div className="flex items-center justify-between">
-            <div className="flex items-baseline gap-1">
-              <span className="text-base font-bold text-gray-900">
+ return (
+   // Wrap the whole card in a Link that navigates to /product/:id
+   <Link href={`/product/${id}`} className="block">
+     <div
+       className={cn(
+         "group relative overflow-hidden rounded shadow-md transition-all duration-300 hover:-translate-y-1 hover:shadow-lg"
+       )}
+     >
+       <div className="relative aspect-square overflow-hidden rounded-t-lg bg-gray-100">
+         <Image
+           src={image || "/placeholder.svg"}
+           alt={name || "Product Image"}
+           width={400}
+           height={400}
+           className="object-cover transition-transform duration-300 group-hover:scale-105"
+         />
+         {/* The heart button—prevent its click from propagating to the Link */}
+         {/* <button
+           onClick={(e) => {
+             e.preventDefault();
+             // Handle "favorite" logic here, if needed
+           }}
+           className="absolute right-2 top-2 rounded-full bg-white p-1.5 shadow-md transition-transform duration-200 hover:scale-105 active:scale-95"
+         >
+           <Heart className="h-4 w-4 text-gray-600" />
+         </button> */}
+       </div>
+       <div className="space-y-2 p-4">
+         <div className="flex items-start justify-between">
+           <h3 className="text-sm font-medium text-gray-900 line-clamp-1">
+             {name}
+           </h3>
+           <span className="text-xs font-medium text-gray-500">{brand}</span>
+         </div>
+         <p className="text-xs text-gray-600 line-clamp-2">{description}</p>
+         <div className="flex items-center justify-between">
+           <div className="flex flex-col">
+             <span className="text-sm font-semibold text-primary">
                रु.{sortedVariations[0].price} - रु.
-                {sortedVariations[sortedVariations.length - 1].price}
-              </span>
-              {/* {originalPrice && (
+               {sortedVariations[sortedVariations.length - 1].price}
+             </span>
+             {/* {originalPrice && (
                 <span className="text-xs text-gray-500 line-through">
                  रु.{originalPrice}
                 </span>
               )} */}
-            </div>
-            {/* {rating && (
+           </div>
+           {/* {rating && (
               <div className="flex items-center gap-1">
                 <Star className="h-3 w-3 fill-yellow-400 text-yellow-400" />
                 <span className="text-xs font-medium">{rating}</span>
@@ -124,19 +128,21 @@ export function ProductCard({
                 )}
               </div>
             )} */}
-          </div>
-          {/* <Button variant="outline" size="sm">
-            Add to cart
-          </Button> */}
-        </div>
-        {/* {discount > 0 && (
+         </div>
+         {/* <div className="flex items-center justify-between pt-2 border-t border-gray-100">
+           <Button variant="outline" size="sm" className="text-xs">
+             Add to cart
+           </Button>
+         </div> */}
+       </div>
+       {/* {discount > 0 && (
           <div className="absolute left-2 top-2">
             <span className="rounded-full bg-red-100 px-2 py-1 text-xs font-medium text-destructive">
               {discount}% OFF
             </span>
           </div>
         )} */}
-      </div>
-    </Link>
-  );
+     </div>
+   </Link>
+ );
 }

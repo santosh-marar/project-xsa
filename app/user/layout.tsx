@@ -1,21 +1,19 @@
-// export const metadata: Metadata = {
-//   title: "Shozens.com - User Profile Page",
-//   description: "Welcome to Shozens.com - Your profile Page",
-// };
-
 import { DesktopNavbar } from "@/components/custom/desktop-navbar";
 import MobileNavbar from "@/components/custom/mobile-navbar";
 
-export default function AuthLayout({
+export default function UserLayout({
   children,
-}: Readonly<{
-  children: React.ReactNode;
-}>) {
+}: Readonly<{ children: React.ReactNode }>) {
   return (
-    <>
+    <div className="flex flex-col min-h-screen">
+      {/* Desktop Navbar (if needed) */}
       {/* <DesktopNavbar /> */}
-      {children}
+
+      {/* Main content */}
+      <main className="flex-grow">{children}</main>
+
+      {/* Mobile Navbar stays at the bottom */}
       <MobileNavbar />
-    </>
+    </div>
   );
 }

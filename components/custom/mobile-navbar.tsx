@@ -57,7 +57,8 @@ function MobileNavbar() {
     <footer
       className={cn(
         "fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 shadow-sm md:hidden transition-transform duration-300",
-        isVisible ? "translate-y-0" : "translate-y-full"
+        isVisible ? "translate-y-0" : "translate-y-full",
+        "z-50" // Ensure it stays on top
       )}
     >
       <nav className="flex justify-around items-center h-14">

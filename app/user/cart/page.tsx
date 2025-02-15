@@ -5,8 +5,11 @@ import { HydrateClient } from "@/trpc/server";
 const CartPage = () => {
   return (
     <HydrateClient>
-      <SecondaryNavbar  />
-      <CartManager />
+      <SecondaryNavbar />
+
+      <div className="flex flex-col items-center justify-center min-h-screen w-full">
+        <CartManager />
+      </div>
     </HydrateClient>
   );
 };

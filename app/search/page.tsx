@@ -84,10 +84,13 @@ export default function ProductsPage() {
             {/* </Button> */}
             <div className="relative flex-1">
               <div className="relative flex items-center">
-                <Search className="absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+                <Search className="absolute left-3 top-1/2 h-5 w-5 -translate-y-1/2 text-gray-600" />
                 <Input
+                  className="w-full rounded-full border pl-10 pr-4 py-5 text-sm 
+    focus:outline-none focus:ring-2 focus:ring-primary focus:ring-opacity-50
+    focus:border-primary focus:ring-offset-0 
+    transition-all placeholder:text-gray-600"
                   placeholder="Search for product"
-                  className="h-12 rounded-full border-[1px] border-input bg-white pl-11 pr-4 text-base"
                   onChange={(e) => handleSearch(e.target.value)}
                 />
               </div>

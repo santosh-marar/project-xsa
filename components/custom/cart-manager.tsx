@@ -18,16 +18,8 @@ import OrderSummary from "./order-summary";
 import { useSession } from "next-auth/react";
 
 export default function ShoppingCart() {
-  const session = useSession();
-
-  if (!session.data)
-    return (
-      <Button className="rounded-full font-medium">
-        <Link href="/api/auth/signin">Login</Link>
-      </Button>
-    );
-
   const utils = api.useUtils();
+  const session = useSession();
 
   const { data: cart, isLoading, error } = api.cart.getCart.useQuery();
 
@@ -71,21 +63,34 @@ export default function ShoppingCart() {
     return cart.items.reduce((total, item) => total + item.totalPrice, 0);
   };
 
+  if (!session.data)
+    return (
+      <div className="flex items-center justify-center w-full h-[calc(100vh-80px)]">
+        {" "}
+        {/* Adjust height to prevent full screen stretch */}
+        <Button className="rounded-full font-medium">
+          <Link href="/api/auth/signin">Login</Link>
+        </Button>
+      </div>
+    );
+
   if (isLoading)
     return (
-      <div className="flex items-center justify-center h-screen">
+      <div className="flex items-center justify-center w-full h-[calc(100vh-80px)]">
         Loading your cart...
       </div>
     );
+
   if (error)
     return (
-      <div className="flex items-center justify-center h-screen text-destructive">
+      <div className="flex items-center justify-center w-full h-[calc(100vh-80px)] text-destructive">
         Error loading cart: {error.message}
       </div>
     );
+
   if (!cart || cart.items.length === 0)
     return (
-      <div className="flex items-center justify-center h-screen">
+      <div className="flex items-center justify-center w-full h-[calc(100vh-80px)]">
         Your cart is empty.
       </div>
     );
@@ -103,7 +108,7 @@ export default function ShoppingCart() {
               >
                 {/* Image: Takes full height & width of its column */}
                 <Link
-                  href={`/product/रु. {item.product?.id}`}
+                  href={`/product/${item.product?.id}`}
                   className="relative w-full h-36 block"
                 >
                   <Image

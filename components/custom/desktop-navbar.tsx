@@ -39,7 +39,7 @@ export function DesktopNavbar() {
   }, []);
 
   // Always sticky and apply blur on scroll
-  const headerClasses = `sticky top-0 z-50 w-full transition-all duration-300 ${
+  const headerClasses = `sticky top-0 z-50 w-full bg-secondary shadow-md py-1 transition-all duration-300 ${
     isScrolled ? "bg-white/80 backdrop-blur-md shadow-sm" : "bg-white"
   }`;
 
@@ -59,9 +59,10 @@ export function DesktopNavbar() {
             <div className="relative">
               <Search className="absolute left-3 top-1/2 h-5 w-5 -translate-y-1/2 text-gray-600" />
               <Input
-                className="w-full rounded-full border-2 border-gray-900 pl-10 pr-4 py-5 text-sm 
-    focus:outline-none focus:ring-[1px] focus:ring-primary focus:ring-offset-0 
-    transition-all duration-300 placeholder:text-gray-600"
+                className="w-full rounded-full border pl-10 pr-4 py-5 text-sm 
+    focus:outline-none focus:ring-2 focus:ring-primary focus:ring-opacity-50
+    focus:border-primary focus:ring-offset-0 
+    transition-all placeholder:text-gray-600"
                 placeholder="Search for product"
                 // onClick={isMobile ? () => router.push("/search") : undefined}
                 onClick={() => router.push("/search")}
