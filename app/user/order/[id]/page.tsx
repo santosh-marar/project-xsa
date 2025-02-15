@@ -49,7 +49,7 @@ export default function OrderDetailsPage() {
     return (
       <>
         <SecondaryNavbar />
-        <div className="container mx-auto px-4 py-0 pb-20">
+        <div className="container mx-auto px-4 py-20">
           <h1 className="text-2xl font-bold mb-4">Order Details</h1>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             <Card className="md:col-span-2 shadow-none">

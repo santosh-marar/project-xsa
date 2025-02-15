@@ -39,7 +39,7 @@ const OrderPage = () => {
   return (
     <div className="bg-gray-50 min-h-screen">
       <SecondaryNavbar />
-      <div className="container mx-auto px-4 py-8">
+      <div className="container mx-auto px-4 py-20">
         <Suspense fallback={null}>
           <SearchParamsHandler setShowSuccess={setShowSuccess} />
         </Suspense>

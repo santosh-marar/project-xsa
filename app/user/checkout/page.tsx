@@ -192,7 +192,7 @@ export default function Checkout() {
   return (
     <>
       <SecondaryNavbar />
-      <div className="container mx-auto px-4 pb-20">
+      <div className="container mx-auto px-4 py-20">
         <Form {...form}>
           <form
             onSubmit={form.handleSubmit(onSubmit)}

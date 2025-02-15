@@ -10,7 +10,7 @@ export default function Page() {
     <>
       {/* <SecondaryNavbar iconHref="/users/setting" text="Shipping Address" /> */}
       <SecondaryNavbar />
-      <div className="container mx-auto px-4 py-0 pb-20">
+      <div className="container mx-auto px-4 py-0 py-20">
         <div className="max-w-4xl mx-auto">
           <Button variant={"ghost"} className="text-destructive" asChild>
             <Link href="/api/auth/signout">
