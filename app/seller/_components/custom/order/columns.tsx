@@ -13,19 +13,24 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { OrderDialog } from "./product-dialog";
 
 export type Order = {
   id: string;
-  orderId: string;
-  productId: string;
-  productVariationId: string;
   quantity: number;
-  price: number;
   totalPrice: number;
   product: {
+    id: string;
     name: string;
     image: string;
     shopId: string;
+  };
+  productVariation: {
+    id: string;
+    image: string[];
+    size: string;
+    color: string;
+    price: number;
   };
   order: {
     createdAt: Date;
@@ -58,22 +63,8 @@ export const columns: ColumnDef<Order>[] = [
     enableHiding: false,
   },
   {
-    accessorKey: "orderId",
+    accessorKey: "id",
     header: "Order ID",
-  },
-  {
-    accessorKey: "product.name",
-    header: "Product",
-    cell: ({ row }) => (
-      <div className="flex items-center space-x-2">
-        <img
-          src={row.original.product.image || "/placeholder.svg"}
-          alt={row.original.product.name}
-          className="w-8 h-8 rounded-full"
-        />
-        <span>{row.original.product.name}</span>
-      </div>
-    ),
   },
   {
     accessorKey: "quantity",
@@ -82,7 +73,7 @@ export const columns: ColumnDef<Order>[] = [
   {
     accessorKey: "totalPrice",
     header: "Total Price",
-    cell: ({ row }) => <div>${row.original.totalPrice.toFixed(2)}</div>,
+    cell: ({ row }) => <div>रु. {row.original.totalPrice.toFixed(2)}</div>,
   },
   {
     accessorKey: "order.status",
@@ -122,18 +113,12 @@ export const columns: ColumnDef<Order>[] = [
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">
             <DropdownMenuLabel>Actions</DropdownMenuLabel>
-            <DropdownMenuItem
-              onClick={() => navigator.clipboard.writeText(order.orderId)}
-            >
-              Copy order ID
-            </DropdownMenuItem>
+            <OrderDialog order={order}>
+              <DropdownMenuItem onSelect={(e) => e.preventDefault()}>
+                View product details
+              </DropdownMenuItem>
+            </OrderDialog>
             <DropdownMenuSeparator />
-            {/* <DropdownMenuItem>
-              <Eye className="mr-2 h-4 w-4" />
-              View details
-            </DropdownMenuItem>
-            <DropdownMenuItem>Update status</DropdownMenuItem>
-            <DropdownMenuItem>Contact customer</DropdownMenuItem> */}
           </DropdownMenuContent>
         </DropdownMenu>
       );

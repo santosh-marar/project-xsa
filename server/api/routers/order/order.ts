@@ -295,6 +295,7 @@ const orderRouter = createTRPCRouter({
                 select: {
                   name: true,
                   description: true,
+                  image: true,
                 },
               },
               productVariation: {
@@ -302,6 +303,7 @@ const orderRouter = createTRPCRouter({
                   size: true,
                   color: true,
                   price: true,
+                  image: true,
                 },
               },
             },
@@ -504,11 +506,7 @@ const orderRouter = createTRPCRouter({
         },
         select: {
           id: true,
-          orderId: true,
-          productId: true,
-          productVariationId: true,
           quantity: true,
-          price: true,
           totalPrice: true,
           order: {
             select: {
@@ -516,6 +514,7 @@ const orderRouter = createTRPCRouter({
               status: true,
               payment: {
                 select: {
+                  id: true,
                   status: true,
                   method: true,
                 },
@@ -524,9 +523,19 @@ const orderRouter = createTRPCRouter({
           },
           product: {
             select: {
+              id: true,
               name: true,
               image: true,
               shopId: true,
+            },
+          },
+          productVariation: {
+            select: {
+              id: true,
+              image: true,
+              size: true,
+              color: true,
+              price: true,
             },
           },
         },

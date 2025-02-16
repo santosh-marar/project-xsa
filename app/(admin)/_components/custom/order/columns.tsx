@@ -35,6 +35,27 @@ export type ShippingAddress = {
   country: string;
 };
 
+interface OrderItem {
+  id: string;
+  orderId: string;
+  price: number;
+  product: {
+    description: string;
+    image: string;
+    name: string;
+  };
+  productId: string;
+  productVariation: {
+    color: string;
+    image: string[];
+    price: number;
+    size: string;
+  };
+  productVariationId: string;
+  quantity: number;
+  totalPrice: number;
+}
+
 export type Order = {
   id: string;
   orderNumber: string;
@@ -62,17 +83,7 @@ export type Order = {
   _count: {
     items: number;
   };
-  items: {
-    product: {
-      description: string;
-      name: string;
-    };
-    productVariation: {
-      size: string;
-      price: number;
-      color: string;
-    };
-  }[];
+  items: OrderItem[];
 };
 
 export const columns: ColumnDef<Order>[] = [
@@ -111,7 +122,7 @@ export const columns: ColumnDef<Order>[] = [
   {
     accessorKey: "total",
     header: "Total",
-    cell: ({ row }) => <div>${row.original.total.toFixed(2)}</div>,
+    cell: ({ row }) => <div>रु. {row.original.total.toFixed(2)}</div>,
   },
   {
     accessorKey: "user.name",

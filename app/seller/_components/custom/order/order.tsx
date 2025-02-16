@@ -61,6 +61,8 @@ export default function OrderManagementComponent() {
     },
   });
 
+  console.log("orders", data);
+
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
     // Trigger the query with the current search term
@@ -182,8 +184,8 @@ export default function OrderManagementComponent() {
                       onValueChange={setPriceRange}
                     />
                     <div className="flex items-center justify-between">
-                      <Label>Min: ${priceRange[0]}</Label>
-                      <Label>Max: ${priceRange[1]}</Label>
+                      <Label>Min: रु. {priceRange[0]}</Label>
+                      <Label>Max: रु. {priceRange[1]}</Label>
                     </div>
                   </div>
                 </PopoverContent>
@@ -212,7 +214,7 @@ export default function OrderManagementComponent() {
               )}
               {(priceRange[0] > 0 || priceRange[1] < 1000) && (
                 <Badge variant="secondary">
-                  Price: ${priceRange[0]} - ${priceRange[1]}
+                  Price: रु. {priceRange[0]} - रु. {priceRange[1]}
                 </Badge>
               )}
             </div>

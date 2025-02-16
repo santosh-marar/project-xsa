@@ -9,6 +9,7 @@ import {
   Frame,
   GalleryVerticalEnd,
   Map,
+  Package,
   PieChart,
   Settings2,
   Shirt,
@@ -101,7 +102,7 @@ const data = {
     {
       title: "Orders",
       url: "/dashboard/order",
-      icon: User,
+      icon: Package,
       items: [
         {
           title: "Order",

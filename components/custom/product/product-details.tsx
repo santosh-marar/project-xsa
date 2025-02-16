@@ -31,6 +31,7 @@ import { renderAttributes } from "./render-attribute";
 import { ProductVariation } from "@/@types/product";
 import { api } from "@/trpc/react";
 import SecondaryNavbar from "../secondary-navbar";
+import { useRouter } from "next/navigation";
 
 interface Product {
   id: string;
@@ -51,6 +52,7 @@ export default function ProductPage({ product }: { product: Product }) {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
 
   const session = useSession();
+  const router = useRouter();
 
   const addCart = api.cart.addItem.useMutation({
     onSuccess: () => {
@@ -126,6 +128,8 @@ export default function ProductPage({ product }: { product: Product }) {
       quantity,
       price: selectedVariation.price * quantity,
     });
+
+    router.push("/user/cart");
   };
 
   // const handleBuyNow = () => {
