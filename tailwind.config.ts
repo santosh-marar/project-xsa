@@ -12,6 +12,12 @@ export default {
       fontFamily: {
         sans: ["var(--font-inter)"],
       },
+      spacing: {
+        "height-14": "56px",
+        "height-16": "64px",
+        "spacing-4": "16px", // You can add this if needed for consistent spacing
+        "spacing-6": "24px", // Same as above
+      },
       colors: {
         background: "hsl(var(--background))",
         foreground: "hsl(var(--foreground))",

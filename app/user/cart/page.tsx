@@ -1,15 +1,15 @@
 import CartManager from "@/components/custom/cart-manager";
+import { Footer } from "@/components/custom/footer";
 import SecondaryNavbar from "@/components/custom/secondary-navbar";
 import { HydrateClient } from "@/trpc/server";
 
 const CartPage = () => {
   return (
     <HydrateClient>
-      <SecondaryNavbar />
+      <SecondaryNavbar pageName="Cart" />
 
-      <div className="flex flex-col items-center justify-center min-h-screen w-full">
-        <CartManager />
-      </div>
+      <CartManager />
+      <Footer />
     </HydrateClient>
   );
 };

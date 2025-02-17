@@ -18,6 +18,7 @@ export function DesktopNavbar() {
   const session = useSession();
   // console.log("session", session);
   const user = session?.data?.user;
+  console.log("user", user);
 
   // Update header style on scroll
   useEffect(() => {
@@ -39,8 +40,8 @@ export function DesktopNavbar() {
   }, []);
 
   // Always sticky and apply blur on scroll
-  const headerClasses = `sticky top-0 z-50 w-full bg-secondary shadow-md py-1 transition-all duration-300 ${
-    isScrolled ? "bg-white/80 backdrop-blur-md shadow-sm" : "bg-white"
+  const headerClasses = `sticky top-0 z-50 w-full border-b py-1 transition-all duration-300 ${
+    isScrolled ? "bg-white/80 backdrop-blur-md " : "bg-white"
   }`;
 
   return (
@@ -87,7 +88,6 @@ export function DesktopNavbar() {
                 </Link>
               </Button>
               {user ? (
-                // @ts-ignore
                 <AvatarDropdown user={user} />
               ) : (
                 <Button className="rounded-full font-medium">

@@ -5,14 +5,20 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { LogOut, Settings, User } from "lucide-react";
+import { LayoutDashboard, LogOut, Settings, User } from "lucide-react";
 import { useRouter } from "next/navigation";
 
-const AvatarDropdown = ({
-  user,
-}: {
-  user?: { image?: string; name?: string };
-}) => {
+interface AvatarDropdownProps {
+  user?: {
+    email?: string | null;
+    id?: string;
+    image?: string | null;
+    name?: string | null;
+    role?: string[];
+  };
+}
+
+const AvatarDropdown = ({ user }: AvatarDropdownProps) => {
   const router = useRouter();
 
   return (
@@ -28,11 +34,21 @@ const AvatarDropdown = ({
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end" className="w-48">
         <DropdownMenuItem onClick={() => router.push("/user/profile")}>
-          <User className="mr-2 h-4 w-4" /> My Profile
+          <User className="mr-2 h-4 w-4" />Profile
         </DropdownMenuItem>
         <DropdownMenuItem onClick={() => router.push("/user/setting")}>
           <Settings className="mr-2 h-4 w-4" /> Settings
         </DropdownMenuItem>
+        {user?.role?.includes("admin") && (
+          <DropdownMenuItem onClick={() => router.push("/dashboard")}>
+            <LayoutDashboard className="mr-2 h-4 w-4" /> Dashboard
+          </DropdownMenuItem>
+        )}
+        {user?.role?.includes("seller") && (
+          <DropdownMenuItem onClick={() => router.push("/seller")}>
+            <LayoutDashboard className="mr-2 h-4 w-4" /> Seller Dashboard
+          </DropdownMenuItem>
+        )}
         <DropdownMenuItem
           className="text-destructive cursor-pointer"
           onClick={() => {

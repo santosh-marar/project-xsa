@@ -23,8 +23,6 @@ import { formatNepaliDateInEnglish } from "@/lib/nepali-format-date";
 export default function ProfilePage() {
   const session = useSession();
 
- 
-
   const { data: orders } = api.order.getMyOrders.useQuery();
 
   if (!session.data) {
@@ -40,9 +38,9 @@ export default function ProfilePage() {
   }
 
   return (
-    <div>
-      <SecondaryNavbar />
-      <div className="container mx-auto px-4  py-20">
+    <>
+      <SecondaryNavbar pageName="Profile" />
+      <div className="custom-layout">
         <div className="max-w-4xl mx-auto">
           <div className="flex justify-between items-center mb-8">
             <div className="flex items-center space-x-4">
@@ -116,6 +114,6 @@ export default function ProfilePage() {
           </CardContent>
         </Card>
       </div>
-    </div>
+    </>
   );
 }

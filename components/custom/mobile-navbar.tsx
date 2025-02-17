@@ -16,49 +16,12 @@ const navItems = [
 
 function MobileNavbar() {
   const pathname = usePathname();
-  const [isVisible, setIsVisible] = useState(true);
-  const scrollTimeoutRef = useRef<NodeJS.Timeout | null>(null);
-  const lastScrollY = useRef<number>(0);
 
-  useEffect(() => {
-    const handleScroll = () => {
-      const currentScrollY = window.scrollY;
-
-      // Compare with the last scroll position to detect direction:
-      if (currentScrollY > lastScrollY.current) {
-        // Scrolling down → hide navbar
-        setIsVisible(false);
-      } else {
-        // Scrolling up → show navbar
-        setIsVisible(true);
-      }
-      lastScrollY.current = currentScrollY;
-
-      // Clear the previous timeout, if any:
-      if (scrollTimeoutRef.current) {
-        clearTimeout(scrollTimeoutRef.current);
-      }
-      // After 300ms of no scrolling, show the navbar:
-      scrollTimeoutRef.current = setTimeout(() => {
-        setIsVisible(true);
-      }, 300);
-    };
-
-    window.addEventListener("scroll", handleScroll);
-    return () => {
-      window.removeEventListener("scroll", handleScroll);
-      if (scrollTimeoutRef.current) {
-        clearTimeout(scrollTimeoutRef.current);
-      }
-    };
-  }, []);
 
   return (
     <footer
       className={cn(
-        "fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 shadow-sm md:hidden transition-transform duration-300",
-        isVisible ? "translate-y-0" : "translate-y-full",
-        "z-50" // Ensure it stays on top
+        "fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 shadow-sm md:hidden transition-transform duration-300"
       )}
     >
       <nav className="flex justify-around items-center h-14">
@@ -87,7 +50,7 @@ function NavItem({ href, icon: Icon, label, isActive }: NavItemProps) {
       href={href}
       className={cn(
         "flex flex-col items-center justify-center w-full h-full transition-colors duration-200",
-        isActive ? "text-primary" : "text-gray-400 hover:text-gray-600"
+        isActive ? "text-primary border-primary" : "text-gray-400  hover:text-gray-600"
       )}
     >
       <div className="relative">

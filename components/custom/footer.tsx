@@ -127,14 +127,24 @@ import { Facebook, Twitter, Instagram, Youtube } from "lucide-react";
 
 export function Footer() {
   return (
-    <footer className="bg-gray-100 py-4 hidden md:block">
-      <div className="container mx-auto px-4">
-        <p className="text-center text-gray-500 text-sm">
-          © 2025 S. All rights reserved.
-          <br />
-          <Link href="/privacy">Privacy Policy</Link>
-        </p>
+    <footer className=" border-t border-gray-300 py-6 hidden md:block fixed bottom-0 w-full">
+      <div className="container mx-auto px-6 lg:px-8 text-gray-600">
+        <div className="flex justify-between items-center">
+          <p className="text-sm">© 2025 S. All rights reserved.</p>
+          {/* <nav className="flex space-x-6">
+            <Link href="/privacy" className="hover:text-gray-900 transition">
+              Privacy Policy
+            </Link>
+            <Link href="/terms" className="hover:text-gray-900 transition">
+              Terms of Service
+            </Link>
+            <Link href="/contact" className="hover:text-gray-900 transition">
+              Contact Us
+            </Link>
+          </nav> */}
+        </div>
       </div>
     </footer>
   );
 }
+

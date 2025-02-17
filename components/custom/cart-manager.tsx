@@ -96,7 +96,9 @@ export default function ShoppingCart() {
     );
 
   return (
-    <div className="container mx-auto px-4 py-20 pt-0">
+    <div
+      className="custom-layout"
+    >
       <div className="lg:flex lg:gap-12">
         <div className="lg:w-2/3">
           {/* Product List */}
@@ -179,7 +181,7 @@ export default function ShoppingCart() {
                   </Button>
 
                   {/* Total Price */}
-                  <span className="font-bold text-xl text-gray-900">
+                  <span className="font-bold text-base lg:text-xl text-gray-900">
                     रु. {item.totalPrice.toFixed(2)}
                   </span>
                 </div>

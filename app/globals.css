@@ -82,3 +82,20 @@
     @apply bg-background text-foreground;
   }
 }
+
+@layer utilities {
+  .custom-layout {
+    @apply container mx-auto px-4;
+    padding-top: calc(56px + 16px); /* For mobile: height-14 + spacing-4 */
+    padding-bottom: 2.5rem; /* pb-10 */
+  }
+
+  @media (min-width: 1024px) {
+    .custom-layout {
+      padding-top: calc(64px + 24px); /* For desktop: height-16 + spacing-6 */
+      padding-bottom: calc(64px + 24px + 40px); /* desktop bottom padding */
+    }
+  }
+}
+
+

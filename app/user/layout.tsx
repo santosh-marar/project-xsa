@@ -1,4 +1,5 @@
 import { DesktopNavbar } from "@/components/custom/desktop-navbar";
+import { Footer } from "@/components/custom/footer";
 import MobileNavbar from "@/components/custom/mobile-navbar";
 
 export default function UserLayout({
@@ -14,6 +15,7 @@ export default function UserLayout({
 
       {/* Mobile Navbar stays at the bottom */}
       <MobileNavbar />
+      <Footer />
     </div>
   );
 }

@@ -1,25 +1,45 @@
 import SecondaryNavbar from "@/components/custom/secondary-navbar";
 import { Button } from "@/components/ui/button";
-import { LogOut } from "lucide-react";
+import { USER_ROLE } from "@/constants";
+import { auth } from "@/server/auth";
+import { LayoutDashboard, LogOut } from "lucide-react";
 import Link from "next/link";
 import React from "react";
 
-export default function Page() {
+export default async function Page() {
+  const session = await auth();
+  const user = session?.user;
+  console.log("user", user);
 
   const content = (
     <>
-      {/* <SecondaryNavbar iconHref="/users/setting" text="Shipping Address" /> */}
-      <SecondaryNavbar />
-      <div className="container mx-auto px-4 py-20">
-        <div className="max-w-4xl mx-auto">
-          <Button variant={"ghost"} className="text-destructive" asChild>
-            <Link href="/api/auth/signout">
-              <LogOut className="h-4 w-4" />
-              Logout
-              <span className="sr-only">Log out</span>
+      <SecondaryNavbar pageName="Settings" />
+      <div className="container mx-auto max-w-4xl flex flex-col items-start justify-start px-4 py-20">
+        <Button variant={"ghost"} className="text-destructive" asChild>
+          <Link href="/api/auth/signout">
+            <LogOut className="h-4 w-4" />
+            Logout
+            <span className="sr-only">Log out</span>
+          </Link>
+        </Button>
+        {user?.role?.includes(USER_ROLE.ADMIN) && (
+          <Button variant={"ghost"} className="text-primary" asChild>
+            <Link href="/dashboard">
+              <LayoutDashboard className="h-4 w-4" />
+              Dashboard
+              <span className="sr-only">Dashboard</span>
             </Link>
           </Button>
-        </div>
+        )}
+        {user?.role?.includes(USER_ROLE.SELLER) && (
+          <Button variant={"ghost"} className="text-primary" asChild>
+            <Link href="/seller">
+              <LayoutDashboard className="h-4 w-4" />
+              Dashboard
+              <span className="sr-only">Seller dashboard</span>
+            </Link>
+          </Button>
+        )}
       </div>
     </>
   );

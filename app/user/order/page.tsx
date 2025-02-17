@@ -37,9 +37,9 @@ const OrderPage = () => {
   const [showSuccess, setShowSuccess] = useState(false);
 
   return (
-    <div className="bg-gray-50 min-h-screen">
-      <SecondaryNavbar />
-      <div className="container mx-auto px-4 py-20">
+    <>
+      <SecondaryNavbar pageName="Orders"/>
+      <div className="custom-layout">
         <Suspense fallback={null}>
           <SearchParamsHandler setShowSuccess={setShowSuccess} />
         </Suspense>
@@ -117,7 +117,7 @@ const OrderPage = () => {
           </CardContent>
         </Card>
       </div>
-    </div>
+    </>
   );
 };
 
