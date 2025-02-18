@@ -9,7 +9,7 @@ import React from "react";
 export default async function Page() {
   const session = await auth();
   const user = session?.user;
-  console.log("user", user);
+  // console.log("user", user);
 
   const content = (
     <>
@@ -26,8 +26,8 @@ export default async function Page() {
           <Button variant={"ghost"} className="text-primary" asChild>
             <Link href="/dashboard">
               <LayoutDashboard className="h-4 w-4" />
-              Dashboard
-              <span className="sr-only">Dashboard</span>
+              Admin Dashboard
+              <span className="sr-only">Admin Dashboard</span>
             </Link>
           </Button>
         )}
@@ -35,7 +35,7 @@ export default async function Page() {
           <Button variant={"ghost"} className="text-primary" asChild>
             <Link href="/seller">
               <LayoutDashboard className="h-4 w-4" />
-              Dashboard
+              Seller Dashboard
               <span className="sr-only">Seller dashboard</span>
             </Link>
           </Button>

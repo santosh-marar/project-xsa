@@ -1,6 +1,9 @@
-// AD date ranges for BS conversion
-const startDate = new Date(1943, 3, 14); // 1943/04/14 in AD
-const endDate = new Date(2034, 3, 13); // 2034/04/13 in AD
+// Type definitions
+type BSDate = {
+  year: number;
+  month: number;
+  day: number;
+};
 
 // Mapping for Nepali numbers
 const nepaliNumbers: { [key: string]: string } = {
@@ -32,7 +35,7 @@ const nepaliMonths: { [key: number]: string } = {
   12: "चैत्र",
 };
 
-// New mapping for English month names
+// English month names
 const englishMonths: { [key: number]: string } = {
   1: "Baisakh",
   2: "Jestha",
@@ -48,16 +51,111 @@ const englishMonths: { [key: number]: string } = {
   12: "Chaitra",
 };
 
-// BS date data for conversion
-const bsMonthData = {
-  2000: [30, 32, 31, 32, 31, 30, 30, 30, 29, 30, 29, 31],
-  2001: [31, 31, 32, 31, 31, 31, 30, 29, 30, 29, 30, 30],
-  // Add more year data as needed
+// BS calendar data (2080-2090)
+const bsMonthData: { [key: number]: number[] } = {
+  2080: [31, 32, 31, 32, 31, 30, 30, 30, 29, 29, 30, 30],
   2081: [31, 31, 32, 31, 31, 31, 30, 29, 30, 29, 30, 30],
-  2082: [31, 32, 31, 32, 31, 30, 30, 30, 29, 29, 30, 30],
+  2082: [31, 31, 32, 32, 31, 30, 30, 30, 29, 30, 30, 30],
+  2083: [30, 32, 31, 32, 31, 30, 30, 30, 29, 30, 29, 31],
+  2084: [31, 31, 32, 31, 31, 31, 30, 29, 30, 29, 30, 30],
+  2085: [31, 31, 32, 31, 31, 31, 30, 29, 30, 29, 30, 30],
+  2086: [31, 32, 31, 32, 31, 30, 30, 30, 29, 29, 30, 31],
+  2087: [30, 31, 32, 32, 31, 30, 30, 30, 29, 30, 29, 30],
+  2088: [31, 32, 31, 32, 31, 30, 30, 30, 29, 29, 30, 30],
+  2089: [31, 32, 31, 32, 31, 30, 30, 30, 29, 30, 29, 31],
+  2090: [31, 31, 32, 31, 31, 31, 30, 29, 30, 29, 30, 30],
 };
 
-// Convert English number to Nepali
+// Updated reference date
+const reference = {
+  ad: {
+    year: 2025,
+    month: 2,
+    day: 18,
+  },
+  bs: {
+    year: 2081,
+    month: 11,
+    day: 6,
+  },
+};
+
+function isValidDate(date: Date): boolean {
+  return date instanceof Date && !isNaN(date.getTime());
+}
+
+function convertADToBS(adDate: Date): BSDate {
+  if (!isValidDate(adDate)) {
+    throw new Error("Invalid date provided");
+  }
+
+  // Get the difference in days between the input date and reference date
+  const inputDate = new Date(
+    adDate.getFullYear(),
+    adDate.getMonth(),
+    adDate.getDate()
+  );
+  const refDate = new Date(
+    reference.ad.year,
+    reference.ad.month - 1,
+    reference.ad.day
+  );
+
+  const diffDays = Math.floor(
+    (inputDate.getTime() - refDate.getTime()) / (1000 * 60 * 60 * 24)
+  );
+
+  let bsYear = reference.bs.year;
+  let bsMonth = reference.bs.month;
+  let bsDay = reference.bs.day;
+
+  // If date is before reference date
+  if (diffDays < 0) {
+    let remainingDays = Math.abs(diffDays);
+    while (remainingDays > 0) {
+      if (bsDay > 1) {
+        bsDay--;
+      } else {
+        if (bsMonth > 1) {
+          bsMonth--;
+        } else {
+          bsYear--;
+          bsMonth = 12;
+        }
+        if (!bsMonthData[bsYear]) {
+          throw new Error(`Year ${bsYear} BS is not supported`);
+        }
+        bsDay = bsMonthData[bsYear][bsMonth - 1];
+      }
+      remainingDays--;
+    }
+  }
+  // If date is after or equal to reference date
+  else {
+    let remainingDays = diffDays;
+    while (remainingDays > 0) {
+      if (!bsMonthData[bsYear]) {
+        throw new Error(`Year ${bsYear} BS is not supported`);
+      }
+      const daysInMonth = bsMonthData[bsYear][bsMonth - 1];
+      if (bsDay < daysInMonth) {
+        bsDay++;
+      } else {
+        bsDay = 1;
+        if (bsMonth < 12) {
+          bsMonth++;
+        } else {
+          bsYear++;
+          bsMonth = 1;
+        }
+      }
+      remainingDays--;
+    }
+  }
+
+  return { year: bsYear, month: bsMonth, day: bsDay };
+}
+
 function toNepaliNumeral(number: number | string | null | undefined): string {
   if (number === null || number === undefined) return "";
   return number
@@ -67,33 +165,6 @@ function toNepaliNumeral(number: number | string | null | undefined): string {
     .join("");
 }
 
-// Convert AD date to BS date
-function convertADToBS(adDate: Date): {
-  year: number;
-  month: number;
-  day: number;
-} {
-  // Basic conversion logic (simplified version)
-  // This is a basic implementation. For production, you should use a comprehensive conversion library
-  const year = adDate.getFullYear();
-  const month = adDate.getMonth() + 1; // JavaScript months are 0-based
-  const day = adDate.getDate();
-
-  // For demonstration, adding 56 years and 8 months to convert to BS
-  // This is a very simplified conversion and won't be accurate
-  // You should use a proper conversion library in production
-  const bsYear = year + 56;
-  const bsMonth = (month + 8) % 12 || 12;
-  const bsDay = day;
-
-  return {
-    year: bsYear,
-    month: bsMonth,
-    day: bsDay,
-  };
-}
-
-// Format time to Nepali (12-hour format with अपराह्न/पूर्वाह्न)
 function formatNepaliTime(hour: number, minute: number): string {
   const period = hour >= 12 ? "अपराह्न" : "पूर्वाह्न";
   const displayHour = hour % 12 || 12;
@@ -102,10 +173,6 @@ function formatNepaliTime(hour: number, minute: number): string {
   )} ${period}`;
 }
 
-/**
- * Converts AD date to format: "१ फाल्गुण २०८१, ७:३१ अपराह्न" (1 Falgun 2081, 7:31 PM)
- * @param date - JavaScript Date object
- */
 export function formatNepaliDateTime(date: Date | null | undefined): string {
   if (!date) return "";
 
@@ -117,10 +184,6 @@ export function formatNepaliDateTime(date: Date | null | undefined): string {
   } ${toNepaliNumeral(bsDate.year)}, ${timeStr}`;
 }
 
-/**
- * Converts AD date to format: "१ फाल्गुण २०८१" (1 Falgun 2081 B.S.)
- * @param date - JavaScript Date object
- */
 export function formatNepaliDate(date: Date | null | undefined): string {
   if (!date) return "";
 
@@ -130,10 +193,6 @@ export function formatNepaliDate(date: Date | null | undefined): string {
   } ${toNepaliNumeral(bsDate.year)}`;
 }
 
-/**
- * Converts AD date to English format: "1 Falgun 2081 B.S."
- * @param date - JavaScript Date object
- */
 export function formatNepaliDateInEnglish(
   date: Date | null | undefined
 ): string {
@@ -143,11 +202,6 @@ export function formatNepaliDateInEnglish(
   return `${bsDate.day} ${englishMonths[bsDate.month]} ${bsDate.year} B.S.`;
 }
 
-/**
- * Flexible format function that can return either Nepali or English format
- * @param date - JavaScript Date object
- * @param format - 'np' for Nepali format, 'en' for English format
- */
 export function formatNepaliDateFlexible(
   date: Date | null | undefined,
   format: "np" | "en" = "np"

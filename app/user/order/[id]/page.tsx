@@ -38,7 +38,7 @@ export default function OrderDetailsPage() {
 
   const order = getMyOrders.data;
 
-  // console.log("order", order);
+  console.log("order", order?.createdAt);
 
   const shippingAddress = order?.shippingAddress as JsonObject | null;
 
