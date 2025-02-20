@@ -15,7 +15,7 @@ export function DesktopNavbar() {
   const [isMobile, setIsMobile] = useState(false);
 
   const session = useSession();
-  console.log("session", session);
+  // console.log("session", session);
   const user = session?.data?.user;
   // console.log("user", user);
 

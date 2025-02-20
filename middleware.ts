@@ -1,21 +1,25 @@
-import NextAuth from "next-auth";
-import { SIGN_IN_URL, USER_ROLE } from "@/constants";
-import { authConfig } from "./server/auth/config";
+import { NextResponse } from "next/server";
+import type { NextRequest } from "next/server";
+import { auth } from "./server/auth";
+
+// Define user roles type based on your session structure
+type UserRole = "user" | "admin" | "seller" | "super-admin";
 
 // Define types for route configurations
 type RoutePattern = string;
-
 interface RouteAccess {
   PUBLIC: RoutePattern[];
   AUTHENTICATED: RoutePattern[];
-  ROLE_ROUTES: {
-    [key in USER_ROLE]?: RoutePattern[];
+  ROLE_PATHS: {
+    [key in UserRole]?: {
+      exact: RoutePattern[];
+      startsWith: RoutePattern[];
+    };
   };
 }
 
 // Define route access patterns
 const ROUTE_ACCESS: RouteAccess = {
-  // Public routes (no auth required)
   PUBLIC: [
     "/",
     "/auth/login",
@@ -23,71 +27,54 @@ const ROUTE_ACCESS: RouteAccess = {
     "/products",
     "/product/:id",
     "/search",
-    "/api/trpc/product.getProducts",
-    "/api/trpc/product.getProduct",
-    "/api/trpc/search",
+    "/404",
   ],
-
-  // Routes accessible only to authenticated users
-  AUTHENTICATED: [
-    "/user",
-    "/user/profile",
-    "/user/orders",
-    "/cart",
-    "/api/trpc/user",
-    "/api/trpc/cart",
-  ],
-
-  // Role-specific routes
-  ROLE_ROUTES: {
-    [USER_ROLE.SELLER]: [
-      "/seller",
-      "/seller/dashboard",
-      "/seller/products",
-      "/seller/orders",
-      "/api/trpc/seller",
-    ],
-
-    [USER_ROLE.ADMIN]: [
-      "/dashboard",
-      "/admin",
-      "/admin/dashboard",
-      "/admin/users",
-      "/admin/products",
-      "/api/trpc/admin",
-    ],
-
-    [USER_ROLE.SUPER_ADMIN]: [
-      "/super-admin",
-      "/super-admin/dashboard",
-      "/super-admin/settings",
-      "/api/trpc/super-admin",
-    ],
-
-    // Add empty array for USER role to satisfy TypeScript
-    [USER_ROLE.USER]: [],
+  AUTHENTICATED: ["/user/profile", "/user/settings", "/user/cart"],
+  ROLE_PATHS: {
+    user: {
+      exact: [],
+      startsWith: ["/user"],
+    },
+    seller: {
+      exact: ["/seller"],
+      startsWith: ["/seller/", "/dashboard/seller"],
+    },
+    admin: {
+      exact: ["/admin"],
+      startsWith: ["/admin/", "/dashboard/"],
+    },
+    "super-admin": {
+      exact: ["/super-admin"],
+      startsWith: ["/super-admin/", "/admin/", "/dashboard/"],
+    },
   },
 };
 
-const { auth } = NextAuth(authConfig);
+// Helper function to check if a path starts with any of the patterns
+const matchesPathStart = (path: string, patterns: string[]): boolean => {
+  return patterns.some((pattern) => {
+    const normalizedPath = path.endsWith("/") ? path.slice(0, -1) : path;
+    const normalizedPattern = pattern.endsWith("/")
+      ? pattern.slice(0, -1)
+      : pattern;
+    return normalizedPath.startsWith(normalizedPattern);
+  });
+};
 
-// Helper function to check if path matches route pattern
-const matchRoute = (path: string, pattern: string): boolean => {
-  const regex = pattern
-    .replace(/:[^/]+/g, "[^/]+")
-    .replace(/\//g, "\\/")
-    .replace(/\./g, "\\.");
+// Helper function to check if path matches exact route pattern
+const matchExactRoute = (path: string, pattern: string): boolean => {
+  const regex = pattern.replace(/:[^/]+/g, "[^/]+").replace(/\//g, "\\/");
   return new RegExp(`^${regex}$`).test(path);
 };
 
 // Helper function to check if a route is accessible to a role
 const isRouteAccessibleToRole = (
   path: string,
-  userRoles: USER_ROLE[],
+  userRoles: string[],
   isAuthenticated: boolean
 ): boolean => {
-  // Check public routes
-  if (ROUTE_ACCESS.PUBLIC.some((route: string) => matchRoute(path, route))) {
+  // Check public routes first
+  if (ROUTE_ACCESS.PUBLIC.some((route) => matchExactRoute(path, route))) {
     return true;
   }
 
@@ -98,85 +85,71 @@ const isRouteAccessibleToRole = (
 
   // Check authenticated routes
   if (
-    ROUTE_ACCESS.AUTHENTICATED.some((route: string) => matchRoute(path, route))
+    ROUTE_ACCESS.AUTHENTICATED.some((route) => matchExactRoute(path, route))
   ) {
     return true;
   }
 
-  // Check role-specific routes
-  return userRoles.some((role: USER_ROLE) => {
-    const roleRoutes = ROUTE_ACCESS.ROLE_ROUTES[role];
-    if (!roleRoutes) return false;
+  // Check role-specific permissions
+  return userRoles.some((role) => {
+    const rolePaths = ROUTE_ACCESS.ROLE_PATHS[role as UserRole];
+    if (!rolePaths) return false;
 
-    // Super admin can access all routes
-    if (role === USER_ROLE.SUPER_ADMIN) return true;
+    // Admin can access everything (based on your roles structure)
+    if (role === "admin") return true;
 
-    // Admin can access seller and user routes
-    if (
-      role === USER_ROLE.ADMIN &&
-      ROUTE_ACCESS.ROLE_ROUTES[USER_ROLE.SELLER]
-    ) {
-      const adminAccessibleRoutes = [
-        ...(ROUTE_ACCESS.ROLE_ROUTES[USER_ROLE.SELLER] || []),
-        ...roleRoutes,
-      ];
-      return adminAccessibleRoutes.some((route: string) =>
-        matchRoute(path, route)
-      );
+    // Check exact matches
+    if (rolePaths.exact.some((route) => matchExactRoute(path, route))) {
+      return true;
     }
 
-    // Check routes for the specific role
-    return roleRoutes.some((route: string) => matchRoute(path, route));
+    // Check path prefixes
+    if (matchesPathStart(path, rolePaths.startsWith)) {
+      return true;
+    }
+
+    return false;
   });
 };
 
-export default auth((req) => {
+// Middleware function
+export default async function middleware(req: NextRequest) {
   const { nextUrl } = req;
   const path = nextUrl.pathname;
-
-  // Get authentication status and roles
-  const isAuthenticated = !!req.auth;
-  const userRoles = (req.auth?.user?.role as USER_ROLE[]) || [];
 
   // Skip middleware for static files and resources
   if (
     path.startsWith("/_next") ||
     path.startsWith("/static") ||
     path.includes(".") ||
-    path === '/404' // Skip middleware for 404 page
-
+    path === "/404"
   ) {
-    return undefined;
+    return NextResponse.next();
   }
+
+  // Get the session using Auth.js v5
+  const session = await auth();
+
+  // Get authentication status and roles from the session
+  const isAuthenticated = !!session?.user;
+  const userRoles = (session?.user?.role as string[]) || [];
 
   // Check if the route is accessible
   const canAccess = isRouteAccessibleToRole(path, userRoles, isAuthenticated);
 
   if (!canAccess) {
-    // If not authenticated, redirect to login
-    if (!isAuthenticated) {
-      return Response.redirect(new URL(SIGN_IN_URL, req.url));
+    // You might want to redirect to login for authenticated routes
+    if (!isAuthenticated && !ROUTE_ACCESS.PUBLIC.includes(path)) {
+      return NextResponse.redirect(new URL("/auth/login", req.url));
     }
-    // If authenticated but unauthorized, redirect to unauthorized page
-    return Response.redirect(new URL("/404", req.url));
+    // Otherwise redirect to 404
+    return NextResponse.redirect(new URL("/404", req.url));
   }
 
-  return undefined;
-});
+  return NextResponse.next();
+}
 
 // Matcher configuration
 export const config = {
-  matcher: [
-    /*
-     * Match all request paths except for the ones starting with:
-     * - api/auth (auth endpoints)
-     * - _next/static (static files)
-     * - _next/image (image optimization files)
-     * - favicon.ico (favicon file)
-     * But include:
-     * - api/trpc (tRPC endpoints)
-     */
-    "/((?!api/auth|_next/static|_next/image|favicon.ico).*)",
-    "/api/trpc/:path*",
-  ],
+  matcher: ["/((?!api/auth|_next/static|_next/image|favicon.ico).*)"],
 };
