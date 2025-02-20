@@ -38,7 +38,7 @@ export default function OrderDetailsPage() {
 
   const order = getMyOrders.data;
 
-  console.log("order", order?.createdAt);
+  // console.log("order", order?.createdAt);
 
   const shippingAddress = order?.shippingAddress as JsonObject | null;
 
@@ -49,7 +49,7 @@ export default function OrderDetailsPage() {
     return (
       <>
         <SecondaryNavbar pageName="Order Details"/>
-        <div className="custom-layout">
+        <div className="custom-layout mb-16">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             <Card className="md:col-span-2 shadow-none">
               <CardHeader>

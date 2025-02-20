@@ -6,7 +6,6 @@ import Link from "next/link";
 import { ShoppingCart, Search } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { useSession } from "next-auth/react";
 import AvatarDropdown from "./avatar-dropdown";
 
@@ -16,9 +15,9 @@ export function DesktopNavbar() {
   const [isMobile, setIsMobile] = useState(false);
 
   const session = useSession();
-  // console.log("session", session);
+  console.log("session", session);
   const user = session?.data?.user;
-  console.log("user", user);
+  // console.log("user", user);
 
   // Update header style on scroll
   useEffect(() => {
