@@ -45,7 +45,7 @@ const SecondaryNavbar: React.FC<SecondaryNavbarProps> = ({
   return (
     <nav
       className={cn(
-        "xl:px-16 md:px-8 px-2 w-full fixed top-0 left-0 right-0 z-40 border h-14 lg:h-16 flex lg:gap-4 items-center justify-start bg-white transition-all duration-300 ease-in-out",
+        " xl:px-16 md:px-8 px-2 w-full fixed top-0 left-0 right-0 z-40 border h-14 lg:h-16 flex lg:gap-4 items-center justify-start bg-white transition-all duration-300 ease-in-out",
         isVisible ? "opacity-100 translate-y-0" : "opacity-0 -translate-y-full",
         className
       )}

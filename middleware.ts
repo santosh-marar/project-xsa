@@ -140,7 +140,8 @@ export default async function middleware(req: NextRequest) {
   if (!canAccess) {
     // You might want to redirect to login for authenticated routes
     if (!isAuthenticated && !ROUTE_ACCESS.PUBLIC.includes(path)) {
-      return NextResponse.redirect(new URL("/auth/login", req.url));
+      // return NextResponse.redirect(new URL("/auth/login", req.url));
+      return NextResponse.redirect(new URL("/api/auth/signin", req.url));
     }
     // Otherwise redirect to 404
     return NextResponse.redirect(new URL("/404", req.url));

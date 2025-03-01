@@ -6,8 +6,8 @@ import HomeProduct from "@/components/custom/product/home-product";
 
 export default function Page() {
   return (
-    <>
-      <div className="min-h-screen bg-gray-50 pb-14">
+    <div className="min-h-screen flex flex-col">
+      <div className="">
         <DesktopNavbar />
 
         <main className="container mx-auto p-4 md:p-8">
@@ -28,6 +28,6 @@ export default function Page() {
         <MobileNavbar />
       </div>
       <Footer />
-    </>
+    </div>
   );
 }

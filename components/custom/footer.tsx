@@ -14,7 +14,7 @@
 
 export function Footer() {
   return (
-    <footer className="border-t border-gray-300 py-5 hidden md:block relative w-full mt-auto">
+    <footer className="border-t border-gray-300 py-5 w-full mt-auto hidden md:block">
       <div className="container mx-auto px-6 lg:px-8 text-gray-600">
         <div className="flex justify-between items-center">
           <p className="text-sm">© 2025 S. All rights reserved.</p>
@@ -23,5 +23,6 @@ export function Footer() {
     </footer>
   );
 }
+
 
 

@@ -59,18 +59,6 @@ export function ProductCard({
   //   ? Math.round(((originalPrice - price) / originalPrice) * 100)
   //   : 0;
 
-  const sortedVariations = productVariations.sort((a, b) => a.price - b.price);
-
-  // {
-  //   sortedVariations.length > 0 ? (
-  //     <span className="text-base font-bold text-gray-900">
-  //       ${sortedVariations[0].price}
-  //     </span>
-  //   ) : (
-  //     <span>No price available</span>
-  //   );
-  // }
-
 
  return (
    // Wrap the whole card in a Link that navigates to /product/:id
@@ -110,8 +98,7 @@ export function ProductCard({
          <div className="flex items-center justify-between">
            <div className="flex flex-col">
              <span className="text-sm font-semibold text-primary">
-               रु.{sortedVariations[0].price} - रु.
-               {sortedVariations[sortedVariations.length - 1].price}
+               {/* {productVariations[0].price}  */}
              </span>
              {/* {originalPrice && (
                 <span className="text-xs text-gray-500 line-through">
