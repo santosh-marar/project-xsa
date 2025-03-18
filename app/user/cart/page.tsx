@@ -9,7 +9,6 @@ const CartPage = () => {
       <SecondaryNavbar pageName="Cart" />
 
       <CartManager />
-      <Footer />
     </HydrateClient>
   );
 };

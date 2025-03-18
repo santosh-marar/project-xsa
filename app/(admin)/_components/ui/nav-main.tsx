@@ -16,6 +16,7 @@ import {
   SidebarMenuSub,
   SidebarMenuSubButton,
   SidebarMenuSubItem,
+  useSidebar,
 } from "@/components/ui/sidebar"
 import Link from "next/link"
 
@@ -33,6 +34,10 @@ export function NavMain({
     }[]
   }[]
 }) {
+
+    const { isMobile, state, openMobile, setOpenMobile, toggleSidebar } =
+      useSidebar();
+
   return (
     <SidebarGroup>
       <SidebarGroupLabel>Platform</SidebarGroupLabel>
@@ -55,13 +60,14 @@ export function NavMain({
               <CollapsibleContent>
                 <SidebarMenuSub>
                   {item.items?.map((subItem) => (
-                    <SidebarMenuSubItem key={subItem.title}>
-                      <SidebarMenuSubButton asChild>
-                        <Link href={subItem.url}>
-                          <span>{subItem.title}</span>
-                        </Link>
-                      </SidebarMenuSubButton>
-                    </SidebarMenuSubItem>
+                    <SidebarMenuSubButton asChild>
+                      <Link
+                        href={subItem.url}
+                        onClick={isMobile ? toggleSidebar : undefined} // Only run on mobile
+                      >
+                        <span>{subItem.title}</span>
+                      </Link>
+                    </SidebarMenuSubButton>
                   ))}
                 </SidebarMenuSub>
               </CollapsibleContent>
@@ -70,5 +76,5 @@ export function NavMain({
         ))}
       </SidebarMenu>
     </SidebarGroup>
-  )
+  );
 }
