@@ -129,7 +129,7 @@ export default function ProductPage({ product }: { product: Product }) {
       price: selectedVariation.price * quantity,
     });
 
-    router.push("/user/cart");
+    // router.push("/user/cart");
   };
 
   // const handleBuyNow = () => {
@@ -287,6 +287,7 @@ export default function ProductPage({ product }: { product: Product }) {
                     <Select
                       value={quantity.toString()}
                       onValueChange={handleQuantityChange}
+                      disabled={selectedVariation.stock === 0}
                     >
                       <SelectTrigger className="w-14 rounded-full md:w-20 h-8 text-xs md:text-sm">
                         <SelectValue />
@@ -319,7 +320,7 @@ export default function ProductPage({ product }: { product: Product }) {
                         In Stock ({selectedVariation.stock} available)
                       </Badge>
                     ) : (
-                      <Badge variant="destructive" className="px-2 py-1">
+                      <Badge variant="secondary" className="bg-red-100 text-red-800 px-2 py-1">
                         Out of Stock
                       </Badge>
                     )}

@@ -41,8 +41,6 @@ const getOrdersInputSchema = z.object({
 
 type GetOrdersInput = z.infer<typeof getOrdersInputSchema>;
 
-
-
 const orderRouter = createTRPCRouter({
   create: protectedProcedure
     .input(
@@ -78,63 +76,132 @@ const orderRouter = createTRPCRouter({
         notes: z.string().optional(),
       })
     )
-    .mutation(async ({ ctx, input }) => {
-      const userId = ctx.session.user.id as string;
-
-      const subTotal = input.items.reduce(
-        (sum, item) => sum + item.price * item.quantity,
-        0
-      );
-      const total = subTotal + input.shippingCost + input.tax;
-
-      return ctx.db.$transaction(async (db) => {
-        const order = await db.order.create({
-          data: {
-            userId: userId,
-            shippingAddress: input.shippingAddress,
-            orderNumber: generateOrderNumber(),
-            subTotal,
-            shippingCost: input.shippingCost,
-            tax: input.tax,
-            total,
-            notes: input.notes,
-          },
-        });
-
-        await db.orderItem.createMany({
-          data: input.items.map((item) => ({
-            orderId: order.id,
-            productId: item.productId,
-            productVariationId: item.productVariationId,
-            quantity: item.quantity,
-            price: item.price,
-            totalPrice: item.price * item.quantity,
-          })),
-        });
-
-        await db.payment.create({
-          data: {
-            orderId: order.id,
-            method: input.paymentMethod,
-            amount: input.total,
-            status: "PENDING",
-            transactionId: input.transactionId,
-          },
-        });
-
-        return order;
+  .mutation(async ({ ctx, input }) => {
+  const userId = ctx.session.user.id as string;
+  const subTotal = input.items.reduce(
+    (sum, item) => sum + item.price * item.quantity,
+    0
+  );
+  const total = subTotal + input.shippingCost + input.tax;
+  
+  return ctx.db.$transaction(async (db) => {
+    // Check inventory for all products before creating the order
+    for (const item of input.items) {
+      const productVariation = await db.productVariation.findUnique({
+        where: {
+          id: item.productVariationId,
+        },
+        select: {
+          stock: true,
+          product: {
+            select: {
+              name: true
+            }
+          }
+        }
       });
-    }),
+      
+      if (!productVariation) {
+        throw new Error(`Product variation with ID ${item.productVariationId} not found`);
+      }
+      
+      if (productVariation.stock < item.quantity) {
+        throw new Error(
+          `Not enough stock for product ${productVariation.product.name}. ` +
+          `Requested: ${item.quantity}, Available: ${productVariation.stock}`
+        );
+      }
+    }
+    
+    // Create the order if all inventory checks pass
+    const order = await db.order.create({
+      data: {
+        userId: userId,
+        shippingAddress: input.shippingAddress,
+        orderNumber: generateOrderNumber(),
+        subTotal,
+        shippingCost: input.shippingCost,
+        tax: input.tax,
+        total,
+        notes: input.notes,
+      },
+    });
+    
+    // Create order items and update inventory
+    await db.orderItem.createMany({
+      data: input.items.map((item) => ({
+        orderId: order.id,
+        productId: item.productId,
+        productVariationId: item.productVariationId,
+        quantity: item.quantity,
+        price: item.price,
+        totalPrice: item.price * item.quantity,
+      })),
+    });
+    
+    // Update product variation stock quantities
+    for (const item of input.items) {
+      await db.productVariation.update({
+        where: {
+          id: item.productVariationId,
+        },
+        data: {
+          stock: {
+            decrement: item.quantity
+          }
+        }
+      });
+    }
+    
+    // Create payment record
+    await db.payment.create({
+      data: {
+        orderId: order.id,
+        method: input.paymentMethod,
+        amount: input.total,
+        status: "PENDING",
+        transactionId: input.transactionId,
+      },
+    });
+    
+    // Find and delete the user's cart items
+    await db.cartItem.deleteMany({
+      where: {
+        cart: {
+          userId: userId
+        }
+      }
+    });
+    
+    // Delete the cart itself (optional, depending on your schema design)
+    const cart = await db.cart.findFirst({
+      where: {
+        userId: userId
+      }
+    });
+    
+    if (cart) {
+      // Option 1: Delete the cart entirely
+      await db.cart.delete({
+        where: {
+          id: cart.id
+        }
+      });
+    }
+    
+    return order;
+  });
+}),
 
   getMyOrders: protectedProcedure.query(async ({ ctx }) => {
     const orders = await ctx.db.order.findMany({
       where: { userId: ctx.session.user.id },
       select: {
-        id: true, // Order ID
-        orderNumber: true, // Order number
+        id: true,
+        orderNumber: true,
         createdAt: true, // Order date
-        status: true, // Order status
-        total: true, // Total amount
+        status: true,
+        total: true,
         items: {
           select: {
             id: true,

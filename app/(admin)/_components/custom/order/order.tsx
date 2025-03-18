@@ -26,6 +26,7 @@ import {
   CardDescription,
 } from "@/components/ui/card";
 import { Search, SortAsc, SortDesc } from "lucide-react";
+import { useDebounce } from "@/hooks/use-debounce";
 
 export default function OrderManagementComponent() {
   const [page, setPage] = useState(1);
@@ -42,22 +43,19 @@ export default function OrderManagementComponent() {
     PaymentMethod | undefined
   >(undefined);
 
+  const debouncedSearch=useDebounce(search, 300);
+
   const { data, isLoading } = api.order.getAllOrder.useQuery({
     page,
     pageSize,
     sortBy,
     sortOrder,
-    search: search || undefined,
+    search: debouncedSearch || undefined,
     filters: {
       status: statusFilter,
       paymentMethod: paymentMethodFilter,
     },
   });
-
-  const handleSearch = (e: React.FormEvent) => {
-    e.preventDefault();
-    // Trigger the query with the current search term
-  };
 
   return (
     <div className="container mx-auto py-10">

@@ -31,6 +31,7 @@ import { ProductCard } from "@/components/custom/product/product-card";
 import { Footer } from "@/components/custom/footer";
 import { useSession } from "next-auth/react";
 import AvatarDropdown from "@/components/custom/avatar-dropdown";
+import { useDebounce } from "@/hooks/use-debounce";
 
 export default function ProductsPage() {
   const [searchTerm, setSearchTerm] = useState("");
@@ -51,13 +52,17 @@ export default function ProductsPage() {
   const user = session?.data?.user;
   // console.log("user", user);
 
+  const debouncedSearchTerm=useDebounce(searchTerm, 1000);
+
+  console.log("debouncedSearchTerm", debouncedSearchTerm);
+
 
   const { data, isLoading } = api.product.getAllProducts.useQuery({
     page: 1,
     pageSize: 10,
     sortBy: sortOrder ? "price" : "createdAt",
     sortOrder: sortOrder === "low-to-high" ? "asc" : "desc",
-    search: searchTerm,
+    search: debouncedSearchTerm,
     filters: {
       minPrice: priceRange[0],
       maxPrice: priceRange[1],
@@ -72,6 +77,7 @@ export default function ProductsPage() {
   });
 
   const clearFilters = () => {
+    setSearchTerm("");
     setSelectedCategory(null);
     setSelectedSize(null);
     setSelectedColor(null);
@@ -81,7 +87,7 @@ export default function ProductsPage() {
     setSelectedMaterial(null);
     setPriceRange([
       data?.filters.priceRange.min || 0,
-      data?.filters.priceRange.max || 5000,
+      data?.filters.priceRange.max || 50000,
     ]);
     setSortOrder(null);
   };
@@ -270,7 +276,7 @@ export default function ProductsPage() {
               selectedColor ||
               selectedBrand ||
               priceRange[0] !== (data?.filters.priceRange.min || 0) ||
-              priceRange[1] !== (data?.filters.priceRange.max || 5000) ? (
+              priceRange[1] !== (data?.filters.priceRange.max || 50000) ? (
                 <div className="mb-4">
                   <div className="flex flex-wrap gap-2">
                     {selectedCategory && (
@@ -377,10 +383,10 @@ export default function ProductsPage() {
                     <Slider
                       defaultValue={[
                         data?.filters.priceRange.min || 0,
-                        data?.filters.priceRange.max || 5000,
+                        data?.filters.priceRange.max || 50000,
                       ]}
                       min={data?.filters.priceRange.min || 0}
-                      max={data?.filters.priceRange.max || 5000}
+                      max={data?.filters.priceRange.max || 50000}
                       step={100}
                       value={priceRange}
                       onValueChange={(values) =>

@@ -14,6 +14,8 @@ import {
 import { Button } from "@/components/ui/button";
 import { MoreHorizontal } from "lucide-react";
 import { OrderDialog } from "./order-dialog";
+import { toast } from "sonner";
+import { StatusUpdateDialog } from "./status-update-dialog";
 
 export type OrderStatus =
   | "PENDING"
@@ -84,6 +86,11 @@ export type Order = {
     items: number;
   };
   items: OrderItem[];
+};
+
+const handleCopyId = (id: string) => {
+  navigator.clipboard.writeText(id);
+  toast.success("Order ID copied to clipboard");
 };
 
 export const columns: ColumnDef<Order>[] = [
@@ -189,9 +196,7 @@ export const columns: ColumnDef<Order>[] = [
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">
             <DropdownMenuLabel>Actions</DropdownMenuLabel>
-            <DropdownMenuItem
-              onClick={() => navigator.clipboard.writeText(order.id)}
-            >
+            <DropdownMenuItem onClick={() => handleCopyId(order.id)}>
               Copy order ID
             </DropdownMenuItem>
             <DropdownMenuSeparator />
@@ -200,8 +205,17 @@ export const columns: ColumnDef<Order>[] = [
                 View details
               </DropdownMenuItem>
             </OrderDialog>
-            <DropdownMenuItem>Update status</DropdownMenuItem>
-            <DropdownMenuItem>Contact customer</DropdownMenuItem>
+            <StatusUpdateDialog
+              orderStatus={order.status}
+              // @ts-ignore
+              paymentMethod={order.payment?.method}
+              // @ts-ignore
+              paymentStatus={order.payment?.status}
+            >
+              <DropdownMenuItem onSelect={(e) => e.preventDefault()}>
+                Update status
+              </DropdownMenuItem>
+            </StatusUpdateDialog>
           </DropdownMenuContent>
         </DropdownMenu>
       );
