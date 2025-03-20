@@ -7,7 +7,6 @@ import {
   columns,
   type Order,
   type OrderStatus,
-  type PaymentMethod,
 } from "./columns";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -27,6 +26,7 @@ import {
 } from "@/components/ui/card";
 import { Search, SortAsc, SortDesc } from "lucide-react";
 import { useDebounce } from "@/hooks/use-debounce";
+import { PaymentMethod } from "@/@types/payment";
 
 export default function OrderManagementComponent() {
   const [page, setPage] = useState(1);
@@ -148,53 +148,15 @@ export default function OrderManagementComponent() {
               </div>
             </div>
             <div className="flex flex-col sm:flex-row gap-4">
-              <div className="w-full sm:w-[200px]">
-                <label
-                  htmlFor="sort-by"
-                  className="text-sm font-medium mb-2 block"
-                >
-                  Sort By
-                </label>
-                <Select
-                  value={sortBy}
-                  onValueChange={(
-                    value: "total" | "createdAt" | "orderNumber"
-                  ) => setSortBy(value)}
-                >
-                  <SelectTrigger id="sort-by">
-                    <SelectValue placeholder="Sort by" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="total">Total Amount</SelectItem>
-                    <SelectItem value="createdAt">Created At</SelectItem>
-                    <SelectItem value="orderNumber">Order Number</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-              <div className="w-full sm:w-[200px]">
-                <label className="text-sm font-medium mb-2 block">
-                  Sort Order
-                </label>
-                <Button
-                  variant="outline"
-                  className="w-full justify-start"
-                  onClick={() =>
-                    setSortOrder(sortOrder === "asc" ? "desc" : "asc")
-                  }
-                >
-                  {sortOrder === "asc" ? (
-                    <SortAsc className="mr-2 h-4 w-4" />
-                  ) : (
-                    <SortDesc className="mr-2 h-4 w-4" />
-                  )}
-                  {sortOrder === "asc" ? "Ascending" : "Descending"}
-                </Button>
-              </div>
               <div className="flex-1 flex items-end">
                 <Button
                   className="w-full sm:w-auto"
                   onClick={() => {
-                    /* Implement reset filters logic */
+                    setSearch("");
+                    setStatusFilter(undefined);
+                    setPaymentMethodFilter(undefined);
+                    setSortBy("total");
+                    setSortOrder("desc");
                   }}
                 >
                   Reset Filters

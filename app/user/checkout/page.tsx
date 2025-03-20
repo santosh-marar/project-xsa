@@ -159,14 +159,11 @@ export default function Checkout() {
 
     createOrder(orderData, {
       onSuccess: (data) => {
-        // Handle successful order creation (e.g., redirect to confirmation page)
         toast.success("Order created placed successfully");
         router.push("/user/order");
         setIsSubmitting(false);
-        // Add a success message or redirect to a confirmation page
       },
       onError: (error) => {
-        // Handle error (e.g., show error message to user)
         handleError(error);
         setIsSubmitting(false);
       },

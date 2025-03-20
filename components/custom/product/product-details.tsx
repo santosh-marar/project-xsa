@@ -51,11 +51,14 @@ export default function ProductPage({ product }: { product: Product }) {
   const [quantity, setQuantity] = useState(1);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
 
+  const utils= api.useUtils();
+
   const session = useSession();
   const router = useRouter();
 
   const addCart = api.cart.addItem.useMutation({
     onSuccess: () => {
+      utils.cart.getCart.invalidate();
       toast.success("Product added to cart successfully");
     },
   });
@@ -129,7 +132,7 @@ export default function ProductPage({ product }: { product: Product }) {
       price: selectedVariation.price * quantity,
     });
 
-    // router.push("/user/cart");
+    router.push("/user/cart");
   };
 
   // const handleBuyNow = () => {

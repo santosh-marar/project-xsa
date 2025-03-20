@@ -16,6 +16,9 @@ import { MoreHorizontal } from "lucide-react";
 import { OrderDialog } from "./order-dialog";
 import { toast } from "sonner";
 import { StatusUpdateDialog } from "./status-update-dialog";
+import { ArrowUpDown } from "lucide-react";
+import { Payment, PaymentStatus } from "@/@types/payment";
+
 
 export type OrderStatus =
   | "PENDING"
@@ -24,8 +27,7 @@ export type OrderStatus =
   | "SHIPPED"
   | "DELIVERED"
   | "CANCELLED";
-export type PaymentMethod = "CASH_ON_DELIVERY" | "ESEWA" | "KHALTI";
-export type PaymentStatus = "PENDING" | "COMPLETED" | "FAILED";
+
 
 export type ShippingAddress = {
   fullName: string;
@@ -69,10 +71,7 @@ export type Order = {
     name: string | null;
     email: string;
   };
-  payment: {
-    method: PaymentMethod;
-    status: PaymentStatus;
-  } | null;
+  payment: Payment
   shippingAddress: {
     fullName: string;
     phoneNumber1: string;
@@ -128,7 +127,17 @@ export const columns: ColumnDef<Order>[] = [
   },
   {
     accessorKey: "total",
-    header: "Total",
+    header: ({ column }) => {
+      return (
+        <Button
+          variant="ghost"
+          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+        >
+          Email
+          <ArrowUpDown className="ml-2 h-4 w-4" />
+        </Button>
+      );
+    },
     cell: ({ row }) => <div>रु. {row.original.total.toFixed(2)}</div>,
   },
   {
@@ -172,7 +181,10 @@ export const columns: ColumnDef<Order>[] = [
   },
   {
     accessorKey: "_count.items",
-    header: "Items",
+    header: "Quantity",
+    cell: ({ row }) => (
+      <div>{row.original.items?.map((item) => item.quantity)}</div>
+    ),
   },
   {
     accessorKey: "createdAt",
@@ -185,7 +197,6 @@ export const columns: ColumnDef<Order>[] = [
     id: "actions",
     cell: ({ row }) => {
       const order = row.original;
-
       return (
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
@@ -207,10 +218,9 @@ export const columns: ColumnDef<Order>[] = [
             </OrderDialog>
             <StatusUpdateDialog
               orderStatus={order.status}
-              // @ts-ignore
-              paymentMethod={order.payment?.method}
-              // @ts-ignore
               paymentStatus={order.payment?.status}
+              orderId={order.id}
+              paymentId={order.payment.id}
             >
               <DropdownMenuItem onSelect={(e) => e.preventDefault()}>
                 Update status

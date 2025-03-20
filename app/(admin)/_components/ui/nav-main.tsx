@@ -59,8 +59,8 @@ export function NavMain({
               </CollapsibleTrigger>
               <CollapsibleContent>
                 <SidebarMenuSub>
-                  {item.items?.map((subItem) => (
-                    <SidebarMenuSubButton asChild>
+                  {item.items?.map((subItem, index) => (
+                    <SidebarMenuSubButton asChild key={index}>
                       <Link
                         href={subItem.url}
                         onClick={isMobile ? toggleSidebar : undefined} // Only run on mobile
