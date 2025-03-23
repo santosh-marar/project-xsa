@@ -1,0 +1,12 @@
+model HomeCarousel {
+  id        String   @id @default(ulid())
+  title     String
+  subtitle  String?
+  price     Float
+  image     String
+  link      String
+  bgColor   String?
+  bgImage   String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}

@@ -30,6 +30,7 @@ import {
 import { api } from "@/trpc/react";
 import { ImageUploader } from "@/components/custom/image-uploader";
 import { ImageUploaderRef } from "@/@types/image";
+import { handleError } from "@/lib/zod-error";
 
 interface CreateProductFormProps {
   shops: { id: string; name: string }[];
@@ -87,13 +88,11 @@ export function CreateProductForm({
 
       form.reset();
     } catch (error) {
-      console.error("Error submitting form:", error);
+     handleError(error)
     } finally {
       setIsSubmitting(false);
     }
   }
-
-
 
   return (
     <Card>

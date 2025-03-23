@@ -16,6 +16,7 @@ import {
   SquareTerminal,
   Store,
   User,
+  WalletCards,
 } from "lucide-react";
 
 import { NavMain } from "@/app/(admin)/_components/ui/nav-main";
@@ -107,6 +108,17 @@ const data = {
         {
           title: "Order",
           url: "/dashboard/order",
+        },
+      ],
+    },
+    {
+      title: "Carousel",
+      url: "/dashboard/order",
+      icon: WalletCards,
+      items: [
+        {
+          title: "Home Carousel",
+          url: "/dashboard/home-carousel",
         },
       ],
     },

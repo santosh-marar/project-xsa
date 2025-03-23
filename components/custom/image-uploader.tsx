@@ -149,6 +149,8 @@ export const ImageUploader = forwardRef<ImageUploaderRef, ImageUploaderProps>(
               <Image
                 src={url}
                 alt={`Uploaded ${index}`}
+                width={128}
+                height={128}
                 className="w-32 h-32 object-cover rounded-lg border mp-4"
               />
               <button

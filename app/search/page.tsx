@@ -52,9 +52,9 @@ export default function ProductsPage() {
   const user = session?.data?.user;
   // console.log("user", user);
 
-  const debouncedSearchTerm=useDebounce(searchTerm, 1000);
+  const debouncedSearchTerm=useDebounce(searchTerm, 500);
 
-  console.log("debouncedSearchTerm", debouncedSearchTerm);
+  // console.log("debouncedSearchTerm", debouncedSearchTerm);
 
 
   const { data, isLoading } = api.product.getAllProducts.useQuery({

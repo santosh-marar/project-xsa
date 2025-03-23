@@ -12,7 +12,7 @@ export default function Page() {
 
         <main className="container mx-auto p-4 md:p-8">
           {/* Featured Section */}
-          {/* <section className="mb-12"><HomeCarousel /></section> */}
+          <section className="mb-12"><HomeCarousel /></section>
 
           {/* Product Grid */}
           <section>

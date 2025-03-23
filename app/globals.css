@@ -37,6 +37,12 @@
     --sidebar-accent-foreground: 240 5.9% 10%;
     --sidebar-border: 220 13% 91%;
     --sidebar-ring: 217.2 91.2% 59.8%;
+
+  --carousel-title-color: white;
+  --carousel-subtitle-color: rgba(255, 255, 255, 0.9);
+  --carousel-price-color: white;
+  --carousel-button-bg: black;
+  --carousel-button-text: white;
   }
   .dark {
     --background: 224 71.4% 4.1%;
