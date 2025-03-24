@@ -1,25 +1,21 @@
-import { api } from "@/trpc/server";
+"use client";
+
+import { api } from "@/trpc/react";
 import ProductPage from "@/components/custom/product/product-details";
-import { notFound } from "next/navigation";
+import { useParams } from "next/navigation";
 
-export default async function Page({
-  params,
-}: {
-  params: Promise<{ id: string }> | { id: string };
-}) {
-  const resolvedParams = params instanceof Promise ? await params : params;
-  const { id } = resolvedParams;
+export default function Page() {
+  const params = useParams();
+  const productId = params.id as string;
 
-  if (!id) {
-    return notFound();
-  }
+  const product = api.product.getById.useQuery(productId, {
+    enabled: Boolean(productId),
+  });
 
-  const product = await api.product.getById(id);
-
-  if (!product) {
-    return notFound();
-  }
-
-  { /* @ts-ignore */ }
-  return <ProductPage product={product} />;
+  return (
+    <>
+      {/* @ts-ignore */}
+      <ProductPage product={product?.data} />
+    </>
+  );
 }
