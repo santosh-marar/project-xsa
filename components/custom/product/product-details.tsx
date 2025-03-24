@@ -132,6 +132,8 @@ export default function ProductPage({ product }: { product: Product }) {
       price: selectedVariation.price * quantity,
     });
 
+    utils.cart.getCart.invalidate();
+
     router.push("/user/cart");
   };
 

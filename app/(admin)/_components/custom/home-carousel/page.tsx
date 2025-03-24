@@ -18,7 +18,7 @@ export type HomeCarouselItem = {
   image: string;
   link: string;
   bgColor: string;
-  bgImage: string | null;
+  bgImage: string | undefined;
 };
 
 export default function HomeCarouselPage() {

@@ -79,7 +79,7 @@ model ProductCategory {
 
   products     Product[]
 
-  @@index([name])
+  @@index([name, parentId])
 }
 
 

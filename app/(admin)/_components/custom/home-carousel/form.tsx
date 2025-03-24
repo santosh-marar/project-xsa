@@ -295,7 +295,8 @@ export function HomeCarouselForm({
                           {product.productVariations &&
                             product.productVariations.length > 0 && (
                               <span className="ml-2 text-sm text-gray-500">
-                                रु. {product.productVariations[0].price.toFixed(2)}
+                                रु.{" "}
+                                {product.productVariations[0].price.toFixed(2)}
                               </span>
                             )}
                         </div>
@@ -325,7 +326,7 @@ export function HomeCarouselForm({
                 {selectedProduct.productVariations &&
                   selectedProduct.productVariations.length > 0 && (
                     <p className="text-sm text-gray-600">
-                      Price: $
+                      Price: रु.{" "}
                       {selectedProduct.productVariations[0].price.toFixed(2)}
                     </p>
                   )}
