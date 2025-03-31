@@ -188,7 +188,7 @@ export const ShopComponent = () => {
         </Card>
 
         {/* Table section */}
-        <div className="rounded-sm border bg-card text-card-foreground shadow w-full px-2 py-4">
+        <div className="rounded-sm border bg-card text-card-foreground shadow-xs w-full px-2 py-4">
           {/* <div className="w-full lg:w-2/3"> */}
           {/* <div className="w-full overflow-auto rounded-md border"> */}
           <Table>

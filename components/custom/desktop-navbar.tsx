@@ -49,7 +49,7 @@ export function DesktopNavbar() {
               <Search className="absolute left-3 top-1/2 h-5 w-5 -translate-y-1/2 text-muted-foreground" />
               <Input
                 className="w-full rounded-full border pl-10 pr-4 py-5 text-sm 
-                  focus-visible:ring-primary focus-visible:ring-offset-0"
+                  focus-visible:ring-secondary focus-visible:ring-offset-0"
                 placeholder="Search for product"
                 onClick={() => router.push("/search")}
               />

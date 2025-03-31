@@ -44,7 +44,7 @@ export function AviationCarousel() {
           <CarouselContent>
             {images.map((image, index) => (
               <CarouselItem key={index}>
-                <div className="relative aspect-[2/1] w-full">
+                <div className="relative aspect-2/1 w-full">
                   <Image
                     src={image.src || "/placeholder.svg"}
                     alt={image.alt}

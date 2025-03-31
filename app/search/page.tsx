@@ -154,7 +154,7 @@ export default function ProductsPage() {
                   <Search className="absolute left-3 top-1/2 h-5 w-5 -translate-y-1/2 text-muted-foreground" />
                   <Input
                     className="w-full rounded-full border pl-10 pr-4 py-5 text-sm 
-                  focus-visible:ring-primary focus-visible:ring-offset-0"
+                  focus-visible:ring-secondary focus-visible:ring-offset-0"
                     placeholder="Search for product"
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
@@ -192,7 +192,7 @@ export default function ProductsPage() {
                 <SelectTrigger
                   className={cn(
                     "h-8 flex-1 min-w-fit rounded-full border-[1px] border-input bg-white px-4",
-                    "data-[placeholder]:text-muted-foreground hover:bg-accent/50"
+                    "data-placeholder:text-muted-foreground hover:bg-accent/50"
                   )}
                 >
                   <div className="flex items-center gap-2">
@@ -215,7 +215,7 @@ export default function ProductsPage() {
                 <SelectTrigger
                   className={cn(
                     "h-8 flex-1 min-w-fit rounded-full border-[1px] border-input bg-white px-4",
-                    "data-[placeholder]:text-muted-foreground hover:bg-accent/50"
+                    "data-placeholder:text-muted-foreground hover:bg-accent/50"
                   )}
                 >
                   <div className="flex items-center gap-2">
@@ -234,7 +234,7 @@ export default function ProductsPage() {
                 <SelectTrigger
                   className={cn(
                     "h-8 flex-1 min-w-fit rounded-full border-[1px] border-input bg-white px-4",
-                    "data-[placeholder]:text-muted-foreground hover:bg-accent/50"
+                    "data-placeholder:text-muted-foreground hover:bg-accent/50"
                   )}
                 >
                   <div className="flex items-center gap-2">
@@ -258,7 +258,7 @@ export default function ProductsPage() {
         <div className="container mx-auto flex gap-6 p-4 md:p-6">
           {/* Desktop Sidebar */}
           <div className="hidden md:block w-64 shrink-0">
-            <div className="bg-white rounded-lg shadow-sm p-6">
+            <div className="bg-white rounded-lg shadow-2xs p-6">
               <div className="flex justify-between items-center mb-6">
                 <h2 className="font-semibold">Filters</h2>
                 <Button
@@ -463,7 +463,7 @@ export default function ProductsPage() {
                   .map((_, i) => (
                     <div
                       key={i}
-                      className="bg-white rounded-lg overflow-hidden shadow-sm"
+                      className="bg-white rounded-lg overflow-hidden shadow-2xs"
                     >
                       <div className="aspect-square bg-gray-200 animate-pulse" />
                       <div className="p-4 space-y-3">

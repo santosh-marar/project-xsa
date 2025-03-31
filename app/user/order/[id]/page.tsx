@@ -79,7 +79,7 @@ export default function OrderDetailsPage() {
                 <div className="space-y-4">
                   {order?.items.map((item, index) => (
                     <div key={item.id} className="flex items-center space-x-4">
-                      <div className="relative w-16 h-16 flex-shrink-0 cursor-pointer">
+                      <div className="relative w-16 h-16 shrink-0 cursor-pointer">
                         <Link
                           href={`/product/${item.product.id}`}
                           className="block"
@@ -92,7 +92,7 @@ export default function OrderDetailsPage() {
                           />
                         </Link>
                       </div>
-                      <div className="flex-grow">
+                      <div className="grow">
                         <h3 className="font-medium">{item.product.name}</h3>
                         <p className="text-sm text-muted-foreground">
                           Quantity: {item.quantity}

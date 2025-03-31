@@ -11,7 +11,7 @@ export default function UserLayout({
       {/* <DesktopNavbar /> */}
 
       {/* Main content */}
-      <main className="flex-grow">{children}</main>
+      <main className="grow">{children}</main>
 
       {/* Mobile Navbar stays at the bottom */}
       <MobileNavbar />

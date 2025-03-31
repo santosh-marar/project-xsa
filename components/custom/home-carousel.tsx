@@ -57,7 +57,7 @@ export function HomeCarousel() {
                 <Card
                   className={cn(
                     "overflow-hidden rounded-xl",
-                    "bg-gradient-to-r from-primary/90 to-secondary/50 "
+                    "bg-linear-to-r from-primary/90 to-secondary/50 "
                   )}
                 >
                   <div className="p-4 sm:p-6 md:p-8 h-full">

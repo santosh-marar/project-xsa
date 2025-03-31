@@ -72,7 +72,7 @@ const VariationCard = ({ variation, onDelete }) => {
   };
 
   return (
-    <Card className="w-full border border-gray-200 shadow-sm rounded-xl transition hover:shadow-md">
+    <Card className="w-full border border-gray-200 shadow-2xs rounded-xl transition hover:shadow-md">
       <CardContent className="p-5">
         <div className="flex items-center gap-5">
           {/* Product Image */}

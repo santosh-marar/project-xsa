@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 
 export default function Custom404() {
   return (
-    <div className="min-h-screen bg-gradient-to-b from-background to-secondary/20 flex items-center justify-center px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen bg-linear-to-b from-background to-secondary/20 flex items-center justify-center px-4 sm:px-6 lg:px-8">
       <div className="max-w-lg w-full space-y-8 text-center">
         <div className="flex flex-col items-center">
           <ShoppingBag className="h-16 w-16 text-primary" />

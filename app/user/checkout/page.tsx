@@ -378,7 +378,7 @@ export default function Checkout() {
               </div>
 
               {/* Payment Method */}
-              <div className="bg-background p-6 rounded-lg shadow-sm mb-6">
+              <div className="bg-background p-6 rounded-lg shadow-2xs mb-6">
                 <h2 className="text-2xl font-semibold mb-4">Payment Method</h2>
                 <RadioGroup
                   value={paymentMethod}
@@ -408,12 +408,12 @@ export default function Checkout() {
 
             <div className="lg:w-1/3">
               {/* Order Summary */}
-              <div className="bg-background p-6 rounded-lg shadow-sm">
+              <div className="bg-background p-6 rounded-lg shadow-2xs">
                 <h2 className="text-2xl font-semibold mb-4">Order Summary</h2>
                 <div className="space-y-4 mb-4">
                   {cartItems.map((item) => (
                     <div key={item.id} className="flex items-center space-x-4">
-                      <div className="relative w-16 h-16 flex-shrink-0 cursor-pointer">
+                      <div className="relative w-16 h-16 shrink-0 cursor-pointer">
                         <Link
                           href={`/product/${item.product.id}`}
                           className="block"
@@ -426,7 +426,7 @@ export default function Checkout() {
                           />
                         </Link>
                       </div>
-                      <div className="flex-grow">
+                      <div className="grow">
                         <h3 className="font-medium">{item.product.name}</h3>
                         <p className="text-sm text-muted-foreground">
                           Quantity: {item.quantity}

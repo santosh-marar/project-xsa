@@ -21,7 +21,7 @@ function MobileNavbar() {
   return (
     <footer
       className={cn(
-        "fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 shadow-sm md:hidden transition-transform duration-300"
+        "fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 shadow-2xs md:hidden transition-transform duration-300"
       )}
     >
       <nav className="flex justify-around items-center h-14">

@@ -249,7 +249,7 @@ export default function ProductPage({ product }: { product: Product }) {
                           selectedColor === color
                             ? ""
                             : "border-input hover:border-primary"
-                        } focus-visible:outline-none`}
+                        } focus-visible:outline-hidden`}
                         style={{ backgroundColor: color }}
                       >
                         {selectedColor === color && (
