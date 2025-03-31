@@ -162,3 +162,13 @@
   -ms-overflow-style: none;
   scrollbar-width: none;
 }
+
+/* Add to your global CSS */
+@keyframes pulse-opacity {
+  0%, 100% { opacity: 0.6; }
+  50% { opacity: 1; }
+}
+
+[data-state="loading"] .skeleton {
+  animation: pulse-opacity 1.5s ease-in-out infinite;
+}

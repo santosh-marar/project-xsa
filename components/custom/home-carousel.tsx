@@ -7,6 +7,7 @@ import Autoplay from "embla-carousel-autoplay";
 import { cn } from "@/lib/utils";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { api } from "@/trpc/react";
+import { CarouselSkeleton } from "./skeleton/home-carousel";
 
 
 
@@ -46,6 +47,8 @@ export function HomeCarousel() {
   }, [emblaApi, onSelect]);
 
   const { data:carousels, isLoading } = api.homeCarousel.getAll.useQuery();
+
+  if(isLoading) return <CarouselSkeleton />;
 
   return (
     <div className="w-full max-w-7xl mx-auto px-4 py-4">
