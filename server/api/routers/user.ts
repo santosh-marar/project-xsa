@@ -5,6 +5,7 @@ import {
 } from "@/server/api/trpc";
 import { z } from "zod";
 import { Prisma } from "@prisma/client";
+import { TRPCError } from "@trpc/server";
 
 // Input validation schema
 const getUsersInputSchema = z.object({
@@ -23,7 +24,70 @@ const getUsersInputSchema = z.object({
     .optional(),
 });
 
-type GetUsersInput = z.infer<typeof getUsersInputSchema>;
+const checkRolePermissions = async (ctx: any, roleId: string) => {
+  // Get the current user's roles
+  const currentUserRoles = await ctx.db.userRole.findMany({
+    where: {
+      userId: ctx.session.user.id,
+    },
+    include: {
+      role: true,
+    },
+  });
+
+  const isSuperAdmin = currentUserRoles.some(
+    (userRole: any) => userRole.role.name === "super_admin"
+  );
+
+  const isAdmin = currentUserRoles.some(
+    (userRole: any) => userRole.role.name === "admin"
+  );
+
+  // Get the role we're trying to assign/remove
+  const targetRole = await ctx.db.role.findUnique({
+    where: {
+      id: roleId,
+    },
+  });
+
+  if (!targetRole) {
+    throw new TRPCError({
+      code: "NOT_FOUND",
+      message: "Role not found",
+    });
+  }
+
+  // Check permissions based on role hierarchies
+  if (targetRole.name === "super_admin" && !isSuperAdmin) {
+    throw new TRPCError({
+      code: "FORBIDDEN",
+      message: "Only super_admin can manage super_admin roles",
+    });
+  }
+
+  if (targetRole.name === "admin" && !isSuperAdmin) {
+    throw new TRPCError({
+      code: "FORBIDDEN",
+      message: "Only super_admin can manage admin roles",
+    });
+  }
+
+  if (targetRole.name === "seller" && !isAdmin && !isSuperAdmin) {
+    throw new TRPCError({
+      code: "FORBIDDEN",
+      message: "Only super_admin or admin can manage seller roles",
+    });
+  }
+
+  if (targetRole.name === "user" && !isAdmin && !isSuperAdmin) {
+    throw new TRPCError({
+      code: "FORBIDDEN",
+      message: "Only admin or super_admin can manage user roles",
+    });
+  }
+
+  return targetRole;
+};
 
 export const userRouter = createTRPCRouter({
   getMyProfile: protectedProcedure.query(async ({ ctx }) => {
@@ -160,6 +224,7 @@ export const userRouter = createTRPCRouter({
         },
       };
     }),
+
   getById: adminProcedure.input(z.string()).query(async ({ ctx, input }) => {
     const user = await ctx.db.user.findUnique({
       where: { id: input },
@@ -171,7 +236,7 @@ export const userRouter = createTRPCRouter({
                 id: true,
                 name: true,
               },
-            }, // Fetch the actual role details
+            },
           },
         },
       },
@@ -184,4 +249,90 @@ export const userRouter = createTRPCRouter({
       roles: user.roles.map((userRole) => userRole.role), // Extracting only role details
     };
   }),
+
+  getRoles: adminProcedure.query(async ({ ctx }) => {
+    return await ctx.db.role.findMany();
+  }),
+
+  addUserRole: protectedProcedure
+    .input(
+      z.object({
+        userId: z.string(),
+        roleId: z.string(),
+      })
+    )
+    .mutation(async ({ ctx, input }) => {
+      // Check permissions
+      const targetRole = await checkRolePermissions(ctx, input.roleId);
+
+      // Check if the role is already assigned
+      const existingRole = await ctx.db.userRole.findUnique({
+        where: {
+          userId_roleId: {
+            userId: input.userId,
+            roleId: input.roleId,
+          },
+        },
+      });
+
+      if (existingRole) {
+        throw new TRPCError({
+          code: "CONFLICT",
+          message: "User already has this role",
+        });
+      }
+
+      // Add the role
+      await ctx.db.userRole.create({
+        data: {
+          userId: input.userId,
+          roleId: input.roleId,
+        },
+      });
+
+      return {
+        success: true,
+        message: `Role ${targetRole.name} added successfully`,
+      };
+    }),
+
+  removeUserRole: protectedProcedure
+    .input(
+      z.object({
+        userId: z.string(),
+        roleId: z.string(),
+      })
+    )
+    .mutation(async ({ ctx, input }) => {
+      // Check permissions
+      const targetRole = await checkRolePermissions(ctx, input.roleId);
+
+      if (targetRole?.name === "user")
+        throw new TRPCError({
+          code: "UNAUTHORIZED",
+          message: "User have at least one role",
+        });
+
+      try {
+        // Remove the role
+        await ctx.db.userRole.delete({
+          where: {
+            userId_roleId: {
+              userId: input.userId,
+              roleId: input.roleId,
+            },
+          },
+        });
+
+        return {
+          success: true,
+          message: `Role ${targetRole.name} removed successfully`,
+        };
+      } catch (error) {
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: "User does not have this role",
+        });
+      }
+    }),
 });

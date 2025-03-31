@@ -10,31 +10,35 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
-import {  Trash2 } from "lucide-react";
+import { Trash2 } from "lucide-react";
 
 interface DeleteConfirmationDialogProps {
   onConfirm: () => void;
   itemName: string;
+  children?: React.ReactNode;
 }
 
 export function DeleteConfirmationDialog({
   onConfirm,
   itemName,
+  children,
 }: DeleteConfirmationDialogProps) {
   return (
     <AlertDialog>
       <AlertDialogTrigger asChild>
-        <Button variant="destructive" size="sm" className="w-full">
-          Delete
-        </Button>
+        {children || (
+          <Button variant="destructive" size="sm" className="w-full">
+            <Trash2 className="mr-2 h-4 w-4" />
+            Delete
+          </Button>
+        )}
       </AlertDialogTrigger>
       <AlertDialogContent>
         <AlertDialogHeader>
           <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
           <AlertDialogDescription>
             This action cannot be undone. This will permanently delete the{" "}
-            {itemName}
-            and remove all associated data.
+            {itemName} and all its associated data.
           </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>

@@ -13,6 +13,8 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
 import { MoreHorizontal } from "lucide-react";
+import { toast } from "sonner";
+import { ChangeUserRoleDialog } from "./roles-update-dialog";
 
 export type User = {
   id: string;
@@ -25,6 +27,11 @@ export type User = {
     shops: number;
     order: number;
   };
+};
+
+const handleCopyId = (id: string) => {
+  navigator.clipboard.writeText(id);
+  toast.success("Order ID copied to clipboard");
 };
 
 export const columns: ColumnDef<User>[] = [
@@ -102,14 +109,14 @@ export const columns: ColumnDef<User>[] = [
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">
             <DropdownMenuLabel>Actions</DropdownMenuLabel>
-            <DropdownMenuItem
-              onClick={() => navigator.clipboard.writeText(user.id)}
-            >
-              Copy user ID
+            <DropdownMenuItem onClick={() => handleCopyId(user.id)}>
+              Copy order ID
             </DropdownMenuItem>
-            <DropdownMenuSeparator />
-            <DropdownMenuItem>View user details</DropdownMenuItem>
-            <DropdownMenuItem>Edit user</DropdownMenuItem>
+            <ChangeUserRoleDialog userId={user?.id}>
+              <DropdownMenuItem onSelect={(e) => e.preventDefault()}>
+                Change user role
+              </DropdownMenuItem>
+            </ChangeUserRoleDialog>
           </DropdownMenuContent>
         </DropdownMenu>
       );

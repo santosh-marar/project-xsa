@@ -13,6 +13,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { useDebounce } from "@/hooks/use-debounce";
 
 export default function UserManagerComponent() {
   const [page, setPage] = useState(1);
@@ -23,57 +24,27 @@ export default function UserManagerComponent() {
   const [sortOrder, setSortOrder] = useState<"asc" | "desc">("desc");
   const [search, setSearch] = useState("");
 
+  const debouncedSearch = useDebounce(search, 500);
+
   const { data, isLoading } = api.user.getAll.useQuery({
     page,
     pageSize,
     sortBy,
     sortOrder,
-    search: search || undefined,
+    search: debouncedSearch,
   });
-
-  const handleSearch = (e: React.FormEvent) => {
-    e.preventDefault();
-    // Trigger the query with the current search term
-  };
 
   return (
     <div className="container mx-auto py-10">
       <h1 className="text-2xl font-bold mb-5">User Management</h1>
 
       <div className="flex justify-between items-center mb-4">
-        <form onSubmit={handleSearch} className="flex gap-2">
-          <Input
-            placeholder="Search users..."
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-            className="w-[300px]"
-          />
-          <Button type="submit">Search</Button>
-        </form>
-
-        <div className="flex items-center gap-2">
-          <Select
-            value={sortBy}
-            onValueChange={(value: "name" | "createdAt" | "email") =>
-              setSortBy(value)
-            }
-          >
-            <SelectTrigger className="w-[180px]">
-              <SelectValue placeholder="Sort by" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="createdAt">Created At</SelectItem>
-              <SelectItem value="name">Name</SelectItem>
-              <SelectItem value="email">Email</SelectItem>
-            </SelectContent>
-          </Select>
-          <Button
-            variant="outline"
-            onClick={() => setSortOrder(sortOrder === "asc" ? "desc" : "asc")}
-          >
-            {sortOrder === "asc" ? "↑" : "↓"}
-          </Button>
-        </div>
+        <Input
+          placeholder="Search user name, email"
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+          className="w-[300px]"
+        />
       </div>
 
       {data && (
