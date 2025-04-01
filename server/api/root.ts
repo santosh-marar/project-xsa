@@ -13,6 +13,7 @@ import orderRouter from "./routers/order/order";
 import paymentRouter from "./routers/payment";
 import orderItemRouter from "./routers/order/order-item";
 import { homeCarouselRouter } from "./routers/home-carousel";
+import { wishlistRouter } from "./routers/wishlist";
 
 /**
  * This is the primary router for your server.
@@ -33,6 +34,7 @@ export const appRouter = createTRPCRouter({
   payment: paymentRouter,
   orderItem: orderItemRouter,
   homeCarousel: homeCarouselRouter,
+  wishlist: wishlistRouter,
 });
 
 // export type definition of API

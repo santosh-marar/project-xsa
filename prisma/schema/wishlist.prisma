@@ -1,0 +1,25 @@
+model Wishlist {
+  id        String   @id @default(ulid())
+  userId    String   @unique 
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  items     WishlistItem[]
+
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model WishlistItem {
+  id                 String    @id @default(ulid())
+  wishlistId         String
+  productId          String
+  productVariationId String?
+  createdAt          DateTime  @default(now())
+  updatedAt          DateTime  @updatedAt
+
+  wishlist         Wishlist        @relation(fields: [wishlistId], references: [id], onDelete: Cascade)
+  product          Product         @relation(fields: [productId], references: [id], onDelete: Cascade)
+  productVariation ProductVariation? @relation(fields: [productVariationId], references: [id], onDelete: Cascade)
+
+  // Unique constraint to prevent duplicates
+  @@unique([wishlistId, productId, productVariationId])
+}

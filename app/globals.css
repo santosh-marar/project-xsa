@@ -6,6 +6,7 @@
 @theme {
 	--font-sans: Inter, ui-sans-serif, system-ui, sans-serif,
 		"Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+     --breakpoint-xs: 26.25rem;
 }
 
 :root {
@@ -143,14 +144,16 @@
   }
 }
 
-@utility custom-layout {
-  @apply container mx-auto px-4;
-  padding-top: calc(56px + 16px); /* For mobile: height-14 + spacing-4 */
-  padding-bottom: 2.5rem; /* pb-10 */
+@layer utilities {
+  .custom-layout {
+    @apply container mx-auto px-4;
+    padding-top: calc(3.5rem + 1rem); /* 56px + 16px */
+    padding-bottom: 2.5rem; /* 40px */
 
-  @media (min-width: 1024px) {
-    padding-top: calc(64px + 24px); /* For desktop: height-16 + spacing-6 */
-    padding-bottom: calc(64px + 24px + 40px); /* desktop bottom padding */
+    @media (min-width: theme('screens.lg')) {
+      padding-top: calc(4rem + 1.5rem); /* 64px + 24px */
+      padding-bottom: calc(4rem + 1.5rem + 2.5rem); /* 64px + 24px + 40px */
+    }
   }
 }
 

@@ -2,7 +2,7 @@ import SecondaryNavbar from "@/components/custom/secondary-navbar";
 import { Button } from "@/components/ui/button";
 import { USER_ROLE } from "@/constants";
 import { auth } from "@/server/auth";
-import { LayoutDashboard, LogOut } from "lucide-react";
+import { Heart, LayoutDashboard, LogOut } from "lucide-react";
 import Link from "next/link";
 import React from "react";
 
@@ -20,6 +20,13 @@ export default async function Page() {
             <LogOut className="h-4 w-4" />
             Logout
             <span className="sr-only">Log out</span>
+          </Link>
+        </Button>
+        <Button variant={"ghost"} className="" asChild>
+          <Link href="/user/wishlist">
+            <Heart className="h-4 w-4" />
+            Wishlist
+            <span className="sr-only">Wishlist</span>
           </Link>
         </Button>
         {user?.role?.includes(USER_ROLE.ADMIN) && (

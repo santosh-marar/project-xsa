@@ -96,9 +96,7 @@ export default function ShoppingCart() {
     );
 
   return (
-    <div
-      className="custom-layout"
-    >
+    <div className="custom-layout">
       <div className="lg:flex lg:gap-12">
         <div className="lg:w-2/3">
           {/* Product List */}
@@ -106,23 +104,23 @@ export default function ShoppingCart() {
             {cart.items.map((item) => (
               <div
                 key={item.id}
-                className="grid grid-cols-3 items-center gap-6 border rounded-lg pr-2"
+                className="grid grid-cols xs:grid-cols-3 items-center xs:gap-6 gap-2 border rounded-lg "
               >
                 {/* Image: Takes full height & width of its column */}
                 <Link
                   href={`/product/${item.product?.id}`}
-                  className="relative w-full h-36 block"
+                  className="relative w-full h-36 xs:h-full block"
                 >
                   <Image
                     src={item.product?.image || "/placeholder.svg"}
                     alt={item.product?.name || "Product"}
                     fill
-                    className="object-cover w-full h-full rounded-l"
+                    className="object-cover w-full h-full rounded-t xs:rounded-none xs:rounded-l"
                   />
                 </Link>
 
                 {/* Product Info */}
-                <div className="flex flex-col justify-between h-full py-2">
+                <div className="flex flex-col justify-between h-full p-2">
                   <div className="">
                     <h3 className="font-semibold text-lg text-gray-900">
                       {item.product?.name || "Unknown Product"}
@@ -144,7 +142,7 @@ export default function ShoppingCart() {
                   </div>
 
                   {/* Quantity Selector & Price */}
-                  <div className="flex items-center justify-between mt-4">
+                  <div className="flex items-center justify-between sm:mt-4">
                     <div className="flex items-center space-x-2">
                       {isClient && (
                         <Select
@@ -170,7 +168,12 @@ export default function ShoppingCart() {
                 </div>
 
                 {/* Actions & Price */}
-                <div className="flex flex-col justify-between items-end h-full py-2">
+                <div className="flex justify-between items-center h-full p-2 xs:flex-col-reverse">
+                  {/* Total Price */}
+                  <span className="font-bold text-base lg:text-xl text-gray-900">
+                    रु. {item.totalPrice.toFixed(2)}
+                  </span>
+
                   <Button
                     variant="ghost"
                     size="icon"
@@ -179,11 +182,6 @@ export default function ShoppingCart() {
                   >
                     <Trash2 className="h-5 w-5" />
                   </Button>
-
-                  {/* Total Price */}
-                  <span className="font-bold text-base lg:text-xl text-gray-900">
-                    रु. {item.totalPrice.toFixed(2)}
-                  </span>
                 </div>
               </div>
             ))}

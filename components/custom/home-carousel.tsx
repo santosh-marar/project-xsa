@@ -76,7 +76,7 @@ export function HomeCarousel() {
                           {carousel.subtitle}
                         </p>
                         <p className="text-xl font-semibold mt-4">
-                          {carousel.price}
+                          रु. {carousel.price}
                         </p>
                         <button className="mt-4 px-4 py-2 bg-white text-gray-800 hover:bg-white/90 rounded-full text-sm transition-colors">
                           Shop Now

@@ -3,6 +3,7 @@ import Link from "next/link";
 import { Star, Heart } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Badge } from "@/components/ui/badge";
+import { WishlistActions } from "../wishlist-button";
 // Define the type for the product category object
 interface ProductCategory {
   createdAt: Date;        
@@ -59,7 +60,6 @@ export function ProductCard({
   //   ? Math.round(((originalPrice - price) / originalPrice) * 100)
   //   : 0;
 
-
  return (
    // Wrap the whole card in a Link that navigates to /product/:id
    <Link href={`/product/${id}`} className="block">
@@ -82,10 +82,16 @@ export function ProductCard({
              e.preventDefault();
              // Handle "favorite" logic here, if needed
            }}
-           className="absolute right-2 top-2 rounded-full bg-white p-1.5 shadow-md transition-transform duration-200 hover:scale-105 active:scale-95"
          >
            <Heart className="h-4 w-4 text-gray-600" />
          </button> */}
+         {/* Only show if product has variations */}
+         {productVariations?.length > 0 && (
+           <WishlistActions
+             productId={id}
+             variationId={productVariations[0]?.id}
+           />
+         )}{" "}
        </div>
        <div className="space-y-2 p-4">
          <div className="flex items-start justify-between">

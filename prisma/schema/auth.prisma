@@ -41,6 +41,7 @@ model User {
   address       Address[]
   cart          Cart?
   order         Order[]
+  wishlist      Wishlist?
 
   createdAt DateTime @default(now())
 
