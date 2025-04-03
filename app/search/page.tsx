@@ -50,7 +50,7 @@ export default function ProductsPage() {
   const session = useSession();
   // console.log("session", session);
   const user = session?.data?.user;
-  // console.log("user", user);
+  console.log("user", user);
 
   const debouncedSearchTerm=useDebounce(searchTerm, 500);
 
@@ -176,6 +176,7 @@ export default function ProductsPage() {
                   </Link>
                 </Button>
                 {user ? (
+                  // @ts-ignore
                   <AvatarDropdown user={user} />
                 ) : (
                   <Button className="rounded-full font-medium">

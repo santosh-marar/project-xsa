@@ -65,7 +65,7 @@ export function CreateProductForm({
       // router.push("/products");
     },
     onError: (error) => {
-      toast.error(error.message);
+      handleError(error)
     },
   });
 

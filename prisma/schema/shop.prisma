@@ -13,6 +13,8 @@ model Shop {
   shopReview   ShopReview[]
   shopCategory ShopCategory @relation(fields: [shopCategoryId], references: [id])
   owner        User         @relation(fields: [ownerId], references: [id], onDelete: Cascade)
+  discounts   Discount[]
+  coupons     Coupon[]
 
   @@index([name])
 }

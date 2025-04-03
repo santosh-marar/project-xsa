@@ -70,6 +70,7 @@ export function DesktopNavbar() {
               </Link>
             </Button>
             {user ? (
+              // @ts-ignore
               <AvatarDropdown user={user} />
             ) : (
               <Button className="rounded-full font-medium">

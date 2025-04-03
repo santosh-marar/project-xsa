@@ -323,6 +323,7 @@ const productRouter = createTRPCRouter({
       };
     }),
 
+    // Get all products for a public user
   getAll: publicProcedure
     .input(getAllProductSchema)
     .query(async ({ ctx, input }) => {
@@ -590,6 +591,7 @@ const productRouter = createTRPCRouter({
       };
     }),
 
+  // Get all products for a seller
   getMyProducts: sellerProcedure
     .input(getMyProductsInput)
     .query(async ({ ctx, input }) => {
@@ -772,7 +774,7 @@ const productRouter = createTRPCRouter({
     .mutation(async ({ input }) => {
       const product = await db.product.create({
         data: { ...input, createdAt: new Date(), updatedAt: new Date() },
-        select: { id: true }, // Select only the `id`
+        select: { id: true }, 
       });
 
       return product;

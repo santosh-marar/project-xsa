@@ -1,5 +1,4 @@
 "use client";
-
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
   DropdownMenu,
@@ -11,13 +10,14 @@ import { LayoutDashboard, LogOut, Package, Settings, User } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { Separator } from "../ui/separator";
 
+// Fixed interface to match your actual user object
 interface AvatarDropdownProps {
   user?: {
     email?: string | null;
     id?: string;
     image?: string | null;
     name?: string | null;
-    role?: string[];
+    role?: string[]; // Changed to string[] to match your actual data
   };
 }
 
@@ -43,16 +43,19 @@ const AvatarDropdown = ({ user }: AvatarDropdownProps) => {
         <DropdownMenuItem onClick={() => router.push("/user/setting")}>
           <Settings className="mr-2 h-4 w-4" /> Settings
         </DropdownMenuItem>
-        {user?.role?.includes("admin") && user?.role?.includes("user") && (
+
+        {user?.role?.includes("user") && (
           <DropdownMenuItem onClick={() => router.push("/user/order")}>
             <Package className="mr-2 h-4 w-4" /> Orders
           </DropdownMenuItem>
         )}
+
         {user?.role?.includes("admin") && (
           <DropdownMenuItem onClick={() => router.push("/dashboard")}>
             <LayoutDashboard className="mr-2 h-4 w-4" /> Dashboard
           </DropdownMenuItem>
         )}
+
         {user?.role?.includes("seller") && (
           <DropdownMenuItem onClick={() => router.push("/seller")}>
             <LayoutDashboard className="mr-2 h-4 w-4" /> Seller Dashboard

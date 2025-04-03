@@ -2,8 +2,6 @@
 
 import { db } from "@/server/db";
 
-
-
 /**
  * Find user role by id
  */
@@ -19,4 +17,21 @@ export const findUserRoleById = async (id: string) => {
     },
   });
   return userRole;
+};
+
+/** 
+ * Find shop by user id
+ */ 
+export const getShop = async (userId: string) => {
+  const shop = await db.shop.findFirst({
+    where: {
+      ownerId: userId,
+    },
+    select: {
+      id: true,
+      name: true,
+      description: true,
+    },
+  });
+  return shop;
 };

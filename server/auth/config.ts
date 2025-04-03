@@ -4,6 +4,7 @@ import GoogleProvider from "next-auth/providers/google";
 
 import { db } from "@/server/db";
 import { USER_ROLE } from "@/constants";
+import { Role } from "@prisma/client";
 
 
 
@@ -18,7 +19,7 @@ declare module "next-auth" {
     user: {
       // id: string;
       // ...other properties
-      role: USER_ROLE[];
+      role: Role[];
     } & DefaultSession["user"];
   }
 }
@@ -55,7 +56,7 @@ export const authConfig = {
     async session({ session, token }) {
       if (session.user) {
         session.user.id = token.id as string;
-        session.user.role = token.roles as USER_ROLE[]; 
+        session.user.role = token.roles as Role[]; 
       }
       return session;
     },

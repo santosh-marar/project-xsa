@@ -3,6 +3,7 @@
 import * as React from "react";
 import {
   AudioWaveform,
+  BadgePercent,
   BookOpen,
   Package,
   Settings2,
@@ -79,6 +80,29 @@ const data = {
         {
           title: "Order",
           url: "/seller/order",
+        },
+      ],
+    },
+    {
+      title: "Discounts",
+      url: "/seller/discount",
+      icon: BadgePercent,
+      items: [
+        {
+          title: "Discount",
+          url: "/seller/discount",
+        },
+        {
+          title: "Create Discount",
+          url: "/seller/discount/create-discount",
+        },
+        {
+          title: "Product Discount",
+          url: "/seller/discount/product",
+        },
+        {
+          title: "Create Product Discount",
+          url: "/seller/discount/create-product",
         },
       ],
     },

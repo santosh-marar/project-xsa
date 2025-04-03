@@ -28,7 +28,7 @@ model Product {
   productCategory    ProductCategory @relation(fields: [categoryId], references: [id])
   shop        Shop            @relation(fields: [shopId], references: [id], onDelete: Cascade)
   productVariations  ProductVariation[]
-  cartItems         CartItem[] // Relation to CartItem
+  cartItems         CartItem[] 
   orderItems        OrderItem[]
   wishlistItems     WishlistItem[]
 
@@ -40,6 +40,7 @@ model ProductVariation {
   id          String    @id @default(ulid())
   productId   String
   price       Float
+  discountPrice Float?
   stock       Int       @default(0)
   size        String
   color       String
@@ -55,6 +56,8 @@ model ProductVariation {
   cartItems   CartItem[] // Relation to CartItem
   orderItems OrderItem[] 
   wishlistItems WishlistItem[]
+  variationDiscounts ProductVariationDiscount[]
+
   
   tShirtAttributes     TShirtAttributes?     
   pantAttributes       PantAttributes?    
@@ -80,6 +83,8 @@ model ProductCategory {
   subCategories  ProductCategory[] @relation("CategoryHierarchy")
 
   products     Product[]
+  categoryDiscounts CategoryDiscount[]
+
 
   @@index([name, parentId])
 }

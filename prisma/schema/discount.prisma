@@ -1,0 +1,97 @@
+enum DiscountType {
+  PERCENTAGE
+  FIXED_AMOUNT
+  BUY_X_GET_Y
+}
+
+enum DiscountScope {
+  PRODUCT         
+  CATEGORY        
+  SHOP            
+  CART            
+}
+
+model Discount {
+  id              String        @id @default(ulid())
+  shopId          String?        // Vendor applying this discount
+  name            String
+  description     String?
+  discountType    DiscountType
+  discountScope   DiscountScope
+  value           Float         // Percentage or fixed amount
+  minPurchase     Float?        // Minimum spend required
+  minItems        Int?          // Minimum items required for discount
+  usageLimit      Int?          // Max times discount can be used
+  startDate       DateTime      @default(now())
+  endDate         DateTime?     // Null means no expiration
+  isActive        Boolean       @default(true)
+  allowStacking   Boolean       @default(false)
+  priority        Int           @default(1)
+  usageCount      Int           @default(0) 
+  maxDiscountValue Int?
+
+  // BOGO Specific Fields
+  buyQuantity     Int?          
+  getQuantity     Int?          
+  appliedToProductId String?    
+
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
+
+  autoApply       Boolean   @default(false) 
+
+  shop            Shop?          @relation(fields: [shopId], references: [id], onDelete: Cascade)
+  categoryDiscounts CategoryDiscount[]
+  cartDiscounts   CartDiscount[]
+  orderDiscounts  OrderDiscount[]
+  coupons         Coupon[]   
+  ProductVariationDiscounts ProductVariationDiscount[]   
+
+  @@index([shopId, isActive, startDate, endDate])
+}
+
+
+model ProductVariationDiscount {
+  id          String   @id @default(ulid())
+  variationId String
+  discountId  String
+  
+  variation   ProductVariation @relation(fields: [variationId], references: [id])
+  discount    Discount         @relation(fields: [discountId], references: [id])
+  
+  @@unique([variationId, discountId])
+}
+
+model CategoryDiscount {
+  id          String   @id @default(ulid())
+  discountId  String
+  categoryId  String
+  
+  discount    Discount @relation(fields: [discountId], references: [id], onDelete: Cascade)
+  category    ProductCategory @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+  
+  @@unique([discountId, categoryId])
+}
+
+model CartDiscount {
+  id          String   @id @default(ulid())
+  discountId  String
+  cartId      String
+  
+  discount    Discount @relation(fields: [discountId], references: [id], onDelete: Cascade)
+  cart        Cart     @relation(fields: [cartId], references: [id], onDelete: Cascade)
+  
+  @@unique([discountId, cartId])
+}
+
+model OrderDiscount {
+  id          String   @id @default(ulid())
+  discountId  String
+  orderId     String
+  amountSaved Float
+  
+  discount    Discount @relation(fields: [discountId], references: [id])
+  order       Order    @relation(fields: [orderId], references: [id])
+  
+  @@unique([discountId, orderId])
+}

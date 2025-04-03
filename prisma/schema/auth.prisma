@@ -42,6 +42,9 @@ model User {
   cart          Cart?
   order         Order[]
   wishlist      Wishlist?
+  totalOrders   Int      @default(0) 
+  couponUsages  CouponUsage[]
+  couponCustomers CouponCustomer[] // New: For targeted campaigns
 
   createdAt DateTime @default(now())
 

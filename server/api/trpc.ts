@@ -164,7 +164,7 @@ const hasRole = (allowedRoles: string[]) => {
     }
 
     const hasRequiredRole = ctx.session.user.role.some((role) =>
-      allowedRoles.includes(role)
+      allowedRoles.includes(role.name)
     );
 
     if (!hasRequiredRole) {

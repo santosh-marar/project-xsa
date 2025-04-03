@@ -6,11 +6,12 @@ import { Role } from "@prisma/client";
  * Verify if user is either admin/super_admin OR the owner of a shop
  */
 export async function isAdminOrShopOwner(
-  user: { id: string; role: Role },
+  user: { id: string; role: Role[] },
   shopId: string
 ): Promise<true> {
   // Admins always pass
-  if (["admin", "super_admin"].includes(user.role.name)) return true;
+  if (user.role.some((r) => ["admin", "super_admin"].includes(r.name)))
+    return true;
 
   // Non-admins must be the shop owner
   const shop = await db.shop.findUnique({
@@ -27,18 +28,19 @@ export async function isAdminOrShopOwner(
     });
   }
 
-  return true; 
+  return true;
 }
 
 /**
  * Verify product ownership
  */
 export async function verifyProductOwnership(
-  user: { id: string; role: Role },
+  user: { id: string; role: Role[] },
   productId: string
 ): Promise<true> {
   // Admins bypass ownership checks
-  if (["admin", "super_admin"].includes(user.role.name)) return true;
+  if (user.role.some((r) => ["admin", "super_admin"].includes(r.name)))
+    return true;
 
   const product = await db.product.findUnique({
     where: { id: productId },

@@ -1,6 +1,5 @@
 import { z } from "zod";
 import { TRPCError } from "@trpc/server";
-import { ulid } from "ulid";
 import {
   adminProcedure,
   createTRPCRouter,
@@ -173,21 +172,25 @@ const orderRouter = createTRPCRouter({
       }
     });
     
-    // Delete the cart itself (optional, depending on your schema design)
     const cart = await db.cart.findFirst({
       where: {
-        userId: userId
-      }
+        userId: userId,
+      },
     });
-    
+
     if (cart) {
-      // Option 1: Delete the cart entirely
       await db.cart.delete({
         where: {
-          id: cart.id
-        }
+          id: cart.id,
+        },
       });
     }
+
+    await db.user.update({
+      where: { id: userId },
+      data: { totalOrders: { increment: 1 } },
+    });
+
     
     return order;
   });

@@ -4,6 +4,7 @@ model Cart {
   createdAt  DateTime  @default(now())
   updatedAt  DateTime  @updatedAt
   items      CartItem[]
+  appliedDiscounts CartDiscount[]
 
   user       User      @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
