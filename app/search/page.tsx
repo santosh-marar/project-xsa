@@ -176,7 +176,6 @@ export default function ProductsPage() {
                   </Link>
                 </Button>
                 {user ? (
-                  // @ts-ignore
                   <AvatarDropdown user={user} />
                 ) : (
                   <Button className="rounded-full font-medium">

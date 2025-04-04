@@ -32,7 +32,6 @@ type DiscountVariation = {
   };
   variation: {
     id: string;
-    sku: string;
     price: number;
     discountedPrice: number | null;
     stock: number;

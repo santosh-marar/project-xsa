@@ -1,16 +1,16 @@
 import { TRPCError } from "@trpc/server";
 import { db } from "@/server/db";
-import { Role } from "@prisma/client";
+import { USER_ROLE } from "@/constants";
 
 /**
  * Verify if user is either admin/super_admin OR the owner of a shop
  */
 export async function isAdminOrShopOwner(
-  user: { id: string; role: Role[] },
+  user: { id: string; role: USER_ROLE[] },
   shopId: string
 ): Promise<true> {
   // Admins always pass
-  if (user.role.some((r) => ["admin", "super_admin"].includes(r.name)))
+  if (user.role.some((r) => ["admin", "super_admin"].includes(r)))
     return true;
 
   // Non-admins must be the shop owner
@@ -35,11 +35,11 @@ export async function isAdminOrShopOwner(
  * Verify product ownership
  */
 export async function verifyProductOwnership(
-  user: { id: string; role: Role[] },
+  user: { id: string; role: USER_ROLE[] },
   productId: string
 ): Promise<true> {
   // Admins bypass ownership checks
-  if (user.role.some((r) => ["admin", "super_admin"].includes(r.name)))
+  if (user.role.some((r) => ["admin", "super_admin"].includes(r)))
     return true;
 
   const product = await db.product.findUnique({

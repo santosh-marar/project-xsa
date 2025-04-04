@@ -29,7 +29,7 @@ export default async function Page() {
             <span className="sr-only">Wishlist</span>
           </Link>
         </Button>
-        {user?.role?.some((r) => r.name === "admin") && (
+        {user?.role?.includes("admin") && (
           <Button variant={"ghost"} className="text-primary" asChild>
             <Link href="/dashboard">
               <LayoutDashboard className="h-4 w-4" />
@@ -38,7 +38,7 @@ export default async function Page() {
             </Link>
           </Button>
         )}
-        {user?.role?.some((r) => r.name === "seller") && (
+        {user?.role?.includes("admin") && (
           <Button variant={"ghost"} className="text-primary" asChild>
             <Link href="/seller">
               <LayoutDashboard className="h-4 w-4" />

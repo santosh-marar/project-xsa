@@ -5,13 +5,14 @@ import { Button } from "@/components/ui/button";
 import { api } from "@/trpc/react";
 import { useRouter } from "next/navigation";
 import { MouseEvent } from "react";
+import { handleError } from "@/lib/zod-error";
 
 export function WishlistActions({
   productId,
   variationId,
 }: {
   productId: string;
-  variationId?: string | null; 
+  variationId?: string | null;
 }) {
   const router = useRouter();
   const utils = api.useUtils();
@@ -29,6 +30,9 @@ export function WishlistActions({
       onSuccess: () => {
         utils.wishlist.invalidate();
       },
+      onError: (error) => {
+        handleError(error);
+      },
     });
 
   // Move to cart
@@ -43,7 +47,7 @@ export function WishlistActions({
 
   // Check if item is in wishlist
   const { data: wishlist } = api.wishlist.getWishlist.useQuery();
-  const isInWishlist = wishlist?.items.some(
+  const isInWishlist = wishlist?.items?.some(
     (item) =>
       item.productId === productId &&
       item.productVariationId === (variationId || null)

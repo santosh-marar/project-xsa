@@ -132,8 +132,7 @@ export default async function middleware(req: NextRequest) {
 
   // Get authentication status and roles from the session
   const isAuthenticated = !!session?.user;
-  // @ts-ignore
-  const userRoles = (session?.user?.role as string[]) || [];
+const userRoles = (session?.user?.role as string[]) || [];
 
   // Check if the route is accessible
   const canAccess = isRouteAccessibleToRole(path, userRoles, isAuthenticated);

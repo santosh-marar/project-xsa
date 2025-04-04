@@ -1,16 +1,16 @@
 import { addHomeCarouselSchema, deleteHomeCarouselSchema, updateHomeCarouselSchema } from "@/validation/home-carousel";
-import { adminProcedure, createTRPCRouter } from "../trpc";
+import { adminProcedure, createTRPCRouter, publicProcedure } from "../trpc";
 import { db } from "@/server/db";
 import { z } from "zod";
 
 export const homeCarouselRouter = createTRPCRouter({
-  getAll: adminProcedure.query(async ({ ctx }) => {
+  getAll: publicProcedure.query(async ({ ctx }) => {
     return await db.homeCarousel.findMany({
       orderBy: { createdAt: "desc" },
     });
   }),
 
-  getById: adminProcedure
+  getById: publicProcedure
     .input(z.object({ id: z.string().uuid() }))
     .query(async ({ input }) => {
       const { id } = input;
@@ -36,6 +36,8 @@ export const homeCarouselRouter = createTRPCRouter({
       });
       return data;
     }),
+
+
   update: adminProcedure
     .input(updateHomeCarouselSchema)
     .mutation(async ({ input, ctx }) => {
@@ -57,6 +59,8 @@ export const homeCarouselRouter = createTRPCRouter({
       });
       return data;
     }),
+
+    
   delete: adminProcedure
     .input(deleteHomeCarouselSchema)
     .mutation(async ({ input, ctx }) => {
