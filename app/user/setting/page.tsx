@@ -1,6 +1,5 @@
 import SecondaryNavbar from "@/components/custom/secondary-navbar";
 import { Button } from "@/components/ui/button";
-import { USER_ROLE } from "@/constants";
 import { auth } from "@/server/auth";
 import { Heart, LayoutDashboard, LogOut } from "lucide-react";
 import Link from "next/link";

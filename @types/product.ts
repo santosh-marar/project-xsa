@@ -37,6 +37,7 @@ export interface ProductVariation {
   color: string;
   size: string;
   price: number;
+  discountPrice: number;
   stock: number;
   image: string[];
   gender: "MALE" | "FEMALE" | "UNISEX";

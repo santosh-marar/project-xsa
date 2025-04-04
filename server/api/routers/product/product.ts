@@ -224,6 +224,7 @@ const productRouter = createTRPCRouter({
               select: {
                 id: true,
                 price: true,
+                discountPrice: true,
                 stock: true,
                 image: true,
                 size: true,

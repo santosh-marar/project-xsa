@@ -10,6 +10,7 @@ import {
   Minus,
   Plus,
   ShoppingCart,
+  Tag,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
@@ -32,6 +33,8 @@ import { ProductVariation } from "@/@types/product";
 import { api } from "@/trpc/react";
 import SecondaryNavbar from "../secondary-navbar";
 import { useRouter } from "next/navigation";
+import { calculateDiscount } from "./product-card";
+import { cn } from "@/lib/utils";
 
 interface Product {
   id: string;
@@ -51,7 +54,7 @@ export default function ProductPage({ product }: { product: Product }) {
   const [quantity, setQuantity] = useState(1);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
 
-  const utils= api.useUtils();
+  const utils = api.useUtils();
 
   const session = useSession();
   const router = useRouter();
@@ -160,10 +163,12 @@ export default function ProductPage({ product }: { product: Product }) {
     selectedVariation.undergarmentAttributes ||
     selectedVariation.genericAttributes;
 
-  // console.log(product?.productVariations[0].image);
+  const discount = selectedVariation?.discountPrice;
+  const discountPercent = calculateDiscount(selectedVariation);
+
   return (
     <>
-      <SecondaryNavbar pageName="Product Details"/>
+      <SecondaryNavbar pageName="Product Details" />
 
       <div className="max-w-2xl mx-auto p-4  md:max-w-6xl py-20">
         <div className="space-y-4 md:grid md:grid-cols-2 md:gap-6">
@@ -172,7 +177,7 @@ export default function ProductPage({ product }: { product: Product }) {
             <Button
               variant="ghost"
               size="icon"
-              className="absolute left-2 top-1/2 -translate-y-1/2 z-10 bg-white/80 hover:bg-white/90"
+              className="absolute left-2 top-1/2 -translate-y-1/2 z-10 bg-secondary/80 hover:bg-secondary/90"
               onClick={() =>
                 setCurrentImageIndex((prev) =>
                   prev === 0 ? images.length - 1 : prev - 1
@@ -190,7 +195,7 @@ export default function ProductPage({ product }: { product: Product }) {
             <Button
               variant="ghost"
               size="icon"
-              className="absolute right-2 top-1/2 -translate-y-1/2 z-10 bg-white/80 hover:bg-white/90"
+              className="absolute right-2 top-1/2 -translate-y-1/2 z-10 bg-secondary/80 hover:bg-secondary/90"
               onClick={() =>
                 setCurrentImageIndex((prev) =>
                   prev === images.length - 1 ? 0 : prev + 1
@@ -205,10 +210,10 @@ export default function ProductPage({ product }: { product: Product }) {
         productName={product.name}
       /> */}
 
-          <div>
+          <div className="flex gap-3 flex-col">
             {/* Product Info */}
             <div className="space-y-1 lg:space-y-2">
-              <h1 className="text-2xl md:text-3xl font-bold tracking-tight">
+              <h1 className="text-2xl md:text-3xl font-bold tracking-tight capitalize">
                 {product.name}
               </h1>
               <p className="text-xs md:text-sm text-muted-foreground">
@@ -219,18 +224,48 @@ export default function ProductPage({ product }: { product: Product }) {
               </Badge>
             </div>
 
-            {selectedVariation && (
-              <div className="flex items-baseline gap-2 mt-2 py-2">
-                <span className="text-3xl md:text-4xl font-bold">
-                  रु. {(selectedVariation.price * quantity).toFixed(2)}
-                </span>
-                {quantity > 1 && (
-                  <span className="text-xs md:text-sm text-muted-foreground">
-                    (रु{selectedVariation.price.toFixed(2)} each)
+            <div className="flex items-center">
+              {discount ? (
+                <div className="flex flex-wrap items-baseline gap-x-2">
+                  {/* Discounted price */}
+                  <span className="text-2xl font-bold text-green-600">
+                    रु. {(discount * quantity).toFixed(2)}
                   </span>
-                )}
-              </div>
-            )}
+
+                  <div className="flex items-end gap-1.5">
+                    <span className="text-sm text-primary/70 line-through">
+                      रु. {(selectedVariation.price * quantity).toFixed(2)}
+                    </span>
+
+                    <span className="inline-flex items-center gap-0.5 rounded-full bg-secondary/50 px-1.5 py-0.5 text-xs font-medium text-green-600 ring-1 ring-inset ring-emerald-600/20">
+                      <Tag className="h-3 w-3" />
+                      {discountPercent}%
+                    </span>
+                  </div>
+
+                  {/* Per unit price - only shown if quantity > 1 */}
+                  {quantity > 1 && (
+                    <span className="w-full text-xs text-gray-500 mt-0.5">
+                      रु. {discount.toFixed(2)} each
+                    </span>
+                  )}
+                </div>
+              ) : (
+                <div>
+                  {/* Regular price */}
+                  <span className="text-2xl font-bold">
+                    रु. {(selectedVariation.price * quantity).toFixed(2)}
+                  </span>
+
+                  {/* Per unit price - only shown if quantity > 1 */}
+                  {quantity > 1 && (
+                    <span className="block text-xs text-primary/70 mt-0.5">
+                      रु. {selectedVariation.price.toFixed(2)} each
+                    </span>
+                  )}
+                </div>
+              )}
+            </div>
 
             <div className="space-y-4">
               <div>
@@ -325,7 +360,10 @@ export default function ProductPage({ product }: { product: Product }) {
                         In Stock ({selectedVariation.stock} available)
                       </Badge>
                     ) : (
-                      <Badge variant="secondary" className="bg-red-100 text-red-800 px-2 py-1">
+                      <Badge
+                        variant="secondary"
+                        className="bg-red-100 text-red-800 px-2 py-1"
+                      >
                         Out of Stock
                       </Badge>
                     )}

@@ -23,6 +23,7 @@ export const findUserRoleById = async (id: string) => {
  * Find shop by user id
  */ 
 export const getShop = async (userId: string) => {
+
   const shop = await db.shop.findFirst({
     where: {
       ownerId: userId,
