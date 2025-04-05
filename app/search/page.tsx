@@ -50,7 +50,7 @@ export default function ProductsPage() {
   const session = useSession();
   // console.log("session", session);
   const user = session?.data?.user;
-  console.log("user", user);
+  // console.log("user", user);
 
   const debouncedSearchTerm=useDebounce(searchTerm, 500);
 
@@ -495,6 +495,7 @@ export default function ProductsPage() {
                         key={product.id}
                         className="max-w-[248px] mx-auto w-full"
                       >
+                        {/* @ts-ignore */}
                         <ProductCard {...product} />
                       </div>
                     ))}

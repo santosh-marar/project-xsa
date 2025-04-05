@@ -216,7 +216,7 @@ export default function ProductPage({ product }: { product: Product }) {
               <h1 className="text-2xl md:text-3xl font-bold tracking-tight capitalize">
                 {product.name}
               </h1>
-              <p className="text-xs md:text-sm text-muted-foreground">
+              <p className="text-xs md:text-sm text-muted-foreground first-letter:uppercase">
                 {product.description}
               </p>
               <Badge variant="secondary" className="text-xs md:text-sm">

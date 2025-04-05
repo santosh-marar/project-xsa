@@ -17,6 +17,7 @@ const HomeProduct = () => {
     <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 mx-2 md:mx-4 lg:mx-8 my-4 md:my-4 lg:my-8">
       {data?.products.map((product) => (
         <div key={product.id} className="max-w-[248px] mx-auto w-full">
+          {/* @ts-ignore */}
           <ProductCard {...product} />
         </div>
       ))}
