@@ -25,14 +25,14 @@ export default function ShoppingCart() {
 
   const updateQuantity = api.cart.updateItemQuantity.useMutation({
     onSuccess: () => {
-      utils.cart.invalidate();
+      utils.cart.getCart.invalidate();
       toast.success("Quantity updated successfully");
     },
   });
 
   const removeCardItem = api.cart.removeItem.useMutation({
     onSuccess: () => {
-      utils.cart.invalidate();
+      utils.cart.getCart.invalidate();
       toast.success("Item removed from cart successfully");
     },
   });
@@ -56,11 +56,6 @@ export default function ShoppingCart() {
     removeCardItem.mutate({
       cartItemId: itemId,
     });
-  };
-
-  const calculateTotal = () => {
-    if (!cart) return 0;
-    return cart.items.reduce((total, item) => total + item.totalPrice, 0);
   };
 
   if (!session.data)
@@ -94,6 +89,37 @@ export default function ShoppingCart() {
         Your cart is empty.
       </div>
     );
+
+  console.log(cart);
+
+  cart.items?.map((item, index) => {
+    console.log(item);
+  });
+
+  const calculateTotal = () => {
+    if (!cart) return 0;
+    return cart.items.reduce((total, item) => total + item?.totalPrice, 0);
+  };
+
+  const calculateTotalDiscount = () => {
+    if (!cart) return 0;
+    return cart.items.reduce(
+      (total, item) => total + (item?.totalDiscountPrice ?? 0),
+      0
+    );
+  };
+
+  // const originalSubtotal =
+  //   cart?.items.reduce((total, item) => {
+  //     const price = item.productVariation?.price || 0;
+  //     return total + price * item.quantity;
+  //   }, 0) || 0;
+
+  //   console.log(originalSubtotal)
+
+  const originalSubtotal = calculateTotal();
+  const discount = calculateTotalDiscount();
+  const subTotal = originalSubtotal - discount;
 
   return (
     <div className="custom-layout">
@@ -189,8 +215,12 @@ export default function ShoppingCart() {
         </div>
 
         <div className="lg:w-1/3 mt-8 lg:mt-0">
-          {/* Order Summary */}
-          <OrderSummary calculateTotal={calculateTotal} />
+          Order Summary
+          <OrderSummary
+            originalSubtotal={originalSubtotal}
+            discount={discount}
+            discountedSubtotal={subTotal}
+          />{" "}
         </div>
       </div>
     </div>

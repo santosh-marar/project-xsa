@@ -431,14 +431,12 @@ export const discountRouter = createTRPCRouter({
         where: { id: input.discountId },
         select: { shopId: true },
       });
-
       if (!discount) {
         throw new TRPCError({
           code: "NOT_FOUND",
           message: "Discount not found",
         });
       }
-
       await isAdminOrShopOwner(
         { id: ctx.session.user.id!, role: ctx.session.user.role },
         discount.shopId as string
@@ -473,6 +471,23 @@ export const discountRouter = createTRPCRouter({
         );
 
         if (variationsToReset.length > 0) {
+          // Get the current regular prices for these variations to update cart items
+          const variations = await tx.productVariation.findMany({
+            where: {
+              id: { in: variationsToReset },
+            },
+            select: {
+              id: true,
+              price: true,
+            },
+          });
+
+          const variationPriceMap = variations.reduce((map, variation) => {
+            map[variation.id] = variation.price;
+            return map;
+          }, {} as Record<string, number>);
+
+          // 1. Reset discountPrice on variations
           await tx.productVariation.updateMany({
             where: {
               id: { in: variationsToReset },
@@ -480,6 +495,30 @@ export const discountRouter = createTRPCRouter({
             },
             data: { discountPrice: null },
           });
+
+          // 2. Update cart items that use these variations
+          for (const variationId of variationsToReset) {
+            const regularPrice = variationPriceMap[variationId];
+
+            // Find all cart items with this variation
+            const cartItems = await tx.cartItem.findMany({
+              where: {
+                productVariationId: variationId,
+                totalDiscountPrice: { not: null }, // Only update items that have a discount applied
+              },
+            });
+
+            // Update each cart item
+            for (const item of cartItems) {
+              await tx.cartItem.update({
+                where: { id: item.id },
+                data: {
+                  totalDiscountPrice: null,
+                  totalPrice: regularPrice * item.quantity,
+                },
+              });
+            }
+          }
         }
       });
 
@@ -514,7 +553,7 @@ export const discountRouter = createTRPCRouter({
           include: {
             product: {
               select: {
-                id:true,
+                id: true,
                 name: true,
                 image: true,
               },
@@ -551,7 +590,7 @@ export const discountRouter = createTRPCRouter({
           dv.variation.product.image[0] ||
           "/placeholder.jpg",
         productName: dv.variation.product.name,
-        productId: dv.variation.product.id
+        productId: dv.variation.product.id,
       },
     }));
   }),
@@ -628,7 +667,10 @@ export const discountRouter = createTRPCRouter({
       // Verify user has permission to modify this discount
       const userId = ctx.session.user.id as string;
       const role = ctx.session.user.role;
-      await isAdminOrShopOwner({ id: userId, role }, discount?.shopId as string);
+      await isAdminOrShopOwner(
+        { id: userId, role },
+        discount?.shopId as string
+      );
 
       // Delete the associations
       await db.categoryDiscount.deleteMany({

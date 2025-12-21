@@ -47,6 +47,8 @@ export function CreateProductForm({
 
   const logoRef = useRef<ImageUploaderRef>(null);
 
+  const utils=api.useUtils()
+
   const form = useForm<CreateProduct>({
     resolver: zodResolver(createProductSchema),
     defaultValues: {
@@ -62,6 +64,7 @@ export function CreateProductForm({
   const createProduct = api.product.create.useMutation({
     onSuccess: () => {
       toast.success("Product created successfully");
+      utils.product.getMyProducts.invalidate();
       // router.push("/products");
     },
     onError: (error) => {

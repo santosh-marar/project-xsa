@@ -43,7 +43,8 @@ export const cartRouter = createTRPCRouter({
         productId: z.string(),
         productVariationId: z.string(),
         quantity: z.number().int().positive(),
-        price: z.number().positive(),
+        totalPrice: z.number().int().positive(),
+        totalDiscountPrice: z.number().int().positive().optional(),
       })
     )
     .mutation(async ({ ctx, input }) => {
@@ -68,15 +69,29 @@ export const cartRouter = createTRPCRouter({
             productVariationId: input.productVariationId,
           },
         },
+        select:{
+          id:true,
+          quantity:true,
+          productVariation:{
+            select:{
+              price:true,
+              discountPrice:true
+            }
+          }
+        }
       });
 
       if (existingItem) {
         const updatedQuantity = existingItem.quantity + input.quantity;
+        const { price, discountPrice } = existingItem.productVariation;
         return ctx.db.cartItem.update({
           where: { id: existingItem.id },
           data: {
             quantity: updatedQuantity,
-            totalPrice: updatedQuantity * existingItem.price,
+            totalPrice: updatedQuantity * price,
+            totalDiscountPrice: discountPrice
+              ? updatedQuantity * discountPrice
+              : null,
           },
         });
       }
@@ -87,8 +102,8 @@ export const cartRouter = createTRPCRouter({
           productId: input.productId,
           productVariationId: input.productVariationId,
           quantity: input.quantity,
-          price: input.price,
-          totalPrice: input.quantity * input.price,
+          totalDiscountPrice:input.totalDiscountPrice,
+          totalPrice:input.totalPrice,
         },
       });
     }),
@@ -118,7 +133,18 @@ export const cartRouter = createTRPCRouter({
         where: {
           id: input.cartItemId,
           cartId: cart.id,
+
         },
+        select:{
+          id:true,
+          quantity:true,
+          productVariation:{
+            select:{
+              price:true,
+              discountPrice:true
+            }
+          }
+        }
       });
 
       if (!cartItem) {
@@ -128,11 +154,15 @@ export const cartRouter = createTRPCRouter({
         });
       }
 
+      const { price, discountPrice } = cartItem.productVariation;
       return ctx.db.cartItem.update({
         where: { id: input.cartItemId },
         data: {
           quantity: input.quantity,
-          totalPrice: input.quantity * cartItem.price,
+          totalPrice: input.quantity * price,
+          totalDiscountPrice: discountPrice
+            ? input.quantity * discountPrice
+            : null,
         },
       });
     }),

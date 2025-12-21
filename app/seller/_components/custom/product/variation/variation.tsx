@@ -160,7 +160,7 @@ const ProductVariationTable = () => {
     }
   );
 
-  console.log(data);
+  // console.log(data);
 
   const deleteProductVariation = api.productVariation.delete.useMutation({
     onSuccess: () => {

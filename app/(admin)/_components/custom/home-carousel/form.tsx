@@ -102,7 +102,6 @@ export function HomeCarouselForm({
     ? data.products
     : [];
 
-    console.log(products)
 
   // Determine if we're editing based on the existence of an id
   const isEditing = Boolean(item && item.id);
@@ -335,7 +334,7 @@ export function HomeCarouselForm({
                 type="button"
                 variant="ghost"
                 size="sm"
-                className="h-auto p-1 text-xs text-red-500"
+                className="h-auto p-1 text-xs text-destructive"
                 onClick={() => {
                   setSelectedProductId("");
                   setSelectedProduct(null);

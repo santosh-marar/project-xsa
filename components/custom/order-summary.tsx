@@ -1,44 +1,76 @@
-import React from "react";
+import { Separator } from "@radix-ui/react-dropdown-menu";
+import { Button } from "../ui/button";
 import Link from "next/link";
-import { CreditCard, ArrowLeft } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { Separator } from "@/components/ui/separator";
-
-// const TAX_PERCENTAGE = 0.1; // 10% tax
-const TAX_PERCENTAGE = 0;
-const SHIPPING_FEE = 0; // Fixed shipping fee
+import { ArrowLeft, CreditCard } from "lucide-react";
 
 interface OrderSummaryProps {
-  calculateTotal: () => number;
+  originalSubtotal: number;
+  discount: number;
+  discountedSubtotal: number;
 }
 
-const OrderSummary: React.FC<OrderSummaryProps> = ({ calculateTotal }) => {
-  const subtotal = calculateTotal();
-  const tax = subtotal * TAX_PERCENTAGE;
-  const total = subtotal + SHIPPING_FEE; // Default total without tax
+const OrderSummary: React.FC<OrderSummaryProps> = ({
+  originalSubtotal,
+  discount,
+  discountedSubtotal,
+}) => {
+  const TAX_PERCENTAGE = 0;
+  const SHIPPING_FEE = 0;
+
+  const tax = discountedSubtotal * TAX_PERCENTAGE;
+  const total = discountedSubtotal + tax + SHIPPING_FEE;
 
   return (
-    <div className="bg-white p-6 rounded-lg border">
+    <div className="bg-secondary p-6 rounded-lg border">
       <h2 className="text-2xl font-bold mb-4 text-gray-800">Order Summary</h2>
       <div className="space-y-3">
+        {/* Original Subtotal */}
         <div className="flex justify-between text-gray-600">
           <span>Subtotal</span>
-          <span className="font-medium">रु. {subtotal.toFixed(2)}</span>
+          <span className="font-medium">रु. {originalSubtotal.toFixed(2)}</span>
         </div>
 
-        {/* Uncomment to include tax dynamically */}
+        {/* Discount */}
+        {discount > 0 && (
+          <div className="flex justify-between text-gray-600">
+            <span>Discount</span>
+            <span className="font-medium text-green-600">
+              -रु. {discount.toFixed(2)}
+            </span>
+          </div>
+        )}
+
+        {/* Discounted Subtotal */}
         <div className="flex justify-between text-gray-600">
-          <span>Tax ({(TAX_PERCENTAGE * 100).toFixed(0)}%)</span>
-          <span className="font-medium">रु. {tax.toFixed(2)}</span>
+          <span>Discounted Subtotal</span>
+          <span className="font-medium">
+            रु. {discountedSubtotal.toFixed(2)}
+          </span>
         </div>
-       
+
+        {/* Tax */}
+        {TAX_PERCENTAGE > 0 && (
+          <div className="flex justify-between text-gray-600">
+            <span>Tax ({(TAX_PERCENTAGE * 100).toFixed(0)}%)</span>
+            <span className="font-medium">रु. {tax.toFixed(2)}</span>
+          </div>
+        )}
+
+        {/* Shipping */}
+        {SHIPPING_FEE > 0 && (
+          <div className="flex justify-between text-gray-600">
+            <span>Shipping</span>
+            <span className="font-medium">रु. {SHIPPING_FEE.toFixed(2)}</span>
+          </div>
+        )}
 
         <Separator className="my-4" />
 
-        {/* <div className="flex justify-between text-lg font-bold text-gray-800">
+        {/* Total */}
+        <div className="flex justify-between text-lg font-bold text-gray-800">
           <span>Total</span>
-          <span>रु. {(total + tax).toFixed(2)}</span>{" "}
-        </div> */}
+          <span>रु. {total.toFixed(2)}</span>
+        </div>
       </div>
 
       <div className="mt-6 space-y-4">
@@ -63,4 +95,4 @@ const OrderSummary: React.FC<OrderSummaryProps> = ({ calculateTotal }) => {
   );
 };
 
-export default OrderSummary;
+export default OrderSummary

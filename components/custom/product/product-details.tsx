@@ -132,12 +132,13 @@ export default function ProductPage({ product }: { product: Product }) {
       productId: product.id,
       productVariationId: selectedVariation.id,
       quantity,
-      price: selectedVariation.price * quantity,
+      totalPrice: selectedVariation.price * quantity,
+      totalDiscountPrice: (selectedVariation.price- selectedVariation?.discountPrice) * quantity || 0,
     });
 
-    utils.cart.getCart.invalidate();
+    utils.cart.invalidate();
 
-    router.push("/user/cart");
+    // router.push("/user/cart");
   };
 
   // const handleBuyNow = () => {

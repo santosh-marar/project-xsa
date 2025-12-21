@@ -9,6 +9,8 @@ const HomeProduct = () => {
     pageSize: 10
   });
 
+  console.log(data);
+
   if (isLoading) return <div className="text-center py-12">Loading...</div>;
 
 //   console.log(data);

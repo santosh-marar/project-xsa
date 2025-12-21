@@ -56,7 +56,7 @@ model ProductVariationDiscount {
   variationId String
   discountId  String
   
-  variation   ProductVariation @relation(fields: [variationId], references: [id])
+  variation   ProductVariation @relation(fields: [variationId], references: [id], onDelete: Cascade)
   discount    Discount         @relation(fields: [discountId], references: [id])
   
   @@unique([variationId, discountId])

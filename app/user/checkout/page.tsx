@@ -75,8 +75,8 @@ interface CartItem {
   };
   productVariation: ProductVariation;
   quantity: number;
-  price: number;
   totalPrice: number;
+  totalDiscountPrice: number;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -147,7 +147,6 @@ export default function Checkout() {
         productId: item.productId,
         productVariationId: item.productVariationId,
         quantity: item.quantity,
-        price: item.price,
         totalPrice: item.totalPrice,
       })),
       subTotal, // Calculated subTotal

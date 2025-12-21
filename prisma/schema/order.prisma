@@ -29,11 +29,13 @@ model OrderItem {
   productId        String
   productVariationId String
   quantity         Int
-  price            Float     // Price at time of order
+  price            Float     // Price at time of order (after discount if applicable)
+  regularPrice     Float?    // Original price before discount
   totalPrice       Float     // price * quantity
+  totalDiscountPrice Float?  // Total discount amount for this item
 
   order            Order     @relation(fields: [orderId], references: [id], onDelete: Cascade)
-  product          Product   @relation(fields: [productId], references: [id])
+  product          Product   @relation(fields: [productId], references: [id] )
   productVariation ProductVariation @relation(fields: [productVariationId], references: [id])
 
   @@index([orderId])

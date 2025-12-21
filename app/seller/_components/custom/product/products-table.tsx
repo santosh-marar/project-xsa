@@ -15,6 +15,7 @@ import {
   DropdownMenuLabel,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { handleError } from "@/lib/zod-error";
 
 type Product = {
   id: string;
@@ -83,7 +84,7 @@ export function ProductsTable({ shops, categories }: ProductsTableProps) {
       refetch();
     },
     onError: (error) => {
-      toast.error("Error deleting product");
+      handleError(error)
     },
   });
 

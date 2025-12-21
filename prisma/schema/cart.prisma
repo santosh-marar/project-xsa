@@ -16,8 +16,8 @@ model CartItem {
   productId           String
   productVariationId  String
   quantity            Int       @default(1)
-  price               Float     // Store price at the time of adding to cart
-  totalPrice          Float     // price * quantity
+  totalPrice          Float     // productVariation?.price * quantity
+  totalDiscountPrice    Float?
   createdAt           DateTime  @default(now())
   updatedAt           DateTime  @updatedAt
 
